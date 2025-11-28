@@ -24,12 +24,32 @@ const CONFIG = {
 };
 
 // Interface do retorno para tipagem forte
-export interface ProcessedProduct {
-  id: string; 
-  raw: string;
-  product: string;
-  manufacturer: string;
-  formatted: string;
+export interface ItemGrade {
+  id: string;
+  numeroItem: number;
+  
+  // Colunas de Preços (Esquerda)
+  precoDoDia: number;
+  melhorPreco: number;
+  precoFinal: number;
+
+  // Dados do Produto
+  medicamento: string; // Onde a mágica acontece
+  marca: string;       // Ex: GENÉRICO
+  quantidade: number;
+  
+  // Colunas Centrais
+  valorEstimado: number;
+  precoInicial: number; // A coluna Laranja
+  cotacao: number;
+
+  // Concorrentes (Direita)
+  primeiroColocado: string;
+  segundoColocado: string;
+  terceiroColocado: string;
+  
+  // Status
+  mapa: string;
 }
 
 export function processProductLine(inputText: string, index: number): ProcessedProduct {

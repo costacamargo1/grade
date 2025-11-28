@@ -1,90 +1,136 @@
 "use client";
 import { useState } from 'react';
-import { processProductLine, ProcessedProduct } from '../lib/processor';
-import Header from '../components/Header'; // <--- Importando a peça nova
-import { ArrowRight, Check, Copy } from 'lucide-react';
+import { processProductLine, ItemGrade } from '../lib/processor';
+import Header from '../components/Header';
+import Grid from '../components/Grid';
+import { ArrowRight, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 
 export default function Home() {
+  // Dados de entrada (Texto bruto)
   const [inputData, setInputData] = useState("");
-  const [results, setResults] = useState<ProcessedProduct[]>([]);
+  // Dados processados (A Grade)
+  const [itens, setItens] = useState<ItemGrade[]>([]);
+  // Controle visual (Esconder/Mostrar área de colar)
+  const [showImport, setShowImport] = useState(true);
 
   const handleProcess = () => {
+    if (!inputData.trim())
+      return {
+          id: Date.now().toString() + "-" + index,
+          numeroItem: index + 1,
+          
+          // Mapeando para os novos campos
+          precoDoDia: 0,
+          melhorPreco: 0,
+          precoFinal: 0,
+
+          medicamento: processed.formatted, // Usamos o texto já limpo aqui
+          marca: processed.manufacturer !== "NÃO IDENTIFICADO" ? processed.manufacturer : "GENÉRICO",
+          quantidade: 0,
+          
+          valorEstimado: 0,
+          precoInicial: 0,
+          cotacao: 0,
+          
+          primeiroColocado: "",
+          segundoColocado: "",
+          terceiroColocado: "",
+          mapa: ""
+        };
+
     const lines = inputData.split('\n');
-    const processed = lines.map((line, index) => processProductLine(line, index));
-    setResults(processed.filter(p => p.raw.trim() !== ""));
+    
+    // Mapeia o texto bruto para o formato completo da Grade
+    const novosItens: ItemGrade[] = lines
+      .filter(line => line.trim() !== "") // Ignora linhas vazias
+      .map((line, index) => {
+        // Usa o nosso "Motor" para limpar o texto e achar o fabricante
+        const processed = processProductLine(line, index);
+        
+        return {
+          id: Date.now().toString() + "-" + index, // ID único
+          numeroItem: index + 1,
+          
+          // Dados processados
+          descricaoOriginal: processed.raw,
+          produtoFormatado: processed.product,
+          fabricante: processed.manufacturer,
+          
+          // Campos numéricos iniciados zerados para você preencher na Grade
+          quantidade: 0,
+          valorEstimado: 0,
+          
+          // Campos de Disputa
+          precoMinimo: 0,
+          precoFinal: 0,
+          
+          // Campos de Concorrência
+          primeiroColocado: "",
+          segundoColocado: "",
+          terceiroColocado: ""
+        };
+      });
+
+    setItens(novosItens);
+    setShowImport(false); // Esconde a caixa de texto automaticamente para focar na grade
   };
 
   return (
-    <main className="min-h-screen bg-slate-100 p-4 lg:p-8 font-sans">
-      <div className="max-w-7xl mx-auto space-y-6">
-        
-        {/* Título simples acima do sistema */}
-        <div className="flex justify-between items-end">
-            <h1 className="text-xl font-bold text-slate-400">Sistema Web de Licitações</h1>
-            <span className="text-xs text-slate-400">Versão 1.0 (Beta)</span>
-        </div>
+    <main className="min-h-screen bg-slate-100 font-sans pb-20">
+      
+      {/* Faixa Superior (Estilo App) */}
+      <div className="bg-slate-900 h-2 w-full fixed top-0 left-0 z-50"></div>
 
-        {/* --- AQUI ENTRA O SEU CABEÇALHO NOVO --- */}
+      <div className="max-w-[1600px] mx-auto p-4 lg:p-6 space-y-6 mt-2">
+        
+        {/* 1. O CABEÇALHO INTELIGENTE */}
         <Header />
 
-        {/* Área de Trabalho (Inputs e Grids) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* 2. ÁREA DE IMPORTAÇÃO (Colapsável) */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           
-          {/* Lado Esquerdo: Entrada */}
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-300">
-            <h2 className="text-sm font-bold mb-2 text-slate-600 uppercase tracking-wide">Cole os Itens do Edital</h2>
-            <textarea
-              className="w-full h-[400px] p-4 border border-slate-300 rounded bg-slate-50 font-mono text-xs focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none text-slate-800"
-              placeholder="Ex: ITEM 1 - INSULINA EUROFARMA..."
-              value={inputData}
-              onChange={(e) => setInputData(e.target.value)}
-            />
-            <button
-              onClick={handleProcess}
-              className="mt-3 w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 px-4 rounded transition flex items-center justify-center gap-2 uppercase text-sm"
-            >
-              Processar Grade <ArrowRight size={16} />
-            </button>
+          {/* Barra de Título da Importação */}
+          <div 
+            className="p-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-slate-100 transition"
+            onClick={() => setShowImport(!showImport)}
+          >
+            <div className="flex items-center gap-2 text-slate-700 font-bold text-sm uppercase tracking-wide">
+              <FileText size={16} className="text-blue-500" />
+              Importar Dados do Edital
+            </div>
+            {showImport ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
           </div>
 
-          {/* Lado Direito: Saída Processada */}
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-300 flex flex-col">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-sm font-bold text-slate-600 uppercase tracking-wide">Grade Processada</h2>
-              <span className="text-[10px] font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full border border-blue-200">
-                {results.length} ITENS
-              </span>
-            </div>
-            
-            <div className="flex-1 overflow-auto h-[400px] border border-slate-200 rounded bg-white relative">
-              {/* Cabeçalho da Tabela Fake */}
-              <div className="sticky top-0 bg-slate-100 border-b border-slate-300 flex text-[10px] font-bold text-slate-600 p-2">
-                 <div className="flex-1">DESCRIÇÃO</div>
-                 <div className="w-32">FABRICANTE</div>
+          {/* Área de Colar (Só aparece se showImport for true) */}
+          {showImport && (
+            <div className="p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in slide-in-from-top-2">
+              <div className="lg:col-span-9">
+                <textarea
+                  className="w-full h-32 p-4 border border-slate-300 rounded-xl bg-slate-50 font-mono text-xs focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none resize-none text-slate-800 transition-all"
+                  placeholder="Cole aqui a lista de itens (Ex: ITEM 1 - DIPIRONA EMS...)"
+                  value={inputData}
+                  onChange={(e) => setInputData(e.target.value)}
+                />
               </div>
-
-              {results.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-slate-300 gap-2">
-                  <Copy size={32} />
-                  <span className="text-xs">Aguardando dados...</span>
-                </div>
-              ) : (
-                <div className="divide-y divide-slate-100">
-                  {results.map((item) => (
-                    <div key={item.id} className="p-2 flex items-center hover:bg-blue-50 transition text-xs group">
-                      <div className="flex-1 font-medium text-slate-700 pr-2">
-                        {item.product}
-                      </div>
-                      <div className={`w-32 font-bold ${item.manufacturer === 'NÃO IDENTIFICADO' ? 'text-red-500' : 'text-green-600'}`}>
-                        {item.manufacturer}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className="lg:col-span-3 flex flex-col justify-end">
+                <button
+                  onClick={handleProcess}
+                  className="w-full h-full max-h-32 bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 px-6 rounded-xl transition flex flex-col items-center justify-center gap-2 uppercase text-xs tracking-wider shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                >
+                  <ArrowRight size={24} className="text-green-400" />
+                  Gerar Grade
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
+
+{/* 3. A GRADE EDITÁVEL (O Coração do Sistema) */}
+        {/* Removida a condição para a tabela aparecer sempre e permitir adicionar manual */}
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <Grid itens={itens} setItens={setItens} />
+        </div>
+
       </div>
     </main>
   );
