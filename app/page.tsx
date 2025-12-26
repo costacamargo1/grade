@@ -6,6 +6,7 @@ import Grid from '../components/Grid';
 import Orgaos from '../components/Orgaos';
 import { Download } from 'lucide-react';
 import { exportToExcel } from '../lib/exportService';
+import DropdownEmpresa from '../components/DropdownEmpresa';
 
 type Tab = 'grade' | 'orgaos';
 
@@ -67,9 +68,16 @@ export default function Home() {
                 </button>
             </div>
 
-            {/* Botão de Exportação (condicional) */}
-            {activeTab === 'grade' && (
-                <div className="flex justify-end">
+            {/* Container for DropdownEmpresa and Export Button */}
+            <div className="flex items-center gap-4">
+                <DropdownEmpresa
+                    value={headerData.empresa}
+                    onChange={(newValue) => setHeaderData({ ...headerData, empresa: newValue, logoInput: newValue })}
+                    onBlur={() => setHeaderData({ ...headerData, empresa: headerData.empresa, logoInput: headerData.empresa })}
+                />
+
+                {/* Botão de Exportação (condicional) */}
+                {activeTab === 'grade' && (
                     <button
                         onClick={handleExport}
                         className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
@@ -77,13 +85,13 @@ export default function Home() {
                         <Download size={18} />
                         Exportar para Excel
                     </button>
-                </div>
-            )}
+                )}
+            </div>
         </div>
 
         {/* 1. O CABEÇALHO INTELIGENTE */}
         <div className="print:hidden">
-            <Header headerData={headerData} setHeaderData={setHeaderData} setOrgaos={setOrgaos} />
+            <Header headerData={headerData} setHeaderData={setHeaderData} orgaos={orgaos} setOrgaos={setOrgaos} />
         </div>
 
         {/* 2. CONTEÚDO DINÂMICO (GRADE OU ÓRGÃOS) */}

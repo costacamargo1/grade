@@ -13,10 +13,11 @@ import { HeaderData } from "../lib/types";
 interface HeaderProps {
     headerData: HeaderData;
     setHeaderData: (data: HeaderData) => void;
+    orgaos: Orgao[];
     setOrgaos: (orgaos: Orgao[] | ((orgaos: Orgao[]) => Orgao[])) => void;
 }
 
-export default function Header({ headerData, setHeaderData, setOrgaos }: HeaderProps) {
+export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }: HeaderProps) {
   // --- LOCAL COMPONENT STATE ---
   const [showModalOrgao, setShowModalOrgao] = useState(false);
   const [novoOrgaoNome, setNovoOrgaoNome] = useState("");
@@ -30,7 +31,7 @@ export default function Header({ headerData, setHeaderData, setOrgaos }: HeaderP
 
 
   // --- DERIVED STATE ---
-  const empresa = logoMap.get(headerData.logoInput.toUpperCase()) || "UNIQUE";
+  const empresa = logoMap.get(headerData.empresa.toUpperCase()) || "UNIQUE";
 
   // --- HANDLERS THAT UPDATE PARENT STATE ---
   const updateHeader = (field: keyof HeaderData, value: any) => {
@@ -53,7 +54,7 @@ export default function Header({ headerData, setHeaderData, setOrgaos }: HeaderP
   };
 
   const handleOrgaoBlur = () => {
-      const result = buscarOrgao(headerData.orgao);
+      const result = buscarOrgao(headerData.orgao, orgaos);
       let updates: Partial<HeaderData> = { orgao: result.textoFinal };
       if (result.orgaoEncontrado) {
           updates.portalInput = result.orgaoEncontrado.portal;
@@ -62,11 +63,14 @@ export default function Header({ headerData, setHeaderData, setOrgaos }: HeaderP
       setHeaderData({ ...headerData, ...updates });
   };
 
-  const handleUasgBlur = () => {
-      const orgaoEncontrado = buscarOrgaoPorUasg(headerData.uasgInput);
+  const handleUasgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const uasg = e.target.value;
+      updateHeader("uasgInput", uasg);
+      const orgaoEncontrado = buscarOrgaoPorUasg(uasg, orgaos);
       if (orgaoEncontrado) {
           setHeaderData({
               ...headerData,
+              uasgInput: uasg,
               orgao: orgaoEncontrado.nome,
               portalInput: orgaoEncontrado.portal,
           });
@@ -280,8 +284,7 @@ export default function Header({ headerData, setHeaderData, setOrgaos }: HeaderP
                       placeholder="Busca órgão por UASG" 
                       className="w-full pl-5 py-1 bg-transparent border-b border-slate-200 focus:border-blue-500 text-xs font-bold text-slate-600 focus:outline-none placeholder:font-normal" 
                       value={headerData.uasgInput}
-                      onChange={(e) => updateHeader("uasgInput", e.target.value)}
-                      onBlur={handleUasgBlur}
+                      onChange={handleUasgChange}
                     />
                  </div>
               </div>
@@ -313,17 +316,7 @@ export default function Header({ headerData, setHeaderData, setOrgaos }: HeaderP
           </div>
 
           <div className="w-full xl:w-64 flex flex-col items-center justify-between border-t xl:border-t-0 xl:border-l border-slate-100 pl-0 xl:pl-8 pt-6 xl:pt-0 relative">
-                <div className="w-full text-center">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 block">Empresa</label>
-                    <input 
-                        type="text"
-                        placeholder="NSA, COSTA, UNIQUE..."
-                        className="w-full text-center p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase"
-                        value={headerData.logoInput}
-                        onChange={(e) => updateHeader("logoInput", e.target.value)}
-                    />
-                    <p className="text-[10px] text-slate-400 mt-1">Use atalhos (N, C, U, 1, 2, 3)</p>
-                </div>
+
 
                 <div className="transform scale-90 transition-all duration-500 h-24 flex items-center justify-center">
                 {empresa === "UNIQUE" && (
