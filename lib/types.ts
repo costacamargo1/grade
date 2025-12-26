@@ -2,7 +2,7 @@
 
 export interface ItemGrade {
   id: string;
-  numeroItem: number;
+  numeroItem: number | undefined;
   precoDoDia: number;
   melhorPreco: number;
   precoFinal: number;
