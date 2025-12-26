@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { Building2, Calendar, Search, ChevronDown, Globe, Gavel, FileText, Hash, Plus, X, Save } from "lucide-react";
-import { PORTAIS_MAP, LISTA_PORTAIS, MODO_DISPUTA_MAP, LISTA_MODOS, ACAO_JUDICIAL_MAP } from "../lib/constants";
+import { PORTAIS_MAP, LISTA_PORTAIS, MODO_DISPUTA_MAP, LISTA_MODOS } from "../lib/constants";
 import { formatarEdital, formatarDataInteligente } from "../lib/formatters";
 import { saveOrgao, findOrgaoByNome } from "../lib/orgaoService";
 
@@ -51,14 +51,6 @@ export default function Header() {
     if (MODO_DISPUTA_MAP[codigo]) {
       setModoDisputa(MODO_DISPUTA_MAP[codigo]);
     }
-  };
-
-  const handleBlurJudicial = () => {
-     // Pequeno delay para permitir clique no option
-     setTimeout(() => {
-        const codigo = judicialInput.toUpperCase().trim();
-        if (ACAO_JUDICIAL_MAP[codigo]) setJudicialInput(ACAO_JUDICIAL_MAP[codigo]);
-     }, 200);
   };
 
   // --- LÓGICA DE ÓRGÃOS ---
@@ -211,19 +203,15 @@ export default function Header() {
                  <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Ação Judicial</label>
                  <div className="flex items-center">
                     <Gavel size={14} className="absolute left-0 text-red-300" />
-                    <input 
-                       list="judicial-list"
-                       type="text"
-                       className="w-full pl-5 py-1 bg-transparent border-none text-xs font-bold text-red-500 focus:ring-0 cursor-pointer uppercase"
+                    <select
+                       className="w-full pl-5 py-1 bg-transparent border-none text-xs font-bold text-red-500 focus:ring-0 cursor-pointer uppercase appearance-none"
                        value={judicialInput}
                        onChange={(e) => setJudicialInput(e.target.value)}
-                       onBlur={handleBlurJudicial}
-                    />
-                    <datalist id="judicial-list">
-                       <option value="SIM" />
-                       <option value="NÃO" />
-                       <option value="PARCIAL" />
-                    </datalist>
+                    >
+                       <option value="NÃO">NÃO</option>
+                       <option value="SIM">SIM</option>
+                       <option value="PARCIAL">PARCIAL</option>
+                    </select>
                  </div>
               </div>
 

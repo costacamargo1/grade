@@ -49,7 +49,7 @@ export default function Grid({ itens, setItens }: GridProps) {
       melhorPreco: 0,
       precoFinal: 0,
       medicamento: "",
-      marca: "GENÉRICO",
+      marca: "",
       quantidade: 0,
       valorEstimado: 0,
       precoInicial: 0,
@@ -152,7 +152,7 @@ export default function Grid({ itens, setItens }: GridProps) {
                   <input 
                     type="text" 
                     className="w-full px-2 bg-transparent outline-none focus:bg-white uppercase font-bold text-slate-700"
-                    placeholder="DIGITE O PRODUTO..."
+                    placeholder="DIGITE O PRODUTO E FABRICANTE"
                     value={item.medicamento} 
                     onChange={(e) => handleUpdate(item.id, "medicamento", e.target.value)}
                     onBlur={(e) => handleSmartBlur(item.id, e.target.value)}
@@ -160,8 +160,9 @@ export default function Grid({ itens, setItens }: GridProps) {
                 </td>
 
                 {/* 6. Marca */}
-                <td className="p-1 border-r border-slate-200">
+                <td className="p-1 border-r border-slate-200">                  
                   <input type="text" className="w-full text-center bg-transparent outline-none focus:bg-white uppercase" 
+                  placeholder="DIGITE A MARCA"
                     value={item.marca} onChange={(e) => handleUpdate(item.id, "marca", e.target.value)} />
                 </td>
 
