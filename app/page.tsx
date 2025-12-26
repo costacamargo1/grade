@@ -23,6 +23,10 @@ export default function Home() {
     judicialInput: "NÃO",
     modoDisputa: "",
     logoInput: "UNIQUE",
+    cadastro: "",
+    conferencia: "",
+    disputa: "",
+    proposta: "",
   });
   const [activeTab, setActiveTab] = useState<Tab>('grade');
 

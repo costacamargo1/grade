@@ -313,6 +313,48 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                 />
               </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="relative group">
+                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Cadastro</label>
+                 <input
+                  type="text"
+                  className="w-full pl-5 py-1 bg-transparent border-b border-slate-200 focus:border-blue-500 text-xs font-bold text-slate-600 focus:outline-none placeholder:font-normal uppercase"
+                  value={headerData.cadastro}
+                  onChange={(e) => updateHeader("cadastro", e.target.value)}
+                 />
+              </div>
+
+              <div className="relative group">
+                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Conferência</label>
+                 <input
+                  type="text"
+                  className="w-full pl-5 py-1 bg-transparent border-b border-slate-200 focus:border-blue-500 text-xs font-bold text-slate-600 focus:outline-none placeholder:font-normal uppercase"
+                  value={headerData.conferencia}
+                  onChange={(e) => updateHeader("conferencia", e.target.value)}
+                 />
+              </div>
+
+              <div className="relative group">
+                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Disputa</label>
+                 <input
+                  type="text"
+                  className="w-full pl-5 py-1 bg-transparent border-b border-slate-200 focus:border-blue-500 text-xs font-bold text-slate-600 focus:outline-none placeholder:font-normal uppercase"
+                  value={headerData.disputa}
+                  onChange={(e) => updateHeader("disputa", e.target.value)}
+                 />
+              </div>
+
+              <div className="relative group">
+                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Proposta</label>
+                 <input
+                  type="text"
+                  className="w-full pl-5 py-1 bg-transparent border-b border-slate-200 focus:border-blue-500 text-xs font-bold text-slate-600 focus:outline-none placeholder:font-normal uppercase"
+                  value={headerData.proposta}
+                  onChange={(e) => updateHeader("proposta", e.target.value)}
+                 />
+              </div>
+            </div>
           </div>
 
           <div className="w-full xl:w-64 flex flex-col items-center justify-between border-t xl:border-t-0 xl:border-l border-slate-100 pl-0 xl:pl-8 pt-6 xl:pt-0 relative">
@@ -391,4 +433,3 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
     </>
   );
 }
-

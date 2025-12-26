@@ -28,6 +28,10 @@ export interface HeaderData {
   judicialInput: string;
   modoDisputa: string;
   logoInput: string;
+  cadastro: string;
+  conferencia: string;
+  disputa: string;
+  proposta: string;
 }
 
 export interface Orgao {
