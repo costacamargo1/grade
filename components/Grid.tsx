@@ -126,9 +126,6 @@ export default function Grid({ itens, setItens }: GridProps) {
         const updates: Partial<ItemGrade> = {
             medicamento: processado.textoFinal
         };
-        if (processado.fabricanteEncontrado) {
-            updates.marca = processado.fabricanteEncontrado;
-        }
         handleMultiUpdate(id, updates);
     }
   };
