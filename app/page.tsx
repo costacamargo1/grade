@@ -14,9 +14,21 @@ export default function Home() {
   const [showImport, setShowImport] = useState(true);
 
   const handleProcess = () => {
-    if (!inputData.trim())
-      return {
-          id: Date.now().toString() + "-" + index,
+    if (!inputData.trim()) {
+      return;
+    }
+
+    const lines = inputData.split('\n');
+    
+    // Mapeia o texto bruto para o formato completo da Grade
+    const novosItens: ItemGrade[] = lines
+      .filter(line => line.trim() !== "") // Ignora linhas vazias
+      .map((line, index) => {
+        // Usa o nosso "Motor" para limpar o texto e achar o fabricante
+        const processed = processProductLine(line, index);
+        
+        return {
+          id: Date.now().toString() + "-" + index, // ID único
           numeroItem: index + 1,
           
           // Mapeando para os novos campos
@@ -36,38 +48,6 @@ export default function Home() {
           segundoColocado: "",
           terceiroColocado: "",
           mapa: ""
-        };
-
-    const lines = inputData.split('\n');
-    
-    // Mapeia o texto bruto para o formato completo da Grade
-    const novosItens: ItemGrade[] = lines
-      .filter(line => line.trim() !== "") // Ignora linhas vazias
-      .map((line, index) => {
-        // Usa o nosso "Motor" para limpar o texto e achar o fabricante
-        const processed = processProductLine(line, index);
-        
-        return {
-          id: Date.now().toString() + "-" + index, // ID único
-          numeroItem: index + 1,
-          
-          // Dados processados
-          descricaoOriginal: processed.raw,
-          produtoFormatado: processed.product,
-          fabricante: processed.manufacturer,
-          
-          // Campos numéricos iniciados zerados para você preencher na Grade
-          quantidade: 0,
-          valorEstimado: 0,
-          
-          // Campos de Disputa
-          precoMinimo: 0,
-          precoFinal: 0,
-          
-          // Campos de Concorrência
-          primeiroColocado: "",
-          segundoColocado: "",
-          terceiroColocado: ""
         };
       });
 

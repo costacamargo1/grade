@@ -117,7 +117,7 @@ export default function Grid({ itens, setItens }: GridProps) {
 
           <tbody className="divide-y divide-slate-200 text-slate-800 font-medium">
             {itens.map((item) => (
-              <tr key={item.id} className="hover:bg-blue-50 transition-colors group">
+              <tr key={item.id} className="hover:bg-blue-50 transition-colors group h-[200px]">
                 
                 {/* 1. Item (AGORA EDITÁVEL) */}
                 <td className="p-1 border-r border-slate-200 text-center">
