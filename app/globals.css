@@ -24,3 +24,25 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@media print {
+    body {
+        background-color: white !important;
+        color: black !important;
+    }
+    
+    ::placeholder {
+        color: transparent !important;
+    }
+
+    input[type="text"], input[type="number"] {
+        border: none !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}

@@ -34,9 +34,9 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
     };
 
     return (
-        <tr ref={setNodeRef} style={style} {...attributes} className="h-[170px] odd:bg-white even:bg-slate-50/70 hover:bg-blue-50 transition-colors group">
+        <tr ref={setNodeRef} style={style} {...attributes} className="h-[170px] odd:bg-white even:bg-slate-50/70 hover:bg-blue-50 transition-colors group print:bg-white">
             <td className="p-1 border-r border-slate-200 text-center relative">
-                <span {...listeners} className="absolute -left-6 top-1/2 -translate-y-1/2 p-1 cursor-grab touch-none">
+                <span {...listeners} className="absolute -left-6 top-1/2 -translate-y-1/2 p-1 cursor-grab touch-none print:hidden">
                     <GripVertical size={14} />
                 </span>
                 <input
@@ -132,7 +132,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 }
                 />
             </td>
-            <td className="p-1 border-r border-orange-300 bg-orange-100/50">
+            <td className="p-1 border-r border-orange-300 bg-orange-100/50 print:bg-white">
                 <input
                 type="text"
                 className="w-full text-center bg-transparent outline-none focus:bg-white font-bold text-slate-900"
@@ -304,7 +304,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
             <td className="p-1 text-center">
                 <button
                 onClick={() => props.handleDelete(item.id)}
-                className="text-slate-300 hover:text-red-500"
+                className="text-slate-300 hover:text-red-500 print:hidden"
                 >
                 <Trash2 size={12} />
                 </button>
@@ -515,9 +515,9 @@ export default function Grid({ itens, setItens }: GridProps) {
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-slate-300 overflow-hidden">
-      <div className="overflow-x-auto pl-8">
+      <div className="overflow-x-auto pl-8 print:pl-0">
         <table className="w-full text-xs text-left border-collapse min-w-[1300px]">
-          <thead className="text-white bg-slate-800 uppercase font-bold tracking-tighter leading-tight">
+          <thead className="text-white bg-slate-800 uppercase font-bold tracking-tighter leading-tight print:bg-white print:text-black">
             <tr>
               <th className="p-2 border-r border-gray-600 w-20 text-center">
                 <button
@@ -557,7 +557,7 @@ export default function Grid({ itens, setItens }: GridProps) {
                 <br />
                 (R$)
               </th>
-              <th className="p-2 border-r border-gray-600 w-24 text-center text-black bg-orange-200">
+              <th className="p-2 border-r border-gray-600 w-24 text-center text-black bg-orange-200 print:bg-white">
                 Preço
                 <br />
                 Inicial (R$)
@@ -611,7 +611,7 @@ export default function Grid({ itens, setItens }: GridProps) {
 
       <button
         onClick={handleAddRow}
-        className="w-full py-3 bg-slate-50 hover:bg-slate-100 border-t border-slate-200 text-slate-500 font-bold text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition-colors"
+        className="w-full py-3 bg-slate-50 hover:bg-slate-100 border-t border-slate-200 text-slate-500 font-bold text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition-colors print:hidden"
       >
         <Plus size={16} /> Adicionar Item
       </button>

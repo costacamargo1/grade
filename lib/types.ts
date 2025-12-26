@@ -29,3 +29,9 @@ export interface HeaderData {
   modoDisputa: string;
   logoInput: string;
 }
+
+export interface Orgao {
+  nome: string;
+  uasg: string;
+  portal: string;
+}

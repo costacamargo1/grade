@@ -10,15 +10,13 @@ import CalendarComponent from "./Calendar";
 import { resolverModoDisputa, processarAcaoJudicial, processarPortal } from "../lib/processor";
 import { HeaderData } from "../lib/types";
 
-// In a real app, this would be persisted, maybe in localStorage or a backend
-const orgaosCadastrados: Orgao[] = [];
-
 interface HeaderProps {
     headerData: HeaderData;
     setHeaderData: (data: HeaderData) => void;
+    setOrgaos: (orgaos: Orgao[] | ((orgaos: Orgao[]) => Orgao[])) => void;
 }
 
-export default function Header({ headerData, setHeaderData }: HeaderProps) {
+export default function Header({ headerData, setHeaderData, setOrgaos }: HeaderProps) {
   // --- LOCAL COMPONENT STATE ---
   const [showModalOrgao, setShowModalOrgao] = useState(false);
   const [novoOrgaoNome, setNovoOrgaoNome] = useState("");
@@ -155,7 +153,8 @@ export default function Header({ headerData, setHeaderData }: HeaderProps) {
       uasg: novoOrgaoUasg,
       portal: novoOrgaoPortal
     };
-    orgaosCadastrados.push(novoOrgao); 
+    
+    setOrgaos((orgaos) => [...orgaos, novoOrgao]);
 
     setHeaderData({
       ...headerData,
@@ -368,7 +367,7 @@ export default function Header({ headerData, setHeaderData }: HeaderProps) {
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Nome do Órgão *</label>
                 <input 
                   type="text" 
-                  className="w-full p-3 border border-slate-200 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase"
+                  className="w-full p-3 border border-slate-200 rounded-lg text-sm font-semibold text-black focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase"
                   placeholder="EX: PREFEITURA DE VILA VELHA"
                   value={novoOrgaoNome}
                   onChange={(e) => setNovoOrgaoNome(e.target.value)}
@@ -378,11 +377,11 @@ export default function Header({ headerData, setHeaderData }: HeaderProps) {
               <div className="grid grid-cols-2 gap-4">
                  <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">ID / UASG</label>
-                    <input type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm outline-none focus:border-blue-500" placeholder="Opcional" value={novoOrgaoUasg} onChange={(e) => setNovoOrgaoUasg(e.target.value)} />
+                    <input type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500" placeholder="Opcional" value={novoOrgaoUasg} onChange={(e) => setNovoOrgaoUasg(e.target.value)} />
                  </div>
                  <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Portal Padrão</label>
-                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm outline-none focus:border-blue-500 uppercase" placeholder="Opcional" value={novoOrgaoPortal} onChange={(e) => setNovoOrgaoPortal(e.target.value)} />
+                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="Opcional" value={novoOrgaoPortal} onChange={(e) => setNovoOrgaoPortal(e.target.value)} />
                     <datalist id="modal-portais-list">
                       {LISTA_PORTAIS.map(p => <option key={p} value={p} />)}
                     </datalist>
