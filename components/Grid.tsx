@@ -26,6 +26,12 @@ export default function Grid({ itens, setItens }: GridProps) {
     handleUpdate(id, campo, valorFinal);
   };
 
+  const handleColocadoCurrencyChange = (id: string, colocado: keyof ItemGrade, valorInput: string) => {
+    const apenasNumeros = valorInput.replace(/\D/g, "");
+    const valorFinal = Number(apenasNumeros) / 100;
+    handleColocadoChange(id, colocado, 'valor', valorFinal);
+  };
+
   // Formata Quantidade com ponto (1.000)
   const formatQuantity = (value: number | undefined) => {
     if (!value) return "";
@@ -41,6 +47,28 @@ export default function Grid({ itens, setItens }: GridProps) {
 
   // -------------------------------------
 
+  const handleUpdate = (id: string, campo: keyof ItemGrade, valor: any) => {
+    setItens(itens.map(item => 
+      item.id === id ? { ...item, [campo]: valor } : item
+    ));
+  };
+
+  const handleColocadoChange = (id: string, colocado: keyof ItemGrade, campo: 'empresa' | 'marca' | 'valor', valor: any) => {
+    setItens(itens.map(item => {
+      if (item.id === id) {
+        const currentItem = item[colocado] as { empresa: string; marca: string; valor: number };
+        return {
+          ...item,
+          [colocado]: {
+            ...currentItem,
+            [campo]: valor
+          }
+        };
+      }
+      return item;
+    }));
+  };
+
   const handleAddRow = () => {
     const novoItem: ItemGrade = {
       id: Date.now().toString(),
@@ -54,9 +82,9 @@ export default function Grid({ itens, setItens }: GridProps) {
       valorEstimado: 0,
       precoInicial: 0,
       cotacao: 0,
-      primeiroColocado: "",
-      segundoColocado: "",
-      terceiroColocado: "",
+      primeiroColocado: { empresa: "", marca: "", valor: 0 },
+      segundoColocado: { empresa: "", marca: "", valor: 0 },
+      terceiroColocado: { empresa: "", marca: "", valor: 0 },
       mapa: ""
     };
     setItens([...itens, novoItem]);
@@ -64,12 +92,6 @@ export default function Grid({ itens, setItens }: GridProps) {
 
   const handleDelete = (id: string) => {
     setItens(itens.filter(i => i.id !== id));
-  };
-
-  const handleUpdate = (id: string, campo: keyof ItemGrade, valor: any) => {
-    setItens(itens.map(item => 
-      item.id === id ? { ...item, [campo]: valor } : item
-    ));
   };
 
   const handleSmartBlur = (id: string, textoAtual: string) => {
@@ -117,7 +139,7 @@ export default function Grid({ itens, setItens }: GridProps) {
 
           <tbody className="divide-y divide-slate-200 text-slate-800 font-medium">
             {itens.map((item) => (
-              <tr key={item.id} className="hover:bg-blue-50 transition-colors group h-[200px]">
+              <tr key={item.id} className="hover:bg-blue-50 transition-colors group h-[200px]"> /* NÃO EDITAR */
                 
                 {/* 1. Item (AGORA EDITÁVEL) */}
                 <td className="p-1 border-r border-slate-200 text-center">
@@ -209,16 +231,79 @@ export default function Grid({ itens, setItens }: GridProps) {
 
                 {/* 11, 12, 13, 14... Resto igual */}
                 <td className="p-1 border-r border-slate-200">
-                  <textarea rows={2} className="w-full text-center bg-transparent outline-none focus:bg-white resize-none text-[9px] uppercase leading-tight pt-1" 
-                    value={item.primeiroColocado} onChange={(e) => handleUpdate(item.id, "primeiroColocado", e.target.value)} placeholder="EMPRESA&#10;R$ 0,00"></textarea>
+                  <div className="flex flex-col gap-1">
+                    <input 
+                        type="text" 
+                        className="w-full text-center bg-transparent outline-none focus:bg-white text-[9px] uppercase" 
+                        placeholder="EMPRESA" 
+                        value={item.primeiroColocado.empresa} 
+                        onChange={(e) => handleColocadoChange(item.id, "primeiroColocado", "empresa", e.target.value)} 
+                    />
+                    <input 
+                        type="text" 
+                        className="w-full text-center bg-transparent outline-none focus:bg-white text-[9px] uppercase" 
+                        placeholder="MARCA" 
+                        value={item.primeiroColocado.marca} 
+                        onChange={(e) => handleColocadoChange(item.id, "primeiroColocado", "marca", e.target.value)} 
+                    />
+                    <input 
+                        type="text" 
+                        className="w-full text-center bg-transparent outline-none focus:bg-white text-[9px]" 
+                        placeholder="R$ 0,00" 
+                        value={formatCurrency(item.primeiroColocado.valor)} 
+                        onChange={(e) => handleColocadoCurrencyChange(item.id, "primeiroColocado", e.target.value)} 
+                    />
+                  </div>
                 </td>
                 <td className="p-1 border-r border-slate-200">
-                  <textarea rows={2} className="w-full text-center bg-transparent outline-none focus:bg-white resize-none text-[9px] uppercase leading-tight pt-1" 
-                    value={item.segundoColocado} onChange={(e) => handleUpdate(item.id, "segundoColocado", e.target.value)} placeholder="EMPRESA&#10;R$ 0,00"></textarea>
+                  <div className="flex flex-col gap-1">
+                    <input 
+                        type="text" 
+                        className="w-full text-center bg-transparent outline-none focus:bg-white text-[9px] uppercase" 
+                        placeholder="EMPRESA" 
+                        value={item.segundoColocado.empresa} 
+                        onChange={(e) => handleColocadoChange(item.id, "segundoColocado", "empresa", e.target.value)} 
+                    />
+                    <input 
+                        type="text" 
+                        className="w-full text-center bg-transparent outline-none focus:bg-white text-[9px] uppercase" 
+                        placeholder="MARCA" 
+                        value={item.segundoColocado.marca} 
+                        onChange={(e) => handleColocadoChange(item.id, "segundoColocado", "marca", e.target.value)} 
+                    />
+                    <input 
+                        type="text" 
+                        className="w-full text-center bg-transparent outline-none focus:bg-white text-[9px]" 
+                        placeholder="R$ 0,00" 
+                        value={formatCurrency(item.segundoColocado.valor)} 
+                        onChange={(e) => handleColocadoCurrencyChange(item.id, "segundoColocado", e.target.value)} 
+                    />
+                  </div>
                 </td>
                 <td className="p-1 border-r border-slate-200">
-                  <textarea rows={2} className="w-full text-center bg-transparent outline-none focus:bg-white resize-none text-[9px] uppercase leading-tight pt-1" 
-                    value={item.terceiroColocado} onChange={(e) => handleUpdate(item.id, "terceiroColocado", e.target.value)} placeholder="EMPRESA&#10;R$ 0,00"></textarea>
+                  <div className="flex flex-col gap-1">
+                    <input 
+                        type="text" 
+                        className="w-full text-center bg-transparent outline-none focus:bg-white text-[9px] uppercase" 
+                        placeholder="EMPRESA" 
+                        value={item.terceiroColocado.empresa} 
+                        onChange={(e) => handleColocadoChange(item.id, "terceiroColocado", "empresa", e.target.value)} 
+                    />
+                    <input 
+                        type="text" 
+                        className="w-full text-center bg-transparent outline-none focus:bg-white text-[9px] uppercase" 
+                        placeholder="MARCA" 
+                        value={item.terceiroColocado.marca} 
+                        onChange={(e) => handleColocadoChange(item.id, "terceiroColocado", "marca", e.target.value)} 
+                    />
+                    <input 
+                        type="text" 
+                        className="w-full text-center bg-transparent outline-none focus:bg-white text-[9px]" 
+                        placeholder="R$ 0,00" 
+                        value={formatCurrency(item.terceiroColocado.valor)} 
+                        onChange={(e) => handleColocadoCurrencyChange(item.id, "terceiroColocado", e.target.value)} 
+                    />
+                  </div>
                 </td>
                 <td className="p-1">
                   <input type="text" className="w-full text-center bg-transparent outline-none focus:bg-white uppercase" 

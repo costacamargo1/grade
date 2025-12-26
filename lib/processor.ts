@@ -24,6 +24,11 @@ const CONFIG = {
 };
 
 // Interface do retorno para tipagem forte
+export interface Colocado {
+  empresa: string;
+  marca: string;
+  valor: number;
+}
 export interface ItemGrade {
   id: string;
   numeroItem: number;
@@ -44,9 +49,9 @@ export interface ItemGrade {
   cotacao: number;
 
   // Concorrentes (Direita)
-  primeiroColocado: string;
-  segundoColocado: string;
-  terceiroColocado: string;
+  primeiroColocado: Colocado;
+  segundoColocado: Colocado;
+  terceiroColocado: Colocado;
   
   // Status
   mapa: string;

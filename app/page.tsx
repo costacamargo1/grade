@@ -43,10 +43,9 @@ export default function Home() {
           valorEstimado: 0,
           precoInicial: 0,
           cotacao: 0,
-          
-          primeiroColocado: "",
-          segundoColocado: "",
-          terceiroColocado: "",
+          primeiroColocado: { empresa: "", marca: "", valor: 0 },
+          segundoColocado: { empresa: "", marca: "", valor: 0 },
+          terceiroColocado: { empresa: "", marca: "", valor: 0 },
           mapa: ""
         };
       });
