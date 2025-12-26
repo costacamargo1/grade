@@ -1,5 +1,22 @@
 // lib/formatters.ts
 
+/**
+ * Removes accents from a string.
+ * @param texto The input string.
+ * @returns The string without accents.
+ */
+export function removerAcentos(texto: string): string {
+    if (!texto) return "";
+    const comAcentos = "áàãâäéèêëíìîïóòõôöúùûüçÁÀÃÂÄÉÈÊËÍÌÎÏÓÒÕÔÖÚÙÛÜÇ";
+    const semAcentos = "aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC";
+    let novoTexto = texto;
+    for (let i = 0; i < comAcentos.length; i++) {
+        novoTexto = novoTexto.replace(new RegExp(comAcentos.charAt(i), 'g'), semAcentos.charAt(i));
+    }
+    return novoTexto;
+}
+
+
 // --- 1. LÓGICA DO EDITAL ---
 export function formatarEdital(valor: string): string {
   if (!valor) return "";
