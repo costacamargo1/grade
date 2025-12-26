@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
 
 // Placeholder list of companies
-const LISTA_EMPRESAS = ["UNIQUE", "EMPRESA A", "EMPRESA B", "EMPRESA C"];
+const LISTA_EMPRESAS = ["UNIQUE", "COSTA", "NSA"];
 
 interface DropdownEmpresaProps {
   value: string;
