@@ -1,11 +1,12 @@
 // components/Header.tsx
 "use client";
-import { useState, useEffect } from "react";
-import { Building2, Calendar, Search, Globe, Gavel, FileText, Hash, Plus, X, Save } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Building2, Calendar, Search, Globe, Gavel, FileText, Hash, Plus, X, Save, Clock } from "lucide-react";
 import { logoMap, LISTA_PORTAIS, LISTA_MODOS, Orgao } from "../lib/data";
 import { formatarEdital, formatarDataInteligente } from "../lib/formatters";
 import { buscarOrgao, buscarOrgaoPorUasg } from "../lib/orgaoService";
 import DropdownModoDisputa from "./DropdownModoDisputa";
+import CalendarComponent from "./Calendar";
 import { resolverModoDisputa, processarAcaoJudicial, processarPortal } from "../lib/processor";
 import { HeaderData } from "../lib/types";
 
@@ -18,12 +19,18 @@ interface HeaderProps {
 }
 
 export default function Header({ headerData, setHeaderData }: HeaderProps) {
-  // --- LOCAL COMPONENT STATE (MODAL) ---
+  // --- LOCAL COMPONENT STATE ---
   const [showModalOrgao, setShowModalOrgao] = useState(false);
   const [novoOrgaoNome, setNovoOrgaoNome] = useState("");
   const [novoOrgaoUasg, setNovoOrgaoUasg] = useState("");
   const [novoOrgaoPortal, setNovoOrgaoPortal] = useState("");
   
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [time, setTime] = useState({ hour: '09', minute: '00' });
+  const calendarRef = useRef<HTMLDivElement>(null);
+
+
   // --- DERIVED STATE ---
   const empresa = logoMap.get(headerData.logoInput.toUpperCase()) || "UNIQUE";
 
@@ -78,6 +85,67 @@ export default function Header({ headerData, setHeaderData }: HeaderProps) {
     updateHeader("modoDisputa", resolved);
   };
   
+  // --- CALENDAR LOGIC ---
+  const toggleCalendar = () => {
+    // Parse date from input to set calendar correctly
+    const dateStr = headerData.dataAbertura.split(' - ')[0];
+    const parts = dateStr.split('/');
+    if (parts.length === 3) {
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const year = parseInt(parts[2], 10);
+      const d = new Date(year, month, day);
+      if (!isNaN(d.getTime())) {
+        setCalendarDate(d);
+      }
+    }
+    setShowCalendar(!showCalendar);
+  };
+
+  const handleDateSelect = (date: Date) => {
+    const formattedDate = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    updateHeader('dataAbertura', `${formattedDate} - ${time.hour}:${time.minute}h`);
+    setShowCalendar(false);
+  };
+
+  const handleTimeChange = (part: 'hour' | 'minute', value: string) => {
+    const numericValue = value.replace(/\D/g, '');
+    const newTime = { ...time, [part]: numericValue };
+    setTime(newTime);
+
+    const datePartMatch = headerData.dataAbertura.match(/^\d{2}\/\d{2}\/\d{4}/);
+    const datePart = datePartMatch ? datePartMatch[0] : new Date().toLocaleDateString('pt-BR');
+    
+    const finalHour = newTime.hour;
+    const finalMinute = newTime.minute;
+
+    if (finalHour || finalMinute) {
+      const displayHour = finalHour.padStart(2, '0');
+      const displayMinute = finalMinute.padStart(2, '0');
+      updateHeader('dataAbertura', `${datePart} - ${displayHour}:${displayMinute}h`);
+    } else {
+      updateHeader('dataAbertura', datePart);
+    }
+  };
+
+  const handleTimeBlur = (part: 'hour' | 'minute') => {
+    const value = time[part];
+    if (value) {
+      setTime({ ...time, [part]: value.padStart(2, '0') });
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+        setShowCalendar(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+
   // --- LOCAL MODAL LOGIC ---
   const handleSalvarNovoOrgao = () => {
     if (!novoOrgaoNome) return alert("O nome do órgão é obrigatório!");
@@ -104,7 +172,7 @@ export default function Header({ headerData, setHeaderData }: HeaderProps) {
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 transition-all hover:shadow-md relative z-10">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 transition-all hover:shadow-md relative z-20">
         <div className="flex flex-col xl:flex-row gap-8">
           
           <div className="flex-1 space-y-6">
@@ -112,7 +180,7 @@ export default function Header({ headerData, setHeaderData }: HeaderProps) {
               <div className="md:col-span-2 group">
                 <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 block">Edital</label>
                 <div className="relative">
-                  <FileText size={14} className="absolute left-3 top-3 text-slate-300" />
+                  <FileText size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" />
                   <input 
                     type="text" 
                     placeholder="000/2025" 
@@ -128,7 +196,7 @@ export default function Header({ headerData, setHeaderData }: HeaderProps) {
                 <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 block">Órgão Licitante</label>
                 <div className="relative flex gap-2">
                   <div className="relative flex-1">
-                    <Building2 size={14} className="absolute left-3 top-3 text-slate-300" />
+                    <Building2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" />
                     <input 
                       type="text" 
                       placeholder="Busque pelo nome ou abreviação..." 
@@ -137,7 +205,7 @@ export default function Header({ headerData, setHeaderData }: HeaderProps) {
                       onChange={(e) => updateHeader("orgao", e.target.value)}
                       onBlur={handleOrgaoBlur}
                     />
-                    <Search size={14} className="absolute right-3 top-3 text-slate-300" />
+                    <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300" />
                   </div>
                   <button 
                     onClick={() => setShowModalOrgao(true)}
@@ -151,16 +219,34 @@ export default function Header({ headerData, setHeaderData }: HeaderProps) {
 
               <div className="md:col-span-3 group">
                 <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 block">Abertura</label>
-                <div className="relative">
-                  <Calendar size={14} className="absolute left-3 top-3 text-slate-300" />
+                <div className="relative" ref={calendarRef}>
                   <input 
                     type="text" 
                     placeholder="Use atalhos (H, A, T+dias)" 
-                    className="w-full pl-9 pr-3 py-2.5 bg-yellow-50/50 border border-yellow-200 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all placeholder:text-slate-300 uppercase"
+                    className="w-full pl-4 pr-8 py-2.5 bg-yellow-50/50 border border-yellow-200 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all placeholder:text-slate-400 uppercase"
                     value={headerData.dataAbertura}
                     onChange={(e) => updateHeader("dataAbertura", e.target.value)}
                     onBlur={handleBlurData}
                   />
+                   <button type="button" onClick={toggleCalendar} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700">
+                    <Calendar size={16} />
+                  </button>
+                  {showCalendar && (
+                     <div className="absolute top-full right-0 mt-2 z-30 flex flex-col gap-2">
+                       <CalendarComponent 
+                          currentDate={calendarDate}
+                          setCurrentDate={setCalendarDate}
+                          onDateSelect={handleDateSelect}
+                       />
+                       <div className="p-2 bg-white rounded-lg shadow-lg border flex items-center justify-center gap-2">
+                          <Clock size={16} className="text-slate-400"/>
+                          <span className="text-sm font-bold text-slate-500">Hora:</span>
+                          <input type="text" inputMode="numeric" maxLength={2} value={time.hour} onChange={e => handleTimeChange('hour', e.target.value)} onBlur={() => handleTimeBlur('hour')} className="w-12 p-1 text-center border rounded-md font-medium text-slate-700"/>
+                          <span className="font-bold">:</span>
+                          <input type="text" inputMode="numeric" maxLength={2} value={time.minute} onChange={e => handleTimeChange('minute', e.target.value)} onBlur={() => handleTimeBlur('minute')} className="w-12 p-1 text-center border rounded-md font-medium text-slate-700"/>
+                       </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
