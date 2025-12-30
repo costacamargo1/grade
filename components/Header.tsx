@@ -186,7 +186,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                   <FileText size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" />
                   <input 
                     type="text" 
-                    placeholder="000/2025" 
+                    placeholder="0000/202X" 
                     className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
                     value={headerData.edital}
                     onChange={(e) => updateHeader("edital", e.target.value)}
@@ -202,7 +202,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                     <Building2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" />
                     <input 
                       type="text" 
-                      placeholder="Busque pelo nome ou abreviação..." 
+                      placeholder="Busque pelo nome ou abreviação" 
                       className="w-full pl-9 pr-9 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300 uppercase"
                       value={headerData.orgao}
                       onChange={(e) => updateHeader("orgao", e.target.value)}
@@ -263,7 +263,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                     <input 
                       list="portais-list"
                       type="text" 
-                      placeholder="Use atalhos (C, CP...)" 
+                      placeholder="" 
                       className="w-full pl-5 py-1 bg-transparent border-b border-slate-200 focus:border-blue-500 text-xs font-bold text-slate-600 focus:outline-none placeholder:font-normal uppercase"
                       value={headerData.portalInput}
                       onChange={(e) => updateHeader("portalInput", e.target.value)}
@@ -317,7 +317,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                  <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">WEB / COTAÇÃO</label>
                  <input
                    type="text"
-                   placeholder="Opcional"
+                   placeholder="Número da web ou cotação"
                    className="w-full py-1 bg-transparent border-b border-slate-200 focus:border-blue-500 text-xs font-bold text-slate-600 focus:outline-none placeholder:font-normal uppercase"
                    value={headerData.webCotacao}
                    onChange={(e) => updateHeader("webCotacao", e.target.value)}
