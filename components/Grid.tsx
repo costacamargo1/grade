@@ -515,99 +515,99 @@ export default function Grid({ itens, setItens }: GridProps) {
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-slate-300 overflow-hidden">
-      <div className="overflow-x-auto pl-8 print:pl-0">
-        <table className="w-full text-xs text-left border-collapse min-w-[1300px]">
-          <thead className="text-white bg-slate-800 uppercase font-bold tracking-tighter leading-tight print:bg-white print:text-black">
-            <tr>
-              <th className="p-2 border-r border-gray-600 w-20 text-center">
-                <button
-                  className="flex items-center justify-center w-full gap-1"
-                  onClick={() => handleSort("numeroItem")}
-                >
-                  Item
-                  <ArrowUpDown size={12} />
-                </button>
-              </th>
-              <th className="p-2 border-r border-gray-600 w-20 text-center">
-                Preço
-                <br />
-                do Dia
-              </th>
-              <th className="p-2 border-r border-gray-600 w-20 text-center">
-                Melhor
-                <br />
-                Preço
-              </th>
-              <th className="p-2 border-r border-gray-600 w-20 text-center">
-                Preço
-                <br />
-                Final
-              </th>
-              <th className="p-2 border-r border-gray-600 min-w-[250px] text-center">
-                Medicamento
-              </th>
-              <th className="p-2 border-r border-gray-600 w-24 text-center">
-                Marca
-              </th>
-              <th className="p-2 border-r border-gray-600 w-16 text-center">
-                Qtd
-              </th>
-              <th className="p-2 border-r border-gray-600 w-24 text-center">
-                Estimado
-                <br />
-                (R$)
-              </th>
-              <th className="p-2 border-r border-gray-600 w-24 text-center text-black bg-orange-200 print:bg-white">
-                Preço
-                <br />
-                Inicial (R$)
-              </th>
-              <th className="p-2 border-r border-gray-600 w-20 text-center">
-                Cotação
-                <br />
-                (R$)
-              </th>
-              <th className="p-2 border-r border-gray-600 w-32 text-center">
-                1º Colocado
-              </th>
-              <th className="p-2 border-r border-gray-600 w-32 text-center">
-                2º Colocado
-              </th>
-              <th className="p-2 border-r border-gray-600 w-32 text-center">
-                3º Colocado
-              </th>
-              <th className="p-2 w-16 text-center">Mapa</th>
-              <th className="w-8"></th>
-            </tr>
-          </thead>
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="overflow-x-auto pl-8 print:pl-0">
+          <table className="w-full text-xs text-left border-collapse min-w-[1300px]">
+            <thead className="text-white bg-slate-800 uppercase font-bold tracking-tighter leading-tight print:bg-white print:text-black">
+              <tr>
+                <th className="p-2 border-r border-gray-600 w-20 text-center">
+                  <button
+                    className="flex items-center justify-center w-full gap-1"
+                    onClick={() => handleSort("numeroItem")}
+                  >
+                    Item
+                    <ArrowUpDown size={12} />
+                  </button>
+                </th>
+                <th className="p-2 border-r border-gray-600 w-20 text-center">
+                  Preço
+                  <br />
+                  do Dia
+                </th>
+                <th className="p-2 border-r border-gray-600 w-20 text-center">
+                  Melhor
+                  <br />
+                  Preço
+                </th>
+                <th className="p-2 border-r border-gray-600 w-20 text-center">
+                  Preço
+                  <br />
+                  Final
+                </th>
+                <th className="p-2 border-r border-gray-600 min-w-[250px] text-center">
+                  Medicamento
+                </th>
+                <th className="p-2 border-r border-gray-600 w-24 text-center">
+                  Marca
+                </th>
+                <th className="p-2 border-r border-gray-600 w-16 text-center">
+                  Qtd
+                </th>
+                <th className="p-2 border-r border-gray-600 w-24 text-center">
+                  Estimado
+                  <br />
+                  (R$)
+                </th>
+                <th className="p-2 border-r border-gray-600 w-24 text-center text-black bg-orange-200 print:bg-white">
+                  Preço
+                  <br />
+                  Inicial (R$)
+                </th>
+                <th className="p-2 border-r border-gray-600 w-20 text-center">
+                  Cotação
+                  <br />
+                  (R$)
+                </th>
+                <th className="p-2 border-r border-gray-600 w-32 text-center">
+                  1º Colocado
+                </th>
+                <th className="p-2 border-r border-gray-600 w-32 text-center">
+                  2º Colocado
+                </th>
+                <th className="p-2 border-r border-gray-600 w-32 text-center">
+                  3º Colocado
+                </th>
+                <th className="p-2 w-16 text-center">Mapa</th>
+                <th className="w-8"></th>
+              </tr>
+            </thead>
             <SortableContext items={itens} strategy={verticalListSortingStrategy}>
-              <tbody className="divide-y divide-slate-200 text-slate-800 font-medium">
-                {itens.map((item, index) => (
-                  <DraggableRow 
-                    key={item.id} 
-                    item={item} 
-                    index={index}
-                    handleUpdate={handleUpdate}
-                    handleDelete={handleDelete}
-                    handleSmartBlur={handleSmartBlur}
-                    formatQuantity={formatQuantity}
-                    formatCurrency={formatCurrency}
-                    handleCurrencyChange={handleCurrencyChange}
-                    handleQuantityChange={handleQuantityChange}
-                    handleColocadoChange={handleColocadoChange}
-                    handleColocadoCurrencyChange={handleColocadoCurrencyChange}
-                    />
-                ))}
-              </tbody>
+                <tbody className="divide-y divide-slate-200 text-slate-800 font-medium">
+                  {itens.map((item, index) => (
+                    <DraggableRow 
+                      key={item.id} 
+                      item={item} 
+                      index={index}
+                      handleUpdate={handleUpdate}
+                      handleDelete={handleDelete}
+                      handleSmartBlur={handleSmartBlur}
+                      formatQuantity={formatQuantity}
+                      formatCurrency={formatCurrency}
+                      handleCurrencyChange={handleCurrencyChange}
+                      handleQuantityChange={handleQuantityChange}
+                      handleColocadoChange={handleColocadoChange}
+                      handleColocadoCurrencyChange={handleColocadoCurrencyChange}
+                      />
+                  ))}
+                </tbody>
             </SortableContext>
-          </DndContext>
-        </table>
-      </div>
+          </table>
+        </div>
+      </DndContext>
 
       <button
         onClick={handleAddRow}

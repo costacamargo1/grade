@@ -39,3 +39,19 @@ export interface Orgao {
   uasg: string;
   portal: string;
 }
+
+export interface Resultado {
+  id: string;
+  empresa: string;
+  produto: string;
+  webCotacao: string;
+  quantidade: number | string;
+  minimoCotacao: number | string;
+  nossoPreco: number | string;
+  precoConcorrente: number | string;
+  concorrente: string;
+  orgao: string;
+  pregao: string;
+  data: string;
+  status: 'ganho' | 'perdido' | 'neutro';
+}

@@ -109,5 +109,44 @@ export function formatarDataInteligente(valor: string): string {
     }
   }
 
-  return resultado;
-}
+    return resultado;
+
+  }
+
+  
+
+  /**
+
+   * Calculates the contrasting color (black or white) for a given hex color.
+
+   * @param hexColor The background color in hex format (e.g., "#RRGGBB").
+
+   * @returns "#000000" for light backgrounds or "#FFFFFF" for dark backgrounds.
+
+   */
+
+  export function getContrastColor(hexColor: string): string {
+
+      if (!hexColor) return '#000000';
+
+  
+
+      // Convert hex to RGB
+
+      const r = parseInt(hexColor.slice(1, 3), 16);
+
+      const g = parseInt(hexColor.slice(3, 5), 16);
+
+      const b = parseInt(hexColor.slice(5, 7), 16);
+
+  
+
+      // Calculate luminance
+
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  
+
+      return luminance > 0.5 ? '#000000' : '#FFFFFF';
+
+  }

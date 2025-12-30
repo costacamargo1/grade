@@ -1,18 +1,20 @@
 "use client";
 import { useState } from 'react';
-import { ItemGrade, HeaderData, Orgao } from '../lib/types';
+import { ItemGrade, HeaderData, Orgao, Resultado } from '../lib/types';
 import Header from '../components/Header';
 import Grid from '../components/Grid';
 import Orgaos from '../components/Orgaos';
+import Resultados from '../components/Resultados';
 import { Download } from 'lucide-react';
 import { exportToExcel } from '../lib/exportService';
 import DropdownEmpresa from '../components/DropdownEmpresa';
 
-type Tab = 'grade' | 'orgaos';
+type Tab = 'grade' | 'orgaos' | 'resultados';
 
 export default function Home() {
   const [itens, setItens] = useState<ItemGrade[]>([]);
   const [orgaos, setOrgaos] = useState<Orgao[]>([]);
+  const [resultados, setResultados] = useState<Resultado[]>([]);
   const [headerData, setHeaderData] = useState<HeaderData>({
     edital: "",
     orgao: "",
@@ -40,6 +42,8 @@ export default function Home() {
         return <Grid itens={itens} setItens={setItens} />;
       case 'orgaos':
         return <Orgaos orgaos={orgaos} setOrgaos={setOrgaos} />;
+      case 'resultados':
+        return <Resultados resultados={resultados} setResultados={setResultados} />;
       default:
         return null;
     }
@@ -70,6 +74,9 @@ export default function Home() {
                 <button onClick={() => setActiveTab('orgaos')} className={tabButtonClasses('orgaos')}>
                     ÓRGÃOS
                 </button>
+                <button onClick={() => setActiveTab('resultados')} className={tabButtonClasses('resultados')}>
+                    RESULTADOS
+                </button>
             </div>
 
             {/* Container for DropdownEmpresa and Export Button */}
@@ -94,9 +101,11 @@ export default function Home() {
         </div>
 
         {/* 1. O CABEÇALHO INTELIGENTE */}
-        <div className="print:hidden">
-            <Header headerData={headerData} setHeaderData={setHeaderData} orgaos={orgaos} setOrgaos={setOrgaos} />
-        </div>
+        {activeTab !== 'resultados' && (
+          <div className="print:hidden">
+              <Header headerData={headerData} setHeaderData={setHeaderData} orgaos={orgaos} setOrgaos={setOrgaos} />
+          </div>
+        )}
 
         {/* 2. CONTEÚDO DINÂMICO (GRADE OU ÓRGÃOS) */}
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
