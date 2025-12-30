@@ -1,4 +1,3 @@
-// components/Resultados.tsx
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
@@ -75,6 +74,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
         concorrente: '',
         marca: '',
         orgao: '',
+        uf: '',
         pregao: '',
         data: new Date().toISOString().split('T')[0],
         status: 'neutro',
@@ -196,11 +196,12 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
     { key: "webCotacao", label: <div>WEB /<br/>COTAÇÃO</div> },
     { key: "quantidade", label: "QTD." },
     { key: "minimoCotacao", label: <div>MÍNIMO /<br/>COTAÇÃO (R$)</div> },
-    { key: "nossoPreco", label: "NOSSO PREÇO (R$)" },
+    { key: "nossoPreco", label: <div>NOSSO PREÇO<br/>(R$)</div> },
     { key: "precoConcorrente", label: <div>PREÇO<br/>CONCORRENTE (R$)</div> },
     { key: "concorrente", label: "CONCORRENTE" },
     { key: "marca", label: "MARCA" },
     { key: "orgao", label: "ÓRGÃO" },
+    { key: "uf", label: "UF" },
     { key: "pregao", label: "PREGÃO" },
     { key: "data", label: "DATA" },
     { key: "actions", label: "AÇÕES" },
@@ -208,7 +209,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   const fieldMapping: (keyof Omit<Resultado, 'id' | 'actions' | 'status'>)[] = tableHeaders.map(h => h.key).filter(k => !['actions', 'status'].includes(k as string)) as any;
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-lg w-full h-full flex flex-col">
+    <div className="bg-white p-4 rounded-xl shadow-lg w-full h-full flex flex-col resize overflow-auto">
       <ConfiguracoesModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} companyConfigs={companyConfigs} setCompanyConfigs={setCompanyConfigs} />
       <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
         <h2 className="text-2xl font-bold text-slate-800">Resultados</h2>
@@ -219,7 +220,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
             placeholder="Buscar em tudo..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
+            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase text-black"
           />
         </div>
         <div className="flex gap-2">
@@ -253,10 +254,10 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
               {tableHeaders.map(({ key, label }) => (
                 <th 
                   key={key as string}
-                  className="px-4 py-3 text-sm font-semibold uppercase text-left whitespace-nowrap"
+                  className="px-4 py-3 text-sm font-semibold uppercase text-center whitespace-nowrap"
                   onClick={() => key !== 'actions' && requestSort(key as keyof Resultado)}
                 >
-                  <div className="flex items-center gap-2 cursor-pointer">
+                  <div className="flex items-center justify-center gap-2 cursor-pointer">
                     {label}
                     {key !== 'actions' && sortConfig?.key === key && (
                       sortConfig.direction === 'ascending' ? <ChevronUp size={16} /> : <ChevronDown size={16} />

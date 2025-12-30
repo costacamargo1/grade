@@ -52,6 +52,7 @@ export interface Resultado {
   concorrente: string;
   marca: string;
   orgao: string;
+  uf: string;
   pregao: string;
   data: string;
   status: 'ganho' | 'perdido' | 'neutro';
