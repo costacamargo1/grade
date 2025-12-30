@@ -554,13 +554,17 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
         marcaConcorrente = item.primeiroColocado.marca;
     }
     
+    const datePart = headerData.dataAbertura.split(' - ')[0]; // Get "DD/MM/YYYY"
+    const [day, month, year] = datePart.split('/');
+    const isoDate = `${year}-${month}-${day}`; // "YYYY-MM-DD"
+    
     const newResultado: Resultado = {
       id: Date.now().toString(),
       produto: `${item.medicamento} (${item.marca})`,
       quantidade: item.quantidade,
       orgao: headerData.orgao.split('/')[0].trim(),
       pregao: headerData.edital,
-      data: headerData.dataAbertura,
+      data: isoDate,
       uf: headerData.orgao.includes('/') ? headerData.orgao.split('/').pop()!.trim() : '',
       status: status,
       empresa: empresaResultado,
