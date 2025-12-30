@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Resultado, CompanyConfig } from '../lib/types';
-import { PlusCircle, Trash2, Edit, Save, Search, ChevronDown, ChevronUp, Settings, Award, Frown, FileDown } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, Save, Search, ChevronDown, ChevronUp, Settings, Award, Frown, FileDown, FileUp } from 'lucide-react';
 import ConfiguracoesModal from './ConfiguracoesModal';
 import { getContrastColor } from '../lib/formatters';
 import { exportResultadosToExcel } from '../lib/exportService';
+import { importResultadosFromExcel } from '../lib/importService';
 
 interface ResultadosProps {
   resultados: Resultado[];
@@ -18,7 +19,9 @@ type SortConfig = {
 } | null;
 
 const formatCurrency = (value: number | string) => {
-    const number = typeof value === 'string' ? parseFloat(value) : value;
+    if (value === null || value === undefined || value === '') return '';
+    const sanitizedValue = typeof value === 'string' ? value.replace(',', '.') : value;
+    const number = typeof sanitizedValue === 'string' ? parseFloat(sanitizedValue) : sanitizedValue;
     if (isNaN(number)) return '';
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -29,7 +32,9 @@ const formatCurrency = (value: number | string) => {
 };
   
 const formatQuantity = (value: number | string) => {
-    const number = typeof value === 'string' ? parseInt(value, 10) : value;
+    if (value === null || value === undefined || value === '') return '';
+    const sanitizedValue = typeof value === 'string' ? value.replace(',', '.') : value;
+    const number = typeof sanitizedValue === 'string' ? parseInt(sanitizedValue, 10) : sanitizedValue;
     if (isNaN(number)) return '';
     return new Intl.NumberFormat('pt-BR').format(number);
 };
@@ -40,6 +45,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   const [sortConfig, setSortConfig] = useState<SortConfig>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [companyConfigs, setCompanyConfigs] = useState<CompanyConfig[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     try {
@@ -84,8 +90,19 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   };
 
   const handleInputChange = (id: string, field: keyof Omit<Resultado, 'id'>, value: string | number) => {
-    const upperCaseValue = typeof value === 'string' ? value.toUpperCase() : value;
-    setResultados(resultados.map(row => row.id === id ? { ...row, [field]: upperCaseValue } : row));
+    let processedValue: string | number = value;
+    if (field === 'nossoPreco' || field === 'precoConcorrente' || field === 'quantidade' || field === 'minimoCotacao') {
+        if (value === '') {
+            processedValue = '';
+        } else {
+            const sanitizedValue = typeof value === 'string' ? value.replace(',', '.') : String(value);
+            const parsed = parseFloat(sanitizedValue);
+            processedValue = isNaN(parsed) ? '' : parsed;
+        }
+    } else if (typeof value === 'string') {
+      processedValue = value.toUpperCase();
+    }
+    setResultados(resultados.map(row => row.id === id ? { ...row, [field]: processedValue } : row));
   };
 
   const handleStatusChange = (id: string, status: 'ganho' | 'perdido' | 'neutro') => {
@@ -99,6 +116,26 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
 
   const handleDeleteRow = (id: string) => {
     setResultados(resultados.filter(row => row.id !== id));
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      try {
+        const importedResultados = await importResultadosFromExcel(file);
+        setResultados(prevResultados => [...importedResultados, ...prevResultados]);
+      } catch (error) {
+        console.error("Failed to import data from Excel file", error);
+        // Here you could add a user-facing error message
+      }
+    }
+  };
+
+  const handleImportClick = () => {
+    if (fileInputRef.current) {
+        fileInputRef.current.value = ''; // Reset file input
+        fileInputRef.current.click();
+    }
   };
   
   const filteredResultados = useMemo(() => {
@@ -211,6 +248,13 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   return (
     <div className="bg-white p-4 rounded-xl shadow-lg w-full h-full flex flex-col resize overflow-auto">
       <ConfiguracoesModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} companyConfigs={companyConfigs} setCompanyConfigs={setCompanyConfigs} />
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        className="hidden"
+        accept=".xlsx, .xls"
+      />
       <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
         <h2 className="text-2xl font-bold text-slate-800">Resultados</h2>
         <div className="relative w-full md:w-1/3">
@@ -224,6 +268,13 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
           />
         </div>
         <div className="flex gap-2">
+            <button
+                onClick={handleImportClick}
+                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg"
+            >
+                <FileUp size={18} />
+                Importar
+            </button>
             <button
                 onClick={() => exportResultadosToExcel(sortedResultados)}
                 className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg"
