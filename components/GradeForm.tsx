@@ -20,10 +20,12 @@ const InputField = ({ label, value, onChange, onBlur, prefix, statusColor = 'bla
     <div className={`flex flex-col ${containerClassName ?? ''}`.trim()}>
         <label className="text-sm font-medium text-gray-500">{label}</label>
         <div className="flex items-center border-b border-gray-300 focus-within:border-blue-500">
-            {prefix && <span className={`font-bold pr-2`} style={{ color: statusColor }}>{prefix}</span>}
+            {prefix && <span className={`font-bold pr-2 ${statusColor === 'red' ? 'text-red-600' : 'text-black'}`}>{prefix}</span>}
             <input
                 type="text"
                 value={value}
+                title={label}
+                placeholder={label}
                 onChange={onChange}
                 onBlur={onBlur}
                 className="w-full py-1 focus:outline-none"
