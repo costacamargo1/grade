@@ -84,7 +84,7 @@ export const importResultadosFromExcel = (file: File): Promise<Resultado[]> => {
                 } else {
                   const sanitizedValue = typeof value === 'string' ? value.replace(',', '.') : String(value);
                   const parsed = parseFloat(sanitizedValue);
-                  (newResultado as any)[key] = isNaN(parsed) ? value : parsed;
+                  (newResultado as any)[key] = isNaN(parsed) ? '' : parsed;
                 }
               } else if (key === 'data') {
                 (newResultado as any)[key] = parseDate(value);
