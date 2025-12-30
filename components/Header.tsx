@@ -254,9 +254,9 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50/50 p-4 rounded-2xl border border-slate-100 border-dashed">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 bg-slate-50/50 p-4 rounded-2xl border border-slate-100 border-dashed">
               
-              <div className="relative group">
+              <div className="relative group md:max-w-[180px]">
                  <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Portal</label>
                  <div className="flex items-center">
                     <Globe size={14} className="absolute left-0 text-slate-300" />
@@ -275,7 +275,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                  </div>
               </div>
 
-              <div className="relative group">
+              <div className="relative group md:max-w-[180px]">
                  <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">ID / UASG</label>
                  <div className="flex items-center">
                     <Hash size={14} className="absolute left-0 text-slate-300" />
@@ -289,7 +289,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                  </div>
               </div>
 
-              <div className="relative group">
+              <div className="relative group md:max-w-[180px]">
                  <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Ação Judicial</label>
                  <div className="flex items-center">
                     <Gavel size={14} className="absolute left-0 text-red-300" />
@@ -305,12 +305,23 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                  </div>
               </div>
 
-              <div className="relative group">
+              <div className="relative group md:max-w-[180px]">
                 <DropdownModoDisputa 
                   value={headerData.modoDisputa}
                   onChange={(value) => updateHeader("modoDisputa", value)}
                   onBlur={handleModoDisputaBlur}
                 />
+              </div>
+              
+              <div className="relative group md:max-w-[180px]">
+                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">WEB / COTAÇÃO</label>
+                 <input
+                   type="text"
+                   placeholder="Opcional"
+                   className="w-full py-1 bg-transparent border-b border-slate-200 focus:border-blue-500 text-xs font-bold text-slate-600 focus:outline-none placeholder:font-normal uppercase"
+                   value={headerData.webCotacao}
+                   onChange={(e) => updateHeader("webCotacao", e.target.value)}
+                 />
               </div>
             </div>
 

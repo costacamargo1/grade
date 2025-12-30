@@ -27,6 +27,7 @@ export interface HeaderData {
   uasgInput: string;
   judicialInput: string;
   modoDisputa: string;
+  webCotacao: string;
   logoInput: string;
   cadastro: string;
   conferencia: string;

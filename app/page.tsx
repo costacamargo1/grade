@@ -24,6 +24,7 @@ export default function Home() {
     uasgInput: "",
     judicialInput: "NÃO",
     modoDisputa: "",
+    webCotacao: "",
     logoInput: "UNIQUE",
     cadastro: "",
     conferencia: "",

@@ -8,15 +8,16 @@ import { buscarOrgao, buscarOrgaoPorUasg } from '../lib/orgaoService';
 import { processarPortal, processarModoDisputa, processarAcaoJudicial } from '../lib/processor';
 
 // Helper component for styled input fields
-const InputField = ({ label, value, onChange, onBlur, prefix, statusColor = 'black' }: {
+const InputField = ({ label, value, onChange, onBlur, prefix, statusColor = 'black', containerClassName }: {
     label: string,
     value: string,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
     onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void,
     prefix?: string,
     statusColor?: 'black' | 'red',
+    containerClassName?: string,
 }) => (
-    <div className="flex flex-col">
+    <div className={`flex flex-col ${containerClassName ?? ''}`.trim()}>
         <label className="text-sm font-medium text-gray-500">{label}</label>
         <div className="flex items-center border-b border-gray-300 focus-within:border-blue-500">
             {prefix && <span className={`font-bold pr-2`} style={{ color: statusColor }}>{prefix}</span>}
@@ -40,6 +41,7 @@ export default function GradeForm() {
     const [uasg, setUasg] = useState('');
     const [abertura, setAbertura] = useState('');
     const [modoDisputa, setModoDisputa] = useState('');
+    const [webCotacao, setWebCotacao] = useState('');
     const [acaoJudicial, setAcaoJudicial] = useState('');
     const [logo, setLogo] = useState('');
     const [selectedLogo, setSelectedLogo] = useState('/vercel.svg');
@@ -117,22 +119,25 @@ export default function GradeForm() {
                 </div>
 
                 {/* Row 2 */}
-                <div className="md:col-span-2">
-                     <InputField label="Portal" value={portal} onChange={(e) => setPortal(e.target.value)} onBlur={handlePortalChange} prefix="PORTAL:" statusColor={portal ? 'black' : 'red'} />
+                <div className="md:col-span-1">
+                     <InputField label="Portal" value={portal} onChange={(e) => setPortal(e.target.value)} onBlur={handlePortalChange} prefix="PORTAL:" statusColor={portal ? 'black' : 'red'} containerClassName="md:max-w-xs" />
                 </div>
                 <div>
-                     <InputField label="ID ou UASG" value={uasg} onChange={(e) => setUasg(e.target.value)} onBlur={handleUasgBlur} prefix="ID OU UASG:" />
+                     <InputField label="ID ou UASG" value={uasg} onChange={(e) => setUasg(e.target.value)} onBlur={handleUasgBlur} prefix="ID OU UASG:" containerClassName="md:max-w-xs" />
                 </div>
                  <div>
-                    <InputField label="Ação Judicial" value={acaoJudicial} onChange={handleAcaoJudicialChange} prefix="AÇÃO JUDICIAL:" statusColor={acaoJudicial ? 'black' : 'red'} />
+                    <InputField label="Ação Judicial" value={acaoJudicial} onChange={handleAcaoJudicialChange} prefix="AÇÃO JUDICIAL:" statusColor={acaoJudicial ? 'black' : 'red'} containerClassName="md:max-w-xs" />
                 </div>
 
                 {/* Row 3 */}
                 <div className="md:col-span-2">
                      <InputField label="Abertura" value={abertura} onChange={(e) => setAbertura(e.target.value)} onBlur={handleAberturaBlur} prefix="ABERTURA:" statusColor={abertura ? 'black' : 'red'} />
                 </div>
-                 <div className="md:col-span-2">
-                    <InputField label="Modo de Disputa" value={modoDisputa} onChange={handleModoDisputaChange} />
+                 <div className="md:col-span-1">
+                    <InputField label="Modo de Disputa" value={modoDisputa} onChange={handleModoDisputaChange} containerClassName="md:max-w-xs" />
+                </div>
+                <div className="md:col-span-1">
+                    <InputField label="WEB / COTAÇÃO" value={webCotacao} onChange={(e) => setWebCotacao(e.target.value)} containerClassName="md:max-w-xs" />
                 </div>
 
 
