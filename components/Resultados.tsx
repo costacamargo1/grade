@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { Resultado, CompanyConfig } from '../lib/types';
-import { PlusCircle, Trash2, Edit, Save, Search, ChevronDown, ChevronUp, Settings, Award, Frown, FileDown, FileUp } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, Save, Search, ChevronDown, ChevronUp, Settings, Award, FileDown, FileUp, X } from 'lucide-react';
 import ConfiguracoesModal from './ConfiguracoesModal';
 import { getContrastColor } from '../lib/formatters';
 import { exportResultadosToExcel } from '../lib/exportService';
@@ -327,7 +327,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
                           <Award size={18} />
                       </button>
                       <button onClick={() => handleStatusChange(row.id, 'perdido')} className={`p-2 rounded-full ${row.status === 'perdido' ? 'bg-red-500 text-white' : 'text-red-500 hover:bg-red-200'}`}>
-                          <Frown size={18} />
+                          <X size={18} />
                       </button>
                   </div>
                 </td>

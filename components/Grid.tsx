@@ -87,7 +87,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
             <td className="p-1 border-r border-slate-200">
                 <input
                 type="text"
-                className="w-full px-2 bg-transparent outline-none focus:bg-white uppercase font-bold text-slate-700"
+                className="w-full px-2 bg-transparent outline-none focus:bg-white uppercase font-bold text-slate-700 text-center"
                 placeholder="DIGITE PRODUTO, FABRICANTE OU CÓDIGO"
                 value={item.medicamento}
                 onChange={(e) =>
