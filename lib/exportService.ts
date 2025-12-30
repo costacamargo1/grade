@@ -7,9 +7,9 @@ export const exportResultadosToExcel = (resultados: Resultado[]) => {
     const dataToExport = resultados.map(r => ({
         "EMPRESA": r.empresa,
         "PRODUTO": r.produto,
-        "WEB/COTAÇÃO": r.webCotacao,
+        "WEB OU COTAÇÃO": r.webCotacao,
         "QTD.": r.quantidade,
-        "MÍNIMO/COTAÇÃO (R$)": r.minimoCotacao,
+        "MÍNIMO OU COTAÇÃO (R$)": r.minimoCotacao,
         "NOSSO PREÇO (R$)": r.nossoPreco,
         "PREÇO CONCORRENTE (R$)": r.precoConcorrente,
         "CONCORRENTE": r.concorrente,
