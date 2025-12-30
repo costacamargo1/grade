@@ -39,7 +39,7 @@ export default function Home() {
   const renderContent = () => {
     switch (activeTab) {
       case 'grade':
-        return <Grid itens={itens} setItens={setItens} />;
+        return <Grid itens={itens} setItens={setItens} resultados={resultados} setResultados={setResultados} headerData={headerData} />;
       case 'orgaos':
         return <Orgaos orgaos={orgaos} setOrgaos={setOrgaos} />;
       case 'resultados':

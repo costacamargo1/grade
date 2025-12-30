@@ -1,7 +1,7 @@
 "use client";
-import { Trash2, Plus, ArrowUpDown, GripVertical } from "lucide-react";
+import { Trash2, Plus, ArrowUpDown, GripVertical, Save } from "lucide-react";
 import React, { useState } from "react";
-import type { ItemGrade } from "../lib/types";
+import type { ItemGrade, Resultado, HeaderData } from "../lib/types";
 import { buscarProdutoPorCodigo, processarItem } from "../lib/processor";
 import {
   DndContext,
@@ -24,6 +24,9 @@ import { CSS } from "@dnd-kit/utilities";
 interface GridProps {
   itens: ItemGrade[];
   setItens: React.Dispatch<React.SetStateAction<ItemGrade[]>>;
+  resultados: Resultado[];
+  setResultados: React.Dispatch<React.SetStateAction<Resultado[]>>;
+  headerData: HeaderData;
 }
 
 const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: number, [key: string]: any }) => {
@@ -292,14 +295,22 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 </div>
             </td>
             <td className="p-1">
-                <input
-                type="text"
-                className="w-full text-center bg-transparent outline-none focus:bg-white uppercase"
-                value={item.mapa}
-                onChange={(e) =>
-                    props.handleUpdate(item.id, "mapa", e.target.value)
-                }
-                />
+                <div className="flex items-center gap-1">
+                    <input
+                    type="text"
+                    className="w-full text-center bg-transparent outline-none focus:bg-white uppercase"
+                    value={item.mapa}
+                    onChange={(e) =>
+                        props.handleUpdate(item.id, "mapa", e.target.value)
+                    }
+                    />
+                    <button 
+                        onClick={() => props.handleSaveToResultados(item)}
+                        className="p-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs font-bold"
+                    >
+                        SALVAR
+                    </button>
+                </div>
             </td>
             <td className="p-1 text-center">
                 <button
@@ -313,7 +324,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
     );
 };
 
-export default function Grid({ itens, setItens }: GridProps) {
+export default function Grid({ itens, setItens, resultados, setResultados, headerData }: GridProps) {
   const [sortConfig, setSortConfig] = useState<{
     key: keyof ItemGrade;
     direction: "ascending" | "descending";
@@ -499,6 +510,70 @@ export default function Grid({ itens, setItens }: GridProps) {
       handleMultiUpdate(id, updates);
     }
   };
+
+  const handleSaveToResultados = (item: ItemGrade) => {
+    const ourCompanies = ['COSTA', 'UNIQUE', 'NSA'];
+    let primeiroColocadoEmpresa = item.primeiroColocado.empresa.toUpperCase().trim();
+    if (primeiroColocadoEmpresa === 'COSTA CAMARGO') {
+        primeiroColocadoEmpresa = 'COSTA';
+    }
+
+    const isWinner = ourCompanies.includes(primeiroColocadoEmpresa);
+    
+    let status: 'ganho' | 'perdido' | 'neutro' = 'perdido';
+    let nossoPreco: number | string = item.precoFinal; // default
+    let empresaResultado = headerData.empresa;
+    let precoConcorrente: number | string = '';
+    let concorrente = '';
+    let marcaConcorrente = '';
+
+    if (isWinner) {
+        status = 'ganho';
+        nossoPreco = item.primeiroColocado.valor;
+        empresaResultado = primeiroColocadoEmpresa;
+        
+        // Competitor is 2nd place
+        precoConcorrente = item.segundoColocado.valor;
+        concorrente = item.segundoColocado.empresa;
+        marcaConcorrente = item.segundoColocado.marca;
+
+    } else { // We lost
+        status = 'perdido';
+        let userCompany = headerData.empresa.toUpperCase();
+        if (userCompany === 'COSTA CAMARGO') userCompany = 'COSTA';
+
+        if (item.segundoColocado.empresa.toUpperCase().trim().includes(userCompany)) {
+            nossoPreco = item.segundoColocado.valor;
+        } else if (item.terceiroColocado.empresa.toUpperCase().trim().includes(userCompany)) {
+            nossoPreco = item.terceiroColocado.valor;
+        }
+        
+        // The winner is the competitor
+        precoConcorrente = item.primeiroColocado.valor;
+        concorrente = item.primeiroColocado.empresa;
+        marcaConcorrente = item.primeiroColocado.marca;
+    }
+    
+    const newResultado: Resultado = {
+      id: Date.now().toString(),
+      produto: `${item.medicamento} (${item.marca})`,
+      quantidade: item.quantidade,
+      orgao: headerData.orgao.split('/')[0].trim(),
+      pregao: headerData.edital,
+      data: headerData.dataAbertura,
+      uf: headerData.orgao.includes('/') ? headerData.orgao.split('/').pop()!.trim() : '',
+      status: status,
+      empresa: empresaResultado,
+      nossoPreco: nossoPreco,
+      precoConcorrente: precoConcorrente,
+      concorrente: concorrente,
+      marca: marcaConcorrente,
+      webCotacao: '',
+      minimoCotacao: '',
+    };
+
+    setResultados([newResultado, ...resultados]);
+  };
   
   function handleDragEnd(event: DragEndEvent) {
     const {active, over} = event;
@@ -601,6 +676,7 @@ export default function Grid({ itens, setItens }: GridProps) {
                       handleQuantityChange={handleQuantityChange}
                       handleColocadoChange={handleColocadoChange}
                       handleColocadoCurrencyChange={handleColocadoCurrencyChange}
+                      handleSaveToResultados={handleSaveToResultados}
                       />
                   ))}
                 </tbody>
