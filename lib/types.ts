@@ -50,8 +50,15 @@ export interface Resultado {
   nossoPreco: number | string;
   precoConcorrente: number | string;
   concorrente: string;
+  marca: string;
   orgao: string;
   pregao: string;
   data: string;
   status: 'ganho' | 'perdido' | 'neutro';
+}
+
+export interface CompanyConfig {
+  name: string;
+  color: string;
+  fontColor?: string;
 }

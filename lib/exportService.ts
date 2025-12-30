@@ -1,6 +1,60 @@
 // lib/exportService.ts
 import * as XLSX from 'xlsx';
-import { ItemGrade, HeaderData } from './types';
+import { ItemGrade, HeaderData, Resultado } from './types';
+// ... (rest of the file)
+export const exportResultadosToExcel = (resultados: Resultado[]) => {
+    // 1. Map data to desired column headers and format
+    const dataToExport = resultados.map(r => ({
+        "EMPRESA": r.empresa,
+        "PRODUTO": r.produto,
+        "WEB/COTAÇÃO": r.webCotacao,
+        "QTD.": r.quantidade,
+        "MÍNIMO/COTAÇÃO (R$)": r.minimoCotacao,
+        "NOSSO PREÇO (R$)": r.nossoPreco,
+        "PREÇO CONCORRENTE (R$)": r.precoConcorrente,
+        "CONCORRENTE": r.concorrente,
+        "MARCA": r.marca,
+        "ÓRGÃO": r.orgao,
+        "PREGÃO": r.pregao,
+        "DATA": new Date(r.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
+        "STATUS": r.status,
+    }));
+
+    // 2. Create worksheet
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+
+    // 3. Auto-fit columns
+    const objectMaxLength: any[] = [];
+    const range = XLSX.utils.decode_range(ws['!ref']!);
+    for(let C = range.s.c; C <= range.e.c; ++C) {
+        let max = 0;
+        const header = ws[XLSX.utils.encode_cell({c:C, r:0})].v; // Get header
+        max = header.length; // Start with header length
+
+        for(let R = range.s.r + 1; R <= range.e.r; ++R) {
+            const cell_address = {c:C, r:R};
+            const cell_ref = XLSX.utils.encode_cell(cell_address);
+            if(ws[cell_ref] && ws[cell_ref].v) {
+                const length = ws[cell_ref].v.toString().length;
+                if(length > max) {
+                    max = length;
+                }
+            }
+        }
+        objectMaxLength.push({wch: max + 2}); // +2 for padding
+    }
+    ws['!cols'] = objectMaxLength;
+
+    // 4. Create workbook and append sheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Resultados");
+
+    // 5. Trigger download
+    const today = new Date().toISOString().slice(0, 10);
+    const fileName = `RESULTADOS-${today}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+};
+
 import { processarItem } from './processor';
 
 // Helper to safely get the manufacturer from the item description

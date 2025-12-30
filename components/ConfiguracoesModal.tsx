@@ -1,12 +1,8 @@
 // components/ConfiguracoesModal.tsx
 "use client";
 
-import { X, Trash2, Palette } from 'lucide-react';
-
-interface CompanyConfig {
-  name: string;
-  color: string;
-}
+import { X, Trash2, Palette, Type } from 'lucide-react';
+import { CompanyConfig } from '../lib/types';
 
 interface ConfiguracoesModalProps {
   isOpen: boolean;
@@ -19,12 +15,13 @@ const ConfiguracoesModal: React.FC<ConfiguracoesModalProps> = ({ isOpen, onClose
   if (!isOpen) return null;
 
   const handleAddCompany = () => {
-    setCompanyConfigs([...companyConfigs, { name: '', color: '#e0e0e0' }]);
+    setCompanyConfigs([...companyConfigs, { name: '', color: '#e0e0e0', fontColor: '#000000' }]);
   };
 
   const handleCompanyChange = (index: number, field: keyof CompanyConfig, value: string) => {
     const newConfigs = [...companyConfigs];
-    newConfigs[index][field] = value;
+    const config = newConfigs[index];
+    (config[field] as any) = value;
     setCompanyConfigs(newConfigs);
   };
 
@@ -55,26 +52,31 @@ const ConfiguracoesModal: React.FC<ConfiguracoesModalProps> = ({ isOpen, onClose
         {/* Body */}
         <div className="p-6 space-y-3 max-h-[60vh] overflow-y-auto">
           {companyConfigs.map((config, index) => (
-            <div key={index} className="flex items-center gap-3 p-2 border rounded-lg hover:border-blue-400 transition-all">
+            <div key={index} className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-3 p-2 border rounded-lg hover:border-blue-400 transition-all">
               <input
                 type="text"
                 placeholder="Nome da Empresa"
                 value={config.name}
                 onChange={(e) => handleCompanyChange(index, 'name', e.target.value)}
-                className="flex-grow p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition"
+                className="flex-grow p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition uppercase text-black"
               />
-              <div className="relative">
+              <div className="flex flex-col items-center">
+                <span className="text-xs font-semibold text-slate-700">Fundo</span>
                 <input
                   type="color"
                   value={config.color}
                   onChange={(e) => handleCompanyChange(index, 'color', e.target.value)}
-                  className="w-14 h-10 p-0 border-none rounded-md cursor-pointer appearance-none"
-                  style={{ backgroundColor: 'transparent' }} // Hide default color input UI
+                  className="w-10 h-10 p-0 border-none rounded-md cursor-pointer"
                 />
-                <div 
-                  className="absolute inset-0 rounded-md pointer-events-none border border-slate-300"
-                  style={{ backgroundColor: config.color }}
-                ></div>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-xs font-semibold text-slate-700">Fonte</span>
+                 <input
+                  type="color"
+                  value={config.fontColor}
+                  onChange={(e) => handleCompanyChange(index, 'fontColor', e.target.value)}
+                  className="w-10 h-10 p-0 border-none rounded-md cursor-pointer"
+                />
               </div>
               <button onClick={() => handleRemoveCompany(index)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors">
                 <Trash2 size={18} />
@@ -82,7 +84,7 @@ const ConfiguracoesModal: React.FC<ConfiguracoesModalProps> = ({ isOpen, onClose
             </div>
           ))}
            {companyConfigs.length === 0 && (
-            <div className="text-center py-8 text-slate-500">
+            <div className="text-center py-8 text-slate-700">
               <p>Nenhuma empresa configurada.</p>
               <p className="text-sm">Clique em "Adicionar Empresa" para começar.</p>
             </div>

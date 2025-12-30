@@ -2,15 +2,11 @@
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
-import { Resultado } from '../lib/types';
-import { PlusCircle, Trash2, Edit, Save, Search, ChevronDown, ChevronUp, Settings, Award, Frown } from 'lucide-react';
+import { Resultado, CompanyConfig } from '../lib/types';
+import { PlusCircle, Trash2, Edit, Save, Search, ChevronDown, ChevronUp, Settings, Award, Frown, FileDown } from 'lucide-react';
 import ConfiguracoesModal from './ConfiguracoesModal';
 import { getContrastColor } from '../lib/formatters';
-
-interface CompanyConfig {
-  name: string;
-  color: string;
-}
+import { exportResultadosToExcel } from '../lib/exportService';
 
 interface ResultadosProps {
   resultados: Resultado[];
@@ -77,6 +73,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
         nossoPreco: '',
         precoConcorrente: '',
         concorrente: '',
+        marca: '',
         orgao: '',
         pregao: '',
         data: new Date().toISOString().split('T')[0],
@@ -87,7 +84,8 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   };
 
   const handleInputChange = (id: string, field: keyof Omit<Resultado, 'id'>, value: string | number) => {
-    setResultados(resultados.map(row => row.id === id ? { ...row, [field]: value } : row));
+    const upperCaseValue = typeof value === 'string' ? value.toUpperCase() : value;
+    setResultados(resultados.map(row => row.id === id ? { ...row, [field]: upperCaseValue } : row));
   };
 
   const handleStatusChange = (id: string, status: 'ganho' | 'perdido' | 'neutro') => {
@@ -105,9 +103,9 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   
   const filteredResultados = useMemo(() => {
     return resultados.filter(res => {
-      const search = searchTerm.toLowerCase();
+      const search = searchTerm.toUpperCase();
       return Object.values(res).some(value => 
-        String(value).toLowerCase().includes(search)
+        String(value).toUpperCase().includes(search)
       );
     });
   }, [resultados, searchTerm]);
@@ -150,12 +148,12 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   };
 
   const getCompanyStyle = (companyName: string) => {
-    const config = companyConfigs.find(c => c.name.toLowerCase() === companyName.toLowerCase());
+    const config = companyConfigs.find(c => c.name.toUpperCase() === companyName.toUpperCase());
     if (!config || !config.name) return {};
     
     return {
       backgroundColor: config.color,
-      color: getContrastColor(config.color),
+      color: config.fontColor || getContrastColor(config.color),
     };
   };
 
@@ -170,7 +168,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
           type={isNumeric ? 'number' : 'text'}
           value={value}
           onChange={(e) => handleInputChange(row.id, field, e.target.value)}
-          className="w-full px-2 py-1 border rounded-md bg-slate-50"
+          className="w-full px-2 py-1 border rounded-md bg-slate-50 uppercase"
           step={isNumeric ? "0.0001" : undefined}
         />
       );
@@ -185,22 +183,23 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
     
     if (field === 'empresa') {
         const style = getCompanyStyle(value as string);
-        return <span style={style} className="w-full block font-bold px-2 py-1 rounded-sm">{formattedValue}</span>;
+        return <span style={style} className="w-full block font-bold px-2 py-1 rounded-sm uppercase">{formattedValue}</span>;
     }
 
-    return <span className={`w-full block px-2 py-1 ${isPriceBold ? 'font-bold' : ''}`}>{formattedValue}</span>;
+    return <span className={`w-full block px-2 py-1 uppercase ${isPriceBold ? 'font-bold' : ''}`}>{formattedValue}</span>;
   };
 
-  const tableHeaders: { key: keyof Resultado | 'actions', label: string }[] = [
+  const tableHeaders: { key: keyof Resultado | 'actions', label: string | React.ReactNode }[] = [
     { key: "status", label: "Status" },
     { key: "empresa", label: "EMPRESA" },
     { key: "produto", label: "PRODUTO" },
-    { key: "webCotacao", label: "WEB/COTAÇÃO" },
+    { key: "webCotacao", label: <div>WEB /<br/>COTAÇÃO</div> },
     { key: "quantidade", label: "QTD." },
-    { key: "minimoCotacao", label: "MÍNIMO/COTAÇÃO (R$)" },
+    { key: "minimoCotacao", label: <div>MÍNIMO /<br/>COTAÇÃO (R$)</div> },
     { key: "nossoPreco", label: "NOSSO PREÇO (R$)" },
-    { key: "precoConcorrente", label: "PREÇO CONCORRENTE (R$)" },
+    { key: "precoConcorrente", label: <div>PREÇO<br/>CONCORRENTE (R$)</div> },
     { key: "concorrente", label: "CONCORRENTE" },
+    { key: "marca", label: "MARCA" },
     { key: "orgao", label: "ÓRGÃO" },
     { key: "pregao", label: "PREGÃO" },
     { key: "data", label: "DATA" },
@@ -220,10 +219,17 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
             placeholder="Buscar em tudo..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
           />
         </div>
         <div className="flex gap-2">
+            <button
+                onClick={() => exportResultadosToExcel(sortedResultados)}
+                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg"
+            >
+                <FileDown size={18} />
+                Exportar
+            </button>
             <button
                 onClick={() => setIsModalOpen(true)}
                 className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg"
@@ -246,7 +252,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
             <tr>
               {tableHeaders.map(({ key, label }) => (
                 <th 
-                  key={key} 
+                  key={key as string}
                   className="px-4 py-3 text-sm font-semibold uppercase text-left whitespace-nowrap"
                   onClick={() => key !== 'actions' && requestSort(key as keyof Resultado)}
                 >
@@ -273,7 +279,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
                       </button>
                   </div>
                 </td>
-                {fieldMapping.map(field => <td key={field} className="px-1 py-1 text-sm truncate">{renderCell(row, field)}</td>)}
+                {fieldMapping.map(field => <td key={field} className="px-1 py-1 text-sm truncate uppercase">{renderCell(row, field)}</td>)}
                 <td className="px-1 py-1 text-sm">
                   <div className="flex items-center gap-2">
                     {editingRowId === row.id ? (
