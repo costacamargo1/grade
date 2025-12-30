@@ -20,6 +20,7 @@ const headerMapping: { [key: string]: keyof Resultado } = {
   'UF': 'uf',
   'PREGÃO': 'pregao',
   'DATA': 'data',
+  'STATUS': 'status',
 };
 
 const parseDate = (excelDate: any): string => {
@@ -92,6 +93,11 @@ export const importResultadosFromExcel = (file: File): Promise<Resultado[]> => {
                 }
               } else if (key === 'data') {
                 (newResultado as any)[key] = parseDate(value);
+              } else if (key === 'status') {
+                const lowerCaseValue = String(value).toLowerCase();
+                if (lowerCaseValue === 'ganho' || lowerCaseValue === 'perdido' || lowerCaseValue === 'neutro') {
+                    newResultado.status = lowerCaseValue as 'ganho' | 'perdido' | 'neutro';
+                }
               } else {
                 (newResultado as any)[key] = value !== undefined ? value : '';
               }
