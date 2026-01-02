@@ -492,7 +492,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                             </select>
                         </div>
                         <div>
-                            <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase block mb-0.5">Casas Dec.</label>
+                            <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase block mb-0.5">Casas Decimais</label>
                             <div className="relative">
                                 <DollarSign size={10} className="absolute left-1 top-1.5 text-slate-400 print:text-black"/>
                                 <input 
