@@ -186,7 +186,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
               <div className="md:col-span-2 group">
                 <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase tracking-wider mb-1 block">Edital</label>
                 <div className="relative">
-                  <FileText size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 print:text-black" />
+                  <FileText size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 print:hidden" />
                   <input 
                     type="text" 
                     placeholder="0000/202X" 
@@ -203,7 +203,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                 <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase tracking-wider mb-1 block">Órgão Licitante</label>
                 <div className="relative flex gap-2">
                   <div className="relative flex-1">
-                    <Building2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 print:text-black" />
+                    <Building2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 print:hidden" />
                     <input 
                       type="text" 
                       placeholder="Busque pelo nome ou abreviação" 
@@ -212,7 +212,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                       onChange={(e) => updateHeader("orgao", e.target.value)}
                       onBlur={handleOrgaoBlur}
                     />
-                    <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 print:text-black" />
+                    <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 print:hidden" />
                   </div>
                   <button 
                     onClick={() => setShowModalOrgao(true)}

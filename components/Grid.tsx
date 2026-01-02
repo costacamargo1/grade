@@ -601,7 +601,7 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
       >
         <div className="overflow-x-auto pl-8 print:pl-0">
           <table className="w-full text-xs text-left border-collapse min-w-[1300px]">
-            <thead className="text-white bg-slate-800 uppercase font-bold tracking-tighter leading-tight print:bg-white print:text-black">
+            <thead className="text-white bg-slate-800 uppercase font-bold tracking-tighter leading-tight print:bg-black print:text-white">
               <tr>
                 <th className="p-2 border-r border-gray-600 w-20 text-center">
                   <button

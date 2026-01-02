@@ -26,6 +26,11 @@ body {
 }
 
 @media print {
+    @page {
+        size: A4;
+        zoom: 65%;
+    }
+
     body {
         background-color: white !important;
         color: black !important;
@@ -35,15 +40,25 @@ body {
         color: transparent !important;
     }
 
+    /* Hide prefixes in InputField */
+    .flex.items-center.border-b.border-gray-300.focus-within\:border-blue-500 span {
+        display: none;
+    }
+
     input[type="text"], input[type="number"] {
-        border: none !important;
+        border: 1px solid black !important;
         background-color: transparent !important;
         box-shadow: none !important;
         -webkit-appearance: none !important;
         -moz-appearance: none !important;
         appearance: none !important;
-        padding: 0 !important;
+        padding: 2px !important;
         margin: 0 !important;
+    }
+
+    /* Ensure labels are visible */
+    label {
+        color: black !important;
     }
 }
 
