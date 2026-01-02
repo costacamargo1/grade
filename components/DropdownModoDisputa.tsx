@@ -36,12 +36,12 @@ export default function DropdownModoDisputa({ value, onChange, onBlur }: Dropdow
 
   return (
     <div className="relative w-full" ref={dropdownRef}>
-      <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Modo de Disputa</label>
+      <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase mb-1 block">Modo de Disputa</label>
       <div className="relative">
         <input
           type="text"
           placeholder="Use atalhos (N, A, AF)"
-          className="w-full py-1 bg-transparent border-b border-slate-200 focus:border-blue-500 text-xs font-bold text-slate-700 focus:outline-none pr-8 placeholder:font-normal placeholder:text-slate-400"
+          className="w-full py-1 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-700 print:text-black focus:outline-none pr-8 placeholder:font-normal placeholder:text-slate-400"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onBlur={onBlur}
@@ -49,7 +49,7 @@ export default function DropdownModoDisputa({ value, onChange, onBlur }: Dropdow
         />
         <button
           type="button"
-          className="absolute inset-y-0 right-0 flex items-center px-2 text-slate-400 hover:text-slate-600"
+          className="absolute inset-y-0 right-0 flex items-center px-2 text-slate-400 hover:text-slate-600 print:hidden"
           onClick={() => setIsOpen(!isOpen)}
         >
           <ChevronsUpDown size={16} />
@@ -57,7 +57,7 @@ export default function DropdownModoDisputa({ value, onChange, onBlur }: Dropdow
       </div>
 
       {isOpen && (
-        <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-slate-200 animate-in fade-in-0 zoom-in-95">
+        <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-slate-200 animate-in fade-in-0 zoom-in-95 print:hidden">
           <ul className="py-1">
             {LISTA_MODOS.map((modo) => (
               <li

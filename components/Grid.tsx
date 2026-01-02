@@ -38,13 +38,13 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
 
     return (
         <tr ref={setNodeRef} style={style} {...attributes} className="h-[170px] odd:bg-white even:bg-slate-50/70 hover:bg-blue-50 transition-colors group print:bg-white">
-            <td className="p-1 border-r border-slate-200 text-center relative">
+            <td className="p-1 border-r border-slate-200 print:border-black text-center relative">
                 <span {...listeners} className="absolute -left-6 top-1/2 -translate-y-1/2 p-1 cursor-grab touch-none print:hidden">
                     <GripVertical size={14} />
                 </span>
                 <input
                     type="number"
-                    className="w-full text-center bg-transparent outline-none focus:bg-white font-bold"
+                    className="w-full text-center bg-transparent outline-none focus:bg-white font-bold print:text-black"
                     value={item.numeroItem ?? ""}
                     onChange={(e) =>
                         props.handleUpdate(
@@ -57,40 +57,40 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                     }
                 />
             </td>
-            <td className="p-1 border-r border-slate-200">
+            <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
                 type="number"
-                className="w-full text-center bg-transparent outline-none focus:bg-white"
+                className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
                 value={item.precoDoDia || ""}
                 onChange={(e) =>
                     props.handleUpdate(item.id, "precoDoDia", e.target.value)
                 }
                 />
             </td>
-            <td className="p-1 border-r border-slate-200">
+            <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
                 type="number"
-                className="w-full text-center bg-transparent outline-none focus:bg-white"
+                className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
                 value={item.melhorPreco || ""}
                 onChange={(e) =>
                     props.handleUpdate(item.id, "melhorPreco", e.target.value)
                 }
                 />
             </td>
-            <td className="p-1 border-r border-slate-200">
+            <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
                 type="number"
-                className="w-full text-center bg-transparent outline-none focus:bg-white font-bold"
+                className="w-full text-center bg-transparent outline-none focus:bg-white font-bold print:text-black"
                 value={item.precoFinal || ""}
                 onChange={(e) =>
                     props.handleUpdate(item.id, "precoFinal", e.target.value)
                 }
                 />
             </td>
-            <td className="p-1 border-r border-slate-200">
+            <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
                 type="text"
-                className="w-full px-2 bg-transparent outline-none focus:bg-white uppercase font-bold text-slate-700 text-center"
+                className="w-full px-2 bg-transparent outline-none focus:bg-white uppercase font-bold text-slate-700 print:text-black text-center"
                 placeholder="DIGITE PRODUTO, FABRICANTE OU CÓDIGO"
                 value={item.medicamento}
                 onChange={(e) =>
@@ -99,10 +99,10 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 onBlur={(e) => props.handleSmartBlur(item.id, e.target.value)}
                 />
             </td>
-            <td className="p-1 border-r border-slate-200">
+            <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
                 type="text"
-                className="w-full text-center bg-transparent outline-none focus:bg-white uppercase"
+                className="w-full text-center bg-transparent outline-none focus:bg-white uppercase print:text-black"
                 placeholder="MARCA"
                 value={item.marca}
                 onChange={(e) =>
@@ -110,10 +110,10 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 }
                 />
             </td>
-            <td className="p-1 border-r border-slate-200">
+            <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
                 type="text"
-                className="w-full text-center bg-transparent outline-none focus:bg-white"
+                className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
                 placeholder="0"
                 value={props.formatQuantity(item.quantidade)}
                 onChange={(e) =>
@@ -121,10 +121,10 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 }
                 />
             </td>
-            <td className="p-1 border-r border-slate-200">
+            <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
                 type="text"
-                className="w-full text-center bg-transparent outline-none focus:bg-white"
+                className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
                 value={props.formatCurrency(item.valorEstimado)}
                 onChange={(e) =>
                     props.handleCurrencyChange(
@@ -135,10 +135,10 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 }
                 />
             </td>
-            <td className="p-1 border-r border-orange-300 bg-orange-100/50 print:bg-white">
+            <td className="p-1 border-r border-orange-300 print:border-black bg-orange-100/50 print:bg-white">
                 <input
                 type="text"
-                className="w-full text-center bg-transparent outline-none focus:bg-white font-bold text-slate-900"
+                className="w-full text-center bg-transparent outline-none focus:bg-white font-bold text-slate-900 print:text-black"
                 value={props.formatCurrency(item.precoInicial)}
                 onChange={(e) =>
                     props.handleCurrencyChange(
@@ -149,21 +149,21 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 }
                 />
             </td>
-            <td className="p-1 border-r border-slate-200">
+            <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
                 type="text"
-                className="w-full text-center bg-transparent outline-none focus:bg-white"
+                className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
                 value={props.formatCurrency(item.cotacao)}
                 onChange={(e) =>
                     props.handleCurrencyChange(item.id, "cotacao", e.target.value)
                 }
                 />
             </td>
-            <td className="p-1 border-r border-slate-200">
+            <td className="p-1 border-r border-slate-200 print:border-black">
                 <div className="flex flex-col gap-1">
                 <input
                     type="text"
-                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] uppercase"
+                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] uppercase print:text-black"
                     placeholder="EMPRESA"
                     value={item.primeiroColocado.empresa}
                     onChange={(e) =>
@@ -177,7 +177,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 />
                 <input
                     type="text"
-                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] uppercase"
+                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] uppercase print:text-black"
                     placeholder="MARCA"
                     value={item.primeiroColocado.marca}
                     onChange={(e) =>
@@ -191,7 +191,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 />
                 <input
                     type="text"
-                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px]"
+                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] print:text-black"
                     placeholder="R$ 0,00"
                     value={props.formatCurrency(item.primeiroColocado.valor)}
                     onChange={(e) =>
@@ -204,11 +204,11 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 />
                 </div>
             </td>
-            <td className="p-1 border-r border-slate-200">
+            <td className="p-1 border-r border-slate-200 print:border-black">
                 <div className="flex flex-col gap-1">
                 <input
                     type="text"
-                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] uppercase"
+                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] uppercase print:text-black"
                     placeholder="EMPRESA"
                     value={item.segundoColocado.empresa}
                     onChange={(e) =>
@@ -222,7 +222,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 />
                 <input
                     type="text"
-                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] uppercase"
+                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] uppercase print:text-black"
                     placeholder="MARCA"
                     value={item.segundoColocado.marca}
                     onChange={(e) =>
@@ -236,7 +236,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 />
                 <input
                     type="text"
-                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px]"
+                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] print:text-black"
                     placeholder="R$ 0,00"
                     value={props.formatCurrency(item.segundoColocado.valor)}
                     onChange={(e) =>
@@ -249,11 +249,11 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 />
                 </div>
             </td>
-            <td className="p-1 border-r border-slate-200">
+            <td className="p-1 border-r border-slate-200 print:border-black">
                 <div className="flex flex-col gap-1">
                 <input
                     type="text"
-                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] uppercase"
+                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] uppercase print:text-black"
                     placeholder="EMPRESA"
                     value={item.terceiroColocado.empresa}
                     onChange={(e) =>
@@ -267,7 +267,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 />
                 <input
                     type="text"
-                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] uppercase"
+                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] uppercase print:text-black"
                     placeholder="MARCA"
                     value={item.terceiroColocado.marca}
                     onChange={(e) =>
@@ -281,7 +281,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 />
                 <input
                     type="text"
-                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px]"
+                    className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] print:text-black"
                     placeholder="R$ 0,00"
                     value={props.formatCurrency(item.terceiroColocado.valor)}
                     onChange={(e) =>
@@ -298,7 +298,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 <div className="flex items-center gap-1">
                     <input
                     type="text"
-                    className="w-full text-center bg-transparent outline-none focus:bg-white uppercase"
+                    className="w-full text-center bg-transparent outline-none focus:bg-white uppercase print:text-black"
                     value={item.mapa}
                     onChange={(e) =>
                         props.handleUpdate(item.id, "mapa", e.target.value)
@@ -306,7 +306,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                     />
                     <button 
                         onClick={() => props.handleSaveToResultados(item)}
-                        className="p-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs font-bold"
+                        className="p-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs font-bold print:hidden"
                     >
                         SALVAR
                     </button>
@@ -593,7 +593,7 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-300 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-slate-300 print:border-black overflow-hidden">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -665,7 +665,7 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
               </tr>
             </thead>
             <SortableContext items={itens} strategy={verticalListSortingStrategy}>
-                <tbody className="divide-y divide-slate-200 text-slate-800 font-medium">
+                <tbody className="divide-y divide-slate-200 print:divide-black text-slate-800 font-medium print:text-black">
                   {itens.map((item, index) => (
                     <DraggableRow 
                       key={item.id} 

@@ -184,13 +184,13 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
             <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
               {/* EDITAL */}
               <div className="md:col-span-2 group">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 block">Edital</label>
+                <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase tracking-wider mb-1 block">Edital</label>
                 <div className="relative">
-                  <FileText size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" />
+                  <FileText size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 print:text-black" />
                   <input 
                     type="text" 
                     placeholder="0000/202X" 
-                    className="w-full pl-8 pr-2 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
+                    className="w-full pl-8 pr-2 py-2 bg-slate-50 border border-slate-200 print:border-black rounded-lg text-sm font-semibold text-slate-700 print:text-black focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
                     value={headerData.edital}
                     onChange={(e) => updateHeader("edital", e.target.value)}
                     onBlur={handleBlurEdital}
@@ -200,23 +200,23 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
               
               {/* ORGAO */}
               <div className="md:col-span-6 group">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 block">Órgão Licitante</label>
+                <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase tracking-wider mb-1 block">Órgão Licitante</label>
                 <div className="relative flex gap-2">
                   <div className="relative flex-1">
-                    <Building2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" />
+                    <Building2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 print:text-black" />
                     <input 
                       type="text" 
                       placeholder="Busque pelo nome ou abreviação" 
-                      className="w-full pl-8 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300 uppercase"
+                      className="w-full pl-8 pr-8 py-2 bg-slate-50 border border-slate-200 print:border-black rounded-lg text-sm font-semibold text-slate-700 print:text-black focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300 uppercase"
                       value={headerData.orgao}
                       onChange={(e) => updateHeader("orgao", e.target.value)}
                       onBlur={handleOrgaoBlur}
                     />
-                    <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300" />
+                    <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 print:text-black" />
                   </div>
                   <button 
                     onClick={() => setShowModalOrgao(true)}
-                    className="px-2.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg border border-blue-200 transition-colors"
+                    className="px-2.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg border border-blue-200 transition-colors print:hidden"
                   >
                     <Plus size={16} />
                   </button>
@@ -225,21 +225,21 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
 
               {/* DATA ABERTURA */}
               <div className="md:col-span-2 group">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 block">Abertura</label>
+                <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase tracking-wider mb-1 block">Abertura</label>
                 <div className="relative" ref={calendarRef}>
                   <input 
                     type="text" 
                     placeholder="dd/mm/aaaa - hh:mm" 
-                    className="w-full pl-3 pr-7 py-2 bg-yellow-50/50 border border-yellow-200 rounded-lg text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all placeholder:text-slate-400 uppercase"
+                    className="w-full pl-3 pr-7 py-2 bg-yellow-50/50 border border-yellow-200 print:border-black rounded-lg text-sm font-bold text-slate-700 print:text-black focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all placeholder:text-slate-400 uppercase"
                     value={headerData.dataAbertura}
                     onChange={(e) => updateHeader("dataAbertura", e.target.value)}
                     onBlur={handleBlurData}
                   />
-                   <button type="button" onClick={toggleCalendar} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700">
+                   <button type="button" onClick={toggleCalendar} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700 print:hidden">
                     <Calendar size={14} />
                   </button>
                   {showCalendar && (
-                     <div className="absolute top-full right-0 mt-2 z-30 flex flex-col gap-2 shadow-xl">
+                     <div className="absolute top-full right-0 mt-2 z-30 flex flex-col gap-2 shadow-xl print:hidden">
                        <CalendarComponent 
                           currentDate={calendarDate}
                           setCurrentDate={setCalendarDate}
@@ -258,16 +258,16 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
             </div>
 
             {/* PARTE 2: DADOS SECUNDÁRIOS (Portal, ID, Judicial, Web) */}
-            <div className="grid grid-cols-2 md:grid-cols-15 gap-3 bg-slate-50/50 p-3 rounded-xl border border-slate-100 border-dashed items-end">
+            <div className="grid grid-cols-2 md:grid-cols-15 gap-3 bg-slate-50/50 p-3 rounded-xl border border-slate-100 print:border-black border-dashed items-end">
               
               <div className="relative group md:col-span-4">
-                 <label className="text-[9px] font-bold text-slate-400 uppercase mb-0.5 block">Portal</label>
+                 <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">Portal</label>
                  <div className="flex items-center">
-                    <Globe size={12} className="absolute left-0 text-slate-300" />
+                    <Globe size={12} className="absolute left-0 text-slate-300 print:text-black" />
                     <input 
                       list="portais-list"
                       type="text" 
-                      className="w-full pl-4 py-0.5 bg-transparent border-b border-slate-200 focus:border-blue-500 text-xs font-bold text-slate-600 focus:outline-none uppercase"
+                      className="w-full pl-4 py-0.5 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-600 print:text-black focus:outline-none uppercase"
                       value={headerData.portalInput}
                       onChange={(e) => updateHeader("portalInput", e.target.value)}
                       onBlur={handlePortalBlur}
@@ -279,12 +279,12 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
               </div>
 
               <div className="relative group md:col-span-2">
-                 <label className="text-[9px] font-bold text-slate-400 uppercase mb-0.5 block">ID / UASG</label>
+                 <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">ID / UASG</label>
                  <div className="flex items-center">
-                    <Hash size={12} className="absolute left-0 text-slate-300" />
+                    <Hash size={12} className="absolute left-0 text-slate-300 print:text-black" />
                     <input 
                       type="text" 
-                      className="w-full pl-4 py-0.5 bg-transparent border-b border-slate-200 focus:border-blue-500 text-xs font-bold text-slate-600 focus:outline-none" 
+                      className="w-full pl-4 py-0.5 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-600 print:text-black focus:outline-none" 
                       value={headerData.uasgInput}
                       onChange={handleUasgChange}
                     />
@@ -292,11 +292,11 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
               </div>
 
               <div className="relative group md:col-span-2">
-                 <label className="text-[9px] font-bold text-slate-400 uppercase mb-0.5 block">Judicial</label>
+                 <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">Judicial</label>
                  <div className="flex items-center">
-                    <Gavel size={12} className="absolute left-0 text-red-300" />
+                    <Gavel size={12} className="absolute left-0 text-red-300 print:text-black" />
                     <select
-                       className="w-full pl-4 py-0.5 bg-transparent border-none text-xs font-bold text-red-500 focus:ring-0 cursor-pointer uppercase appearance-none p-0"
+                       className="w-full pl-4 py-0.5 bg-transparent border-none text-xs font-bold text-red-500 print:text-black focus:ring-0 cursor-pointer uppercase appearance-none p-0"
                        value={headerData.judicialInput}
                        onChange={(e) => updateHeader("judicialInput", processarAcaoJudicial(e.target.value))}
                     >
@@ -316,10 +316,10 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
               </div>
               
               <div className="relative group md:col-span-2">
-                 <label className="text-[9px] font-bold text-slate-400 uppercase mb-0.5 block">WEB / Cotação</label>
+                 <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">WEB / Cotação</label>
                  <input
                    type="text"
-                   className="w-full py-0.5 bg-transparent border-b border-slate-200 focus:border-blue-500 text-xs font-bold text-slate-600 focus:outline-none uppercase"
+                   className="w-full py-0.5 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-600 print:text-black focus:outline-none uppercase"
                    value={headerData.webCotacao}
                    onChange={(e) => updateHeader("webCotacao", e.target.value)}
                  />
@@ -328,117 +328,117 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
           </div>
             
             {/* LOGO DA EMPRESA (DIREITA) */}
-            <div className="w-full xl:w-80 flex items-center justify-center border-l border-slate-100 pl-4">
+            <div className="w-full xl:w-80 flex items-center justify-center border-l border-slate-100 print:border-black pl-4">
                 <div className="transform scale-90">
                 {empresa === "UNIQUE" && (
                     <div className="text-center">
-                        <h1 className="text-3xl font-extralight tracking-[0.2em] text-slate-800">
-                        uni<span className="font-bold text-orange-500">Q</span>ue
+                        <h1 className="text-3xl font-extralight tracking-[0.2em] text-slate-800 print:text-black">
+                        uni<span className="font-bold text-orange-500 print:text-black">Q</span>ue
                         </h1>
-                        <p className="text-[8px] text-slate-400 mt-1 tracking-[0.4em] uppercase border-t border-slate-100 pt-1 mx-2">medicamentos</p>
+                        <p className="text-[8px] text-slate-400 print:text-black mt-1 tracking-[0.4em] uppercase border-t border-slate-100 print:border-black pt-1 mx-2">medicamentos</p>
                     </div>
                 )}
                 {empresa === "COSTA" && (
-                    <div className="text-center border-2 border-blue-900 px-4 py-2">
-                        <h1 className="text-base font-black text-blue-900 tracking-tighter leading-none">
+                    <div className="text-center border-2 border-blue-900 print:border-black px-4 py-2">
+                        <h1 className="text-base font-black text-blue-900 print:text-black tracking-tighter leading-none">
                         COSTA<br/>CAMARGO
                         </h1>
                     </div>
                 )}
                 {empresa === "NSA" && (
                     <div className="text-center">
-                        <h1 className="text-4xl font-black italic text-green-700 tracking-tighter">
+                        <h1 className="text-4xl font-black italic text-green-700 print:text-black tracking-tighter">
                         NSA
                         </h1>
-                        <p className="text-[9px] font-bold text-slate-400 -mt-1 tracking-wider">DISTRIBUIDORA</p>
+                        <p className="text-[9px] font-bold text-slate-400 print:text-black -mt-1 tracking-wider">DISTRIBUIDORA</p>
                     </div>
                 )}
                 </div>
             </div>
         </div>
 
-        <hr className="border-slate-100 mb-5" />
+        <hr className="border-slate-100 print:border-black mb-5" />
 
         {/* PARTE 3: ÁREA INFERIOR (TRACKING + DETALHES TÉCNICOS) */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
             
             {/* COLUNA 1: RASTREAMENTO DE DATAS (Ocupa 5 colunas) */}
             <div className="xl:col-span-5 space-y-2">
-                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                    <ListOrdered size={12}/> Etapas do Processo
+                <h4 className="text-[10px] font-bold text-slate-400 print:text-black uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <ListOrdered size={12} className="print:text-black"/> Etapas do Processo
                 </h4>
                 
                 {/* Linha Cadastro */}
                 <div className="grid grid-cols-12 items-center gap-2">
-                    <label className="col-span-3 text-[10px] font-bold text-slate-600 uppercase text-right">Cadastro:</label>
+                    <label className="col-span-3 text-[10px] font-bold text-slate-600 print:text-black uppercase text-right">Cadastro:</label>
                     <input 
                         type="text" placeholder="OBSERVAÇÃO" 
-                        className="col-span-5 text-xs border-b border-slate-200 focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 uppercase"
+                        className="col-span-5 text-xs border-b border-slate-200 print:border-black focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 print:text-black uppercase"
                         value={headerData.cadastro} onChange={(e) => updateHeader("cadastro", e.target.value)}
                     />
                     <input 
                         type="text" placeholder="DATA" 
-                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 rounded px-2 py-0.5 text-slate-600 text-center"
+                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 print:border-black rounded px-2 py-0.5 text-slate-600 print:text-black text-center"
                         value={headerData.dataCadastro || ''} onChange={(e) => updateHeader("dataCadastro", e.target.value)}
                     />
                 </div>
 
                 {/* Linha Conferência */}
                 <div className="grid grid-cols-12 items-center gap-2">
-                    <label className="col-span-3 text-[10px] font-bold text-slate-600 uppercase text-right">Conferência:</label>
+                    <label className="col-span-3 text-[10px] font-bold text-slate-600 print:text-black uppercase text-right">Conferência:</label>
                     <input 
                         type="text" placeholder="STATUS" 
-                        className="col-span-5 text-xs border-b border-slate-200 focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 uppercase"
+                        className="col-span-5 text-xs border-b border-slate-200 print:border-black focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 print:text-black uppercase"
                         value={headerData.conferencia} onChange={(e) => updateHeader("conferencia", e.target.value)}
                     />
                     <input 
                         type="text" placeholder="DATA" 
-                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 rounded px-2 py-0.5 text-slate-600 text-center"
+                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 print:border-black rounded px-2 py-0.5 text-slate-600 print:text-black text-center"
                         value={headerData.dataConferencia || ''} onChange={(e) => updateHeader("dataConferencia", e.target.value)}
                     />
                 </div>
 
                 {/* Linha Disputa */}
                 <div className="grid grid-cols-12 items-center gap-2">
-                    <label className="col-span-3 text-[10px] font-bold text-slate-600 uppercase text-right">Disputa:</label>
+                    <label className="col-span-3 text-[10px] font-bold text-slate-600 print:text-black uppercase text-right">Disputa:</label>
                     <input 
                         type="text" placeholder="RESULTADO" 
-                        className="col-span-5 text-xs border-b border-slate-200 focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 uppercase"
+                        className="col-span-5 text-xs border-b border-slate-200 print:border-black focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 print:text-black uppercase"
                         value={headerData.disputa} onChange={(e) => updateHeader("disputa", e.target.value)}
                     />
                     <input 
                         type="text" placeholder="DATA" 
-                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 rounded px-2 py-0.5 text-slate-600 text-center"
+                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 print:border-black rounded px-2 py-0.5 text-slate-600 print:text-black text-center"
                         value={headerData.dataDisputa || ''} onChange={(e) => updateHeader("dataDisputa", e.target.value)}
                     />
                 </div>
 
                 {/* Linha Proposta Reajustada */}
                 <div className="grid grid-cols-12 items-center gap-2">
-                    <label className="col-span-3 text-[10px] font-bold text-slate-600 uppercase text-right">Reajustada:</label>
+                    <label className="col-span-3 text-[10px] font-bold text-slate-600 print:text-black uppercase text-right">Reajustada:</label>
                     <input 
                         type="text" placeholder="DETALHES" 
-                        className="col-span-5 text-xs border-b border-slate-200 focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 uppercase"
+                        className="col-span-5 text-xs border-b border-slate-200 print:border-black focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 print:text-black uppercase"
                         value={headerData.proposta} onChange={(e) => updateHeader("proposta", e.target.value)}
                     />
                     <input 
                         type="text" placeholder="DATA" 
-                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 rounded px-2 py-0.5 text-slate-600 text-center"
+                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 print:border-black rounded px-2 py-0.5 text-slate-600 print:text-black text-center"
                         value={headerData.dataPropostaReajustada || ''} onChange={(e) => updateHeader("dataPropostaReajustada", e.target.value)}
                     />
                 </div>
             </div>
 
             {/* COLUNA 2: REGRAS TÉCNICAS ("BOX AMARELO" ADAPTADO) (Ocupa 7 colunas) */}
-            <div className="xl:col-span-7 bg-amber-50/60 rounded-xl border border-amber-100 p-3 relative">
-                <span className="absolute top-0 right-0 bg-amber-100 text-[9px] font-bold text-amber-700 px-2 py-0.5 rounded-bl-lg rounded-tr-lg">REGRAS DO PREGÃO</span>
+            <div className="xl:col-span-7 bg-amber-50/60 rounded-xl border border-amber-100 print:border-black p-3 relative">
+                <span className="absolute top-0 right-0 bg-amber-100 text-[9px] font-bold text-amber-700 print:text-black px-2 py-0.5 rounded-bl-lg rounded-tr-lg">REGRAS DO PREGÃO</span>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 mt-1">
                     
                     {/* Seção de Envio */}
                     <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
-                            <Send size={10} /> Local de Envio
+                        <label className="text-[10px] font-bold text-slate-500 print:text-black uppercase flex items-center gap-1">
+                            <Send size={10} className="print:text-black" /> Local de Envio
                         </label>
                         <div className="flex gap-2 text-xs">
                            {['PORTAL', 'EMAIL', 'FISICO'].map((tipo) => (
@@ -450,16 +450,16 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                                      checked={headerData.localEnvio === tipo}
                                      onChange={() => updateHeader("localEnvio", tipo)}
                                    />
-                                   <span className="font-semibold text-slate-700">{tipo}</span>
+                                   <span className="font-semibold text-slate-700 print:text-black">{tipo}</span>
                                </label>
                            ))}
                         </div>
                         <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] font-bold text-slate-400">PRAZO:</span>
+                            <span className="text-[10px] font-bold text-slate-400 print:text-black">PRAZO:</span>
                             <input 
                                 type="text" 
                                 placeholder="--/--/----" 
-                                className="flex-1 bg-white border border-amber-200 rounded px-2 py-0.5 text-xs text-slate-700 focus:border-amber-400 outline-none font-mono"
+                                className="flex-1 bg-white border border-amber-200 print:border-black rounded px-2 py-0.5 text-xs text-slate-700 print:text-black focus:border-amber-400 outline-none font-mono"
                                 value={headerData.prazoEnvio || ''}
                                 onChange={(e) => updateHeader("prazoEnvio", e.target.value)}
                             />
@@ -469,9 +469,9 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                     {/* Seção de Regras de Valor */}
                     <div className="grid grid-cols-2 gap-2">
                         <div>
-                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">Corta Estimado?</label>
+                            <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase block mb-0.5">Corta Estimado?</label>
                             <select 
-                                className="w-full bg-white border border-amber-200 rounded px-1 py-1 text-xs font-bold text-slate-700 outline-none"
+                                className="w-full bg-white border border-amber-200 print:border-black rounded px-1 py-1 text-xs font-bold text-slate-700 print:text-black outline-none"
                                 value={headerData.cortaNoEstimado || 'NAO'}
                                 onChange={(e) => updateHeader("cortaNoEstimado", e.target.value)}
                             >
@@ -480,9 +480,9 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                             </select>
                         </div>
                         <div>
-                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">Disputa Por</label>
+                            <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase block mb-0.5">Disputa Por</label>
                             <select 
-                                className="w-full bg-white border border-amber-200 rounded px-1 py-1 text-xs font-bold text-slate-700 outline-none"
+                                className="w-full bg-white border border-amber-200 print:border-black rounded px-1 py-1 text-xs font-bold text-slate-700 print:text-black outline-none"
                                 value={headerData.disputaPorValor || 'UNITARIO'}
                                 onChange={(e) => updateHeader("disputaPorValor", e.target.value)}
                             >
@@ -492,26 +492,26 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                             </select>
                         </div>
                         <div>
-                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">Casas Dec.</label>
+                            <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase block mb-0.5">Casas Dec.</label>
                             <div className="relative">
-                                <DollarSign size={10} className="absolute left-1 top-1.5 text-slate-400"/>
+                                <DollarSign size={10} className="absolute left-1 top-1.5 text-slate-400 print:text-black"/>
                                 <input 
                                     type="number" 
-                                    className="w-full pl-4 bg-white border border-amber-200 rounded px-1 py-1 text-xs font-bold text-slate-700 outline-none"
+                                    className="w-full pl-4 bg-white border border-amber-200 print:border-black rounded px-1 py-1 text-xs font-bold text-slate-700 print:text-black outline-none"
                                     value={headerData.casasDecimais || '2'}
                                     onChange={(e) => updateHeader("casasDecimais", e.target.value)}
                                 />
                             </div>
                         </div>
                         <div>
-                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">Amostra?</label>
-                            <div className={`flex items-center justify-between border rounded px-2 py-1 cursor-pointer transition-colors ${headerData.amostra === 'SIM' ? 'bg-red-50 border-red-200' : 'bg-white border-amber-200'}`}
+                            <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase block mb-0.5">Amostra?</label>
+                            <div className={`flex items-center justify-between border rounded px-2 py-1 cursor-pointer transition-colors ${headerData.amostra === 'SIM' ? 'bg-red-50 border-red-200 print:border-black' : 'bg-white border-amber-200 print:border-black'}`}
                                  onClick={() => updateHeader("amostra", headerData.amostra === 'SIM' ? 'NAO' : 'SIM')}
                             >
-                                <span className={`text-xs font-bold ${headerData.amostra === 'SIM' ? 'text-red-600' : 'text-slate-500'}`}>
+                                <span className={`text-xs font-bold ${headerData.amostra === 'SIM' ? 'text-red-600 print:text-black' : 'text-slate-500 print:text-black'}`}>
                                     {headerData.amostra === 'SIM' ? 'SIM' : 'NÃO'}
                                 </span>
-                                <Microscope size={12} className={headerData.amostra === 'SIM' ? 'text-red-500' : 'text-slate-300'}/>
+                                <Microscope size={12} className={`${headerData.amostra === 'SIM' ? 'text-red-500' : 'text-slate-300'} print:text-black`}/>
                             </div>
                         </div>
                     </div>
@@ -521,12 +521,12 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
         </div>
 
         {/* PARTE 4: OBSERVAÇÕES (RODAPÉ) */}
-        <div className="mt-4 pt-3 border-t border-slate-100">
-            <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 flex items-center gap-2">
-                <AlertCircle size={12} /> Observações
+        <div className="mt-4 pt-3 border-t border-slate-100 print:border-black">
+            <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase mb-1 flex items-center gap-2">
+                <AlertCircle size={12} className="print:text-black" /> Observações
             </label>
             <textarea 
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 min-h-[60px] resize-y placeholder:text-slate-300"
+                className="w-full bg-slate-50 border border-slate-200 print:border-black rounded-lg p-3 text-xs text-slate-700 print:text-black font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 min-h-[60px] resize-y placeholder:text-slate-300"
                 placeholder="Campo de observações..."
                 value={headerData.observacoes || ''}
                 onChange={(e) => updateHeader("observacoes", e.target.value)}
@@ -537,7 +537,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
 
       {/* MODAL DE NOVO ÓRGÃO (MANTIDO IGUAL) */}
       {showModalOrgao && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm p-4 print:hidden">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="bg-slate-50 p-4 border-b border-slate-100 flex justify-between items-center">
               <h3 className="font-bold text-slate-700 flex items-center gap-2"><Building2 size={18} className="text-blue-500" />Cadastrar Novo Órgão</h3>
