@@ -110,13 +110,13 @@ export default function GradeForm() {
 
     return (
         <div className="p-4 sm:p-6 md:p-8 bg-white shadow-lg rounded-lg max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-x-6 gap-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-x-6 gap-y-4">
 
                 {/* Row 1 */}
                 <div className="md:col-span-2">
                     <InputField label="Edital" value={edital} onChange={(e) => setEdital(e.target.value)} onBlur={handleEditalBlur} prefix="EDITAL:" statusColor={edital ? 'black' : 'red'} />
                 </div>
-                <div className="md:col-span-2">
+                <div className="md:col-span-3">
                     <InputField label="Órgão" value={orgao} onChange={(e) => setOrgao(e.target.value)} onBlur={handleOrgaoBlur} prefix="ÓRGÃO:" statusColor={orgao ? 'black' : 'red'} />
                 </div>
 
@@ -124,15 +124,15 @@ export default function GradeForm() {
                 <div className="md:col-span-1">
                      <InputField label="Portal" value={portal} onChange={(e) => setPortal(e.target.value)} onBlur={handlePortalChange} prefix="PORTAL:" statusColor={portal ? 'black' : 'red'} containerClassName="md:max-w-xs" />
                 </div>
-                <div>
+                <div className="md:col-span-1">
                      <InputField label="ID ou UASG" value={uasg} onChange={(e) => setUasg(e.target.value)} onBlur={handleUasgBlur} prefix="ID OU UASG:" containerClassName="md:max-w-xs" />
                 </div>
-                 <div>
+                 <div className="md:col-span-1">
                     <InputField label="Ação Judicial" value={acaoJudicial} onChange={handleAcaoJudicialChange} prefix="AÇÃO JUDICIAL:" statusColor={acaoJudicial ? 'black' : 'red'} containerClassName="md:max-w-xs" />
                 </div>
 
                 {/* Row 3 */}
-                <div className="md:col-span-2">
+                <div className="md:col-span-3">
                      <InputField label="Abertura" value={abertura} onChange={(e) => setAbertura(e.target.value)} onBlur={handleAberturaBlur} prefix="ABERTURA:" statusColor={abertura ? 'black' : 'red'} />
                 </div>
                  <div className="md:col-span-1">
@@ -144,7 +144,7 @@ export default function GradeForm() {
 
 
                 {/* Logo Area */}
-                <div className="md:col-span-4 grid grid-cols-3 gap-6 mt-4">
+                <div className="md:col-span-5 grid grid-cols-3 gap-6 mt-4">
                     <div className="col-span-1">
                         <InputField label="Logo" value={logo} onChange={handleLogoChange} />
                          <p className="text-xs text-gray-400 mt-1">Digite NSA, COSTA, ou UNIQUE (ou iniciais/números)</p>

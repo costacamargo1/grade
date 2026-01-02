@@ -230,7 +230,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                   <input 
                     type="text" 
                     placeholder="dd/mm/aaaa - hh:mm" 
-                    className="w-full pl-3 pr-7 py-2 bg-yellow-50/50 border border-yellow-200 print:border-black rounded-lg text-sm font-bold text-slate-700 print:text-black focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all placeholder:text-slate-400 uppercase"
+                    className="w-50 pl-2 pr-5 py-2 bg-yellow-50/50 border border-yellow-200 print:border-black rounded-lg text-sm font-bold text-slate-700 print:text-black focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all placeholder:text-slate-400 uppercase"
                     value={headerData.dataAbertura}
                     onChange={(e) => updateHeader("dataAbertura", e.target.value)}
                     onBlur={handleBlurData}
