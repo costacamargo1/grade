@@ -41,7 +41,7 @@ export default function DropdownModoDisputa({ value, onChange, onBlur }: Dropdow
         <input
           type="text"
           placeholder="Use atalhos (N, A, AF)"
-          className="w-full py-1 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-700 print:text-black focus:outline-none pr-8 placeholder:font-normal placeholder:text-slate-400"
+          className="w-full py-1 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-700 print:text-black focus:outline-none pr-8 placeholder:font-normal placeholder:text-slate-400 print-border-b"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onBlur={onBlur}

@@ -48,6 +48,35 @@ body {
         margin: 0 !important;
         border: 1px solid black !important;
     }
+    
+    input.print-border-b {
+        border: none !important; /* Resetting the border */
+        border-bottom: 1px solid black !important; /* Applying only bottom border */
+        border-radius: 0 !important; /* Removing any border radius */
+    }
+
+    .print-etapas-input {
+        width: 95% !important;
+    }
+
+    .print-etapas-date-input {
+        width: 95% !important;
+        text-align: center;
+    }
+
+    select.print-judicial-select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        border: none !important;
+        background-image: none !important;
+        padding-left: 1rem !important;
+        background-color: transparent !important;
+    }
+
+    .print-judicial-container {
+        border-bottom: 1px solid black !important;
+    }
 }
 
 .react-resizable {

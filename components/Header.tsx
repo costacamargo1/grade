@@ -267,7 +267,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                     <input 
                       list="portais-list"
                       type="text" 
-                      className="w-full pl-4 py-0.5 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-600 print:text-black focus:outline-none uppercase"
+                      className="w-full pl-4 py-0.5 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-600 print:text-black focus:outline-none uppercase print-border-b"
                       value={headerData.portalInput}
                       onChange={(e) => updateHeader("portalInput", e.target.value)}
                       onBlur={handlePortalBlur}
@@ -284,7 +284,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                     <Hash size={12} className="absolute left-0 text-slate-300 print:text-black" />
                     <input 
                       type="text" 
-                      className="w-full pl-4 py-0.5 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-600 print:text-black focus:outline-none" 
+                      className="w-full pl-4 py-0.5 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-600 print:text-black focus:outline-none print-border-b" 
                       value={headerData.uasgInput}
                       onChange={handleUasgChange}
                     />
@@ -293,10 +293,10 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
 
               <div className="relative group md:col-span-2">
                  <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">Judicial</label>
-                 <div className="flex items-center">
+                 <div className="flex items-center print-judicial-container">
                     <Gavel size={12} className="absolute left-0 text-red-300 print:text-black" />
                     <select
-                       className="w-full pl-4 py-0.5 bg-transparent border-none text-xs font-bold text-red-500 print:text-black focus:ring-0 cursor-pointer uppercase appearance-none p-0"
+                       className="w-full pl-4 py-0.5 bg-transparent border-none text-xs font-bold text-red-500 print:text-black focus:ring-0 cursor-pointer uppercase appearance-none p-0 print-judicial-select"
                        value={headerData.judicialInput}
                        onChange={(e) => updateHeader("judicialInput", processarAcaoJudicial(e.target.value))}
                     >
@@ -319,7 +319,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                  <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">WEB / Cotação</label>
                  <input
                    type="text"
-                   className="w-full py-0.5 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-600 print:text-black focus:outline-none uppercase"
+                   className="w-full py-0.5 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-600 print:text-black focus:outline-none uppercase print-border-b"
                    value={headerData.webCotacao}
                    onChange={(e) => updateHeader("webCotacao", e.target.value)}
                  />
@@ -373,12 +373,12 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                     <label className="col-span-3 text-[10px] font-bold text-slate-600 print:text-black uppercase text-right">Cadastro:</label>
                     <input 
                         type="text" placeholder="OBSERVAÇÃO" 
-                        className="col-span-5 text-xs border-b border-slate-200 print:border-black focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 print:text-black uppercase"
+                        className="col-span-5 text-xs border-b border-slate-200 print:border-black focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 print:text-black uppercase print-border-b print-etapas-input"
                         value={headerData.cadastro} onChange={(e) => updateHeader("cadastro", e.target.value)}
                     />
                     <input 
                         type="text" placeholder="DATA" 
-                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 print:border-black rounded px-2 py-0.5 text-slate-600 print:text-black text-center"
+                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 print:border-black rounded px-2 py-0.5 text-slate-600 print:text-black text-center print-border-b print-etapas-date-input"
                         value={headerData.dataCadastro || ''} onChange={(e) => updateHeader("dataCadastro", e.target.value)}
                     />
                 </div>
@@ -388,12 +388,12 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                     <label className="col-span-3 text-[10px] font-bold text-slate-600 print:text-black uppercase text-right">Conferência:</label>
                     <input 
                         type="text" placeholder="STATUS" 
-                        className="col-span-5 text-xs border-b border-slate-200 print:border-black focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 print:text-black uppercase"
+                        className="col-span-5 text-xs border-b border-slate-200 print:border-black focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 print:text-black uppercase print-border-b print-etapas-input"
                         value={headerData.conferencia} onChange={(e) => updateHeader("conferencia", e.target.value)}
                     />
                     <input 
                         type="text" placeholder="DATA" 
-                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 print:border-black rounded px-2 py-0.5 text-slate-600 print:text-black text-center"
+                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 print:border-black rounded px-2 py-0.5 text-slate-600 print:text-black text-center print-border-b print-etapas-date-input"
                         value={headerData.dataConferencia || ''} onChange={(e) => updateHeader("dataConferencia", e.target.value)}
                     />
                 </div>
@@ -403,12 +403,12 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                     <label className="col-span-3 text-[10px] font-bold text-slate-600 print:text-black uppercase text-right">Disputa:</label>
                     <input 
                         type="text" placeholder="RESULTADO" 
-                        className="col-span-5 text-xs border-b border-slate-200 print:border-black focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 print:text-black uppercase"
+                        className="col-span-5 text-xs border-b border-slate-200 print:border-black focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 print:text-black uppercase print-border-b print-etapas-input"
                         value={headerData.disputa} onChange={(e) => updateHeader("disputa", e.target.value)}
                     />
                     <input 
                         type="text" placeholder="DATA" 
-                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 print:border-black rounded px-2 py-0.5 text-slate-600 print:text-black text-center"
+                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 print:border-black rounded px-2 py-0.5 text-slate-600 print:text-black text-center print-border-b print-etapas-date-input"
                         value={headerData.dataDisputa || ''} onChange={(e) => updateHeader("dataDisputa", e.target.value)}
                     />
                 </div>
@@ -418,12 +418,12 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                     <label className="col-span-3 text-[10px] font-bold text-slate-600 print:text-black uppercase text-right">Reajustada:</label>
                     <input 
                         type="text" placeholder="DETALHES" 
-                        className="col-span-5 text-xs border-b border-slate-200 print:border-black focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 print:text-black uppercase"
+                        className="col-span-5 text-xs border-b border-slate-200 print:border-black focus:border-blue-500 bg-transparent py-0.5 outline-none text-slate-600 print:text-black uppercase print-border-b print-etapas-input"
                         value={headerData.proposta} onChange={(e) => updateHeader("proposta", e.target.value)}
                     />
                     <input 
                         type="text" placeholder="DATA" 
-                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 print:border-black rounded px-2 py-0.5 text-slate-600 print:text-black text-center"
+                        className="col-span-4 text-xs font-mono bg-slate-50 border border-slate-100 print:border-black rounded px-2 py-0.5 text-slate-600 print:text-black text-center print-border-b print-etapas-date-input"
                         value={headerData.dataPropostaReajustada || ''} onChange={(e) => updateHeader("dataPropostaReajustada", e.target.value)}
                     />
                 </div>
