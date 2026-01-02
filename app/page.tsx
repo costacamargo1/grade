@@ -1,11 +1,11 @@
 "use client";
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { ItemGrade, HeaderData, Orgao, Resultado } from '../lib/types';
 import Header from '../components/Header';
 import Grid from '../components/Grid';
 import Orgaos from '../components/Orgaos';
 import Resultados from '../components/Resultados';
-import { Download } from 'lucide-react';
+import { Download, Printer } from 'lucide-react';
 import { exportToExcel } from '../lib/exportService';
 import DropdownEmpresa from '../components/DropdownEmpresa';
 
@@ -32,9 +32,14 @@ export default function Home() {
     proposta: "",
   });
   const [activeTab, setActiveTab] = useState<Tab>('grade');
+  const printableComponentRef = useRef(null);
 
   const handleExport = () => {
     exportToExcel(headerData, itens);
+  };
+
+  const handlePrint = () => {
+    window.print();
   };
 
   const renderContent = () => {
@@ -90,27 +95,38 @@ export default function Home() {
 
                 {/* Botão de Exportação (condicional) */}
                 {activeTab === 'grade' && (
-                    <button
-                        onClick={handleExport}
-                        className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                    >
-                        <Download size={18} />
-                        Exportar para Excel
-                    </button>
+                    <>
+                        <button
+                            onClick={handleExport}
+                            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        >
+                            <Download size={18} />
+                            Exportar para Excel
+                        </button>
+                        <button
+                          onClick={handlePrint}
+                          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        >
+                          <Printer size={18} />
+                          Imprimir / PDF
+                        </button>
+                    </>
                 )}
             </div>
         </div>
 
-        {/* 1. O CABEÇALHO INTELIGENTE */}
-        {activeTab !== 'resultados' && (
-          <div className="print:hidden">
-              <Header headerData={headerData} setHeaderData={setHeaderData} orgaos={orgaos} setOrgaos={setOrgaos} />
-          </div>
-        )}
+        <div ref={printableComponentRef} className="space-y-6">
+            {/* 1. O CABEÇALHO INTELIGENTE */}
+            {activeTab !== 'resultados' && (
+              <div className={activeTab !== 'grade' ? 'print:hidden' : ''}>
+                  <Header headerData={headerData} setHeaderData={setHeaderData} orgaos={orgaos} setOrgaos={setOrgaos} />
+              </div>
+            )}
 
-        {/* 2. CONTEÚDO DINÂMICO (GRADE OU ÓRGÃOS) */}
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {renderContent()}
+            {/* 2. CONTEÚDO DINÂMICO (GRADE OU ÓRGÃOS) */}
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {renderContent()}
+            </div>
         </div>
 
       </div>
