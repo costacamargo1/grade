@@ -258,9 +258,9 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
             </div>
 
             {/* PARTE 2: DADOS SECUNDÁRIOS (Portal, ID, Judicial, Web) */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 bg-slate-50/50 p-3 rounded-xl border border-slate-100 border-dashed items-end">
+            <div className="grid grid-cols-2 md:grid-cols-15 gap-3 bg-slate-50/50 p-3 rounded-xl border border-slate-100 border-dashed items-end">
               
-              <div className="relative group">
+              <div className="relative group md:col-span-4">
                  <label className="text-[9px] font-bold text-slate-400 uppercase mb-0.5 block">Portal</label>
                  <div className="flex items-center">
                     <Globe size={12} className="absolute left-0 text-slate-300" />
@@ -278,7 +278,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                  </div>
               </div>
 
-              <div className="relative group">
+              <div className="relative group md:col-span-2">
                  <label className="text-[9px] font-bold text-slate-400 uppercase mb-0.5 block">ID / UASG</label>
                  <div className="flex items-center">
                     <Hash size={12} className="absolute left-0 text-slate-300" />
@@ -291,7 +291,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                  </div>
               </div>
 
-              <div className="relative group">
+              <div className="relative group md:col-span-2">
                  <label className="text-[9px] font-bold text-slate-400 uppercase mb-0.5 block">Judicial</label>
                  <div className="flex items-center">
                     <Gavel size={12} className="absolute left-0 text-red-300" />
@@ -307,7 +307,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                  </div>
               </div>
 
-              <div className="relative group">
+              <div className="relative group md:col-span-2">
                 <DropdownModoDisputa 
                   value={headerData.modoDisputa}
                   onChange={(value) => updateHeader("modoDisputa", value)}
@@ -315,7 +315,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                 />
               </div>
               
-              <div className="relative group">
+              <div className="relative group md:col-span-2">
                  <label className="text-[9px] font-bold text-slate-400 uppercase mb-0.5 block">WEB / Cotação</label>
                  <input
                    type="text"
@@ -328,7 +328,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
           </div>
             
             {/* LOGO DA EMPRESA (DIREITA) */}
-            <div className="w-full xl:w-48 flex items-center justify-center border-l border-slate-100 pl-4">
+            <div className="w-full xl:w-80 flex items-center justify-center border-l border-slate-100 pl-4">
                 <div className="transform scale-90">
                 {empresa === "UNIQUE" && (
                     <div className="text-center">
