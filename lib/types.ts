@@ -19,6 +19,7 @@ export interface ItemGrade {
 }
 
 export interface HeaderData {
+  // Campos Originais
   edital: string;
   orgao: string;
   dataAbertura: string;
@@ -29,10 +30,31 @@ export interface HeaderData {
   modoDisputa: string;
   webCotacao: string;
   logoInput: string;
+  
+  // Status de Acompanhamento (Texto)
   cadastro: string;
   conferencia: string;
   disputa: string;
   proposta: string;
+
+  // --- NOVOS CAMPOS (Header Planilha) ---
+  
+  // Datas de Acompanhamento
+  dataCadastro?: string;
+  dataConferencia?: string;
+  dataDisputa?: string;
+  dataPropostaReajustada?: string;
+
+  // Regras do Pregão (Box Amarelo)
+  localEnvio?: string; // 'PORTAL' | 'EMAIL' | 'FISICO'
+  prazoEnvio?: string;
+  cortaNoEstimado?: string; // 'SIM' | 'NAO'
+  disputaPorValor?: string; // 'UNITARIO' | 'GLOBAL' | 'LOTE'
+  casasDecimais?: string;
+  amostra?: string; // 'SIM' | 'NAO'
+
+  // Rodapé
+  observacoes?: string;
 }
 
 export interface Orgao {
