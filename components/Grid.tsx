@@ -641,7 +641,7 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
                   <br />
                   (R$)
                 </th>
-                <th className="p-2 border-r border-gray-600 w-24 text-center text-black bg-orange-200 print:bg-white">
+                <th className="p-2 border-r border-gray-600 w-24 text-center text-white bg-black-200 print:bg-black">
                   Preço
                   <br />
                   Inicial (R$)

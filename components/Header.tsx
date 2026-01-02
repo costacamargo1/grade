@@ -480,7 +480,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                             </select>
                         </div>
                         <div>
-                            <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase block mb-0.5">Disputa Por</label>
+                            <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase block mb-0.5">Disputa Por valor</label>
                             <select 
                                 className="w-full bg-white border border-amber-200 print:border-black rounded px-1 py-1 text-xs font-bold text-slate-700 print:text-black outline-none"
                                 value={headerData.disputaPorValor || 'UNITARIO'}
@@ -494,13 +494,14 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                         <div>
                             <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase block mb-0.5">Casas Decimais</label>
                             <div className="relative">
-                                <DollarSign size={10} className="absolute left-1 top-1.5 text-slate-400 print:text-black"/>
+                                <DollarSign size={10} className="absolute left-1.5 top-1/2 -translate-y-1/2 text-slate-400 print:hidden"/>
                                 <input 
                                     type="number" 
-                                    className="w-full pl-4 bg-white border border-amber-200 print:border-black rounded px-1 py-1 text-xs font-bold text-slate-700 print:text-black outline-none"
+                                    className="w-full pl-5 bg-white border border-amber-200 rounded px-1 py-1 text-xs font-bold text-slate-700 print:text-black outline-none pr-14"
                                     value={headerData.casasDecimais || '2'}
                                     onChange={(e) => updateHeader("casasDecimais", e.target.value)}
                                 />
+                                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400 print:text-black pointer-events-none">CASAS</span>
                             </div>
                         </div>
                         <div>
