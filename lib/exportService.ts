@@ -237,3 +237,42 @@ export const exportToExcel = (headerData: HeaderData, itens: ItemGrade[]) => {
 
     XLSX.writeFile(wb, fileName);
 };
+
+export const exportGradeItensToExcel = (itens: ItemGrade[]) => {
+    const dataToExport = itens.map((item) => ({
+        "ITEM": item.numeroItem ?? "",
+        "MEDICAMENTO": item.medicamento,
+        "MARCA": item.marca,
+        "QUANTIDADE": item.quantidade || "",
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+
+    const objectMaxLength: any[] = [];
+    const range = XLSX.utils.decode_range(ws['!ref']!);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+        let max = 0;
+        const header = ws[XLSX.utils.encode_cell({ c: C, r: 0 })].v;
+        max = header.length;
+
+        for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+            const cell_address = { c: C, r: R };
+            const cell_ref = XLSX.utils.encode_cell(cell_address);
+            if (ws[cell_ref] && ws[cell_ref].v) {
+                const length = ws[cell_ref].v.toString().length;
+                if (length > max) {
+                    max = length;
+                }
+            }
+        }
+        objectMaxLength.push({ wch: max + 2 });
+    }
+    ws['!cols'] = objectMaxLength;
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Grade");
+
+    const today = new Date().toISOString().slice(0, 10);
+    const fileName = `GRADE-ITENS-${today}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+};

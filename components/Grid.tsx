@@ -1,8 +1,10 @@
 "use client";
-import { Trash2, Plus, ArrowUpDown, GripVertical, Save } from "lucide-react";
-import React, { useState } from "react";
-import type { ItemGrade, Resultado, HeaderData } from "../lib/types";
+import { Trash2, Plus, ArrowUpDown, GripVertical, Save, Upload, Download, X } from "lucide-react";
+import React, { useRef, useState } from "react";
+import type { ItemGrade, Resultado, HeaderData, Produto } from "../lib/types";
 import { buscarProdutoPorCodigo, processarItem } from "../lib/processor";
+import { exportGradeItensToExcel } from "../lib/exportService";
+import { importGradeItensFromExcel } from "../lib/importService";
 import {
   DndContext,
   closestCenter,
@@ -27,6 +29,7 @@ interface GridProps {
   resultados: Resultado[];
   setResultados: React.Dispatch<React.SetStateAction<Resultado[]>>;
   headerData: HeaderData;
+  produtos: Produto[];
 }
 
 const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: number, [key: string]: any }) => {
@@ -325,11 +328,13 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
     );
 };
 
-export default function Grid({ itens, setItens, resultados, setResultados, headerData }: GridProps) {
+export default function Grid({ itens, setItens, resultados, setResultados, headerData, produtos }: GridProps) {
   const [sortConfig, setSortConfig] = useState<{
     key: keyof ItemGrade;
     direction: "ascending" | "descending";
   } | null>(null);
+  const [showImportExportModal, setShowImportExportModal] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -456,6 +461,82 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
     setItens([...itens, novoItem]);
   };
 
+  const handleImportClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const importedItens = await importGradeItensFromExcel(file);
+      if (importedItens.length === 0) return;
+
+      const newItens: ItemGrade[] = importedItens.map((importedItem, index) => {
+        const novoItem: ItemGrade = {
+          id: `${Date.now()}-${index}`,
+          numeroItem: importedItem.numeroItem,
+          precoDoDia: 0,
+          melhorPreco: 0,
+          precoFinal: 0,
+          medicamento: importedItem.medicamento,
+          marca: importedItem.marca || "",
+          quantidade: importedItem.quantidade || 0,
+          valorEstimado: 0,
+          precoInicial: 0,
+          cotacao: 0,
+          primeiroColocado: { empresa: "", marca: "", valor: 0 },
+          segundoColocado: { empresa: "", marca: "", valor: 0 },
+          terceiroColocado: { empresa: "", marca: "", valor: 0 },
+          mapa: "",
+        };
+
+        const textoLimpo = importedItem.medicamento.trim();
+        if (textoLimpo) {
+          const produtoEncontrado = produtos.find(
+            (produto) =>
+              produto.codeuro &&
+              produto.codeuro.trim().toUpperCase() === textoLimpo.toUpperCase()
+          );
+          if (produtoEncontrado) {
+            if (produtoEncontrado.apresentacaoSugerida) {
+              novoItem.medicamento = produtoEncontrado.apresentacaoSugerida;
+            }
+            if (!novoItem.marca && produtoEncontrado.descricao) {
+              const match = produtoEncontrado.descricao.match(/MARCA:\s*([^\/]+)/i);
+              if (match && match[1]) {
+                novoItem.marca = match[1].trim();
+              }
+            }
+            if (produtoEncontrado.valorInicial) {
+              const normalized = produtoEncontrado.valorInicial
+                .replace(/[^0-9,.\-]/g, "")
+                .replace(",", ".");
+              const parsed = parseFloat(normalized);
+              if (!Number.isNaN(parsed)) {
+                novoItem.precoInicial = parsed;
+              }
+            }
+          }
+        }
+
+        return novoItem;
+      });
+
+      setItens((current) => [...newItens, ...current]);
+    } catch (error) {
+      console.error("Erro ao importar itens da grade:", error);
+    } finally {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   const handleDelete = (id: string) => {
     setItens(itens.filter((i) => i.id !== id));
   };
@@ -500,21 +581,54 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
     if (!textoAtual) return;
 
     const textoLimpo = textoAtual.trim();
+    if (!textoLimpo) return;
 
-    // Feature 1: Lookup by code (from 'APRESENTACOES')
+    // Feature 1: Lookup by CODEURO (from "Produtos" tab)
+    const produtoEncontrado = produtos.find(
+      (produto) =>
+        produto.codeuro &&
+        produto.codeuro.trim().toUpperCase() === textoLimpo.toUpperCase()
+    );
+    if (produtoEncontrado) {
+      const updates: Partial<ItemGrade> = {};
+      if (produtoEncontrado.apresentacaoSugerida) {
+        updates.medicamento = produtoEncontrado.apresentacaoSugerida;
+      }
+      if (produtoEncontrado.descricao) {
+        const match = produtoEncontrado.descricao.match(/MARCA:\s*([^\/]+)/i);
+        if (match && match[1]) {
+          updates.marca = match[1].trim();
+        }
+      }
+      if (produtoEncontrado.valorInicial) {
+        const normalized = produtoEncontrado.valorInicial
+          .replace(/[^0-9,.\-]/g, "")
+          .replace(",", ".");
+        const parsed = parseFloat(normalized);
+        if (!Number.isNaN(parsed)) {
+          updates.precoInicial = parsed;
+        }
+      }
+      if (Object.keys(updates).length > 0) {
+        handleMultiUpdate(id, updates);
+      }
+      return; // Stop processing
+    }
+
+    // Feature 2: Lookup by code (from 'APRESENTACOES')
     if (/^\d+$/.test(textoLimpo)) {
-      const produtoEncontrado = buscarProdutoPorCodigo(textoLimpo);
-      if (produtoEncontrado) {
+      const produtoEncontradoLegacy = buscarProdutoPorCodigo(textoLimpo);
+      if (produtoEncontradoLegacy) {
         handleMultiUpdate(id, {
-          medicamento: produtoEncontrado.nomeProduto,
-          marca: produtoEncontrado.marca,
-          valorEstimado: parseFloat(produtoEncontrado.valor) || 0,
+          medicamento: produtoEncontradoLegacy.nomeProduto,
+          marca: produtoEncontradoLegacy.marca,
+          valorEstimado: parseFloat(produtoEncontradoLegacy.valor) || 0,
         });
         return; // Stop processing
       }
     }
 
-    // Feature 2: Manufacturer parsing (from 'F14:F184' logic)
+    // Feature 3: Manufacturer parsing (from 'F14:F184' logic)
     const processado = processarItem(textoLimpo);
     if (processado) {
       const updates: Partial<ItemGrade> = {
@@ -607,6 +721,21 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-slate-300 print:border-black overflow-hidden">
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileImport}
+        className="hidden"
+        accept=".xlsx, .xls"
+      />
+      <div className="flex justify-end p-2 print:hidden">
+        <button
+          onClick={() => setShowImportExportModal(true)}
+          className="text-xs font-bold px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md transition"
+        >
+          IMPORTAR / EXPORTAR
+        </button>
+      </div>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -708,6 +837,37 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
       >
         <Plus size={16} /> Adicionar Item
       </button>
+      {showImportExportModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm p-4 print:hidden">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="bg-slate-50 p-4 border-b border-slate-100 flex justify-between items-center">
+              <h3 className="font-bold text-slate-700">Importar / Exportar</h3>
+              <button
+                onClick={() => setShowImportExportModal(false)}
+                className="text-slate-400 hover:text-red-500 transition"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 flex flex-col gap-3">
+              <button
+                onClick={handleImportClick}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition"
+              >
+                <Upload size={16} />
+                Importar
+              </button>
+              <button
+                onClick={() => exportGradeItensToExcel(itens)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg transition"
+              >
+                <Download size={16} />
+                Exportar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

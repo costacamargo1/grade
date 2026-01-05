@@ -312,3 +312,97 @@ export const importResultadosFromExcel = (file: File): Promise<Resultado[]> => {
     reader.readAsBinaryString(file);
   });
 };
+
+interface GradeImportItem {
+  numeroItem?: number;
+  medicamento: string;
+  marca?: string;
+  quantidade?: number;
+}
+
+const gradeHeaderMapping: { [key: string]: keyof GradeImportItem } = {
+  'ITEM': 'numeroItem',
+  'MEDICAMENTO': 'medicamento',
+  'MARCA': 'marca',
+  'QUANTIDADE': 'quantidade',
+  'QTD': 'quantidade',
+  'QTD.': 'quantidade',
+};
+
+export const importGradeItensFromExcel = (file: File): Promise<GradeImportItem[]> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      try {
+        const data = e.target?.result;
+        if (!data) {
+          reject(new Error("File data is empty."));
+          return;
+        }
+        const workbook = XLSX.read(data, { type: 'binary' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const json: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        if (json.length < 2) {
+          resolve([]);
+          return;
+        }
+
+        const headerRow = json[0];
+        const mappedHeaders: (keyof GradeImportItem | null)[] = headerRow.map((h: string) => gradeHeaderMapping[String(h).toUpperCase()] || null);
+        
+        const importedItens: GradeImportItem[] = [];
+
+        const parseNumber = (value: any): number | undefined => {
+          if (value === undefined || value === null || value === '') return undefined;
+          if (typeof value === 'number') return value;
+          const normalized = String(value).replace(/\./g, '').replace(',', '.');
+          const parsed = parseFloat(normalized);
+          return Number.isNaN(parsed) ? undefined : parsed;
+        };
+
+        for (let i = 1; i < json.length; i++) {
+          const rowData = json[i];
+          if (!rowData || rowData.length === 0) {
+            continue;
+          }
+
+          const newItem: Partial<GradeImportItem> = {};
+
+          mappedHeaders.forEach((key, index) => {
+            if (!key) return;
+            const value = rowData[index];
+            if (key === 'numeroItem' || key === 'quantidade') {
+              (newItem as any)[key] = parseNumber(value);
+            } else {
+              (newItem as any)[key] = value !== undefined && value !== null ? String(value) : '';
+            }
+          });
+
+          if (mappedHeaders.every(h => h === null)) {
+            newItem.numeroItem = parseNumber(rowData[0]);
+            newItem.medicamento = rowData[1] ? String(rowData[1]) : '';
+            newItem.marca = rowData[2] ? String(rowData[2]) : '';
+            newItem.quantidade = parseNumber(rowData[3]);
+          }
+
+          if (newItem.medicamento) {
+            importedItens.push({
+              numeroItem: newItem.numeroItem,
+              medicamento: newItem.medicamento,
+              marca: newItem.marca || '',
+              quantidade: newItem.quantidade,
+            });
+          }
+        }
+
+        resolve(importedItens);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.onerror = (error) => reject(error);
+    reader.readAsBinaryString(file);
+  });
+};
