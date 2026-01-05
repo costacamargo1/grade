@@ -354,26 +354,30 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
             <div className="w-full xl:w-80 flex items-center justify-center border-l border-slate-100 print:border-black pl-4">
                 <div className="transform scale-90">
                 {empresa === "UNIQUE" && (
-                    <div className="text-center">
-                        <h1 className="text-3xl font-extralight tracking-[0.2em] text-slate-800 print:text-black">
-                        uni<span className="font-bold text-orange-500 print:text-black">Q</span>ue
-                        </h1>
-                        <p className="text-[8px] text-slate-400 print:text-black mt-1 tracking-[0.4em] uppercase border-t border-slate-100 print:border-black pt-1 mx-2">medicamentos</p>
+                    <div className="flex items-center justify-center">
+                        <img
+                          src="/unique.png"
+                          alt="Unique"
+                          className="h-16 w-auto object-contain"
+                        />
                     </div>
                 )}
                 {empresa === "COSTA" && (
-                    <div className="text-center border-2 border-blue-900 print:border-black px-4 py-2">
-                        <h1 className="text-base font-black text-blue-900 print:text-black tracking-tighter leading-none">
-                        COSTA<br/>CAMARGO
-                        </h1>
+                    <div className="flex items-center justify-center">
+                        <img
+                          src="/costa-camargo.png?v=2"
+                          alt="Costa Camargo"
+                          className="h-16 w-auto object-contain"
+                        />
                     </div>
                 )}
                 {empresa === "NSA" && (
-                    <div className="text-center">
-                        <h1 className="text-4xl font-black italic text-green-700 print:text-black tracking-tighter">
-                        NSA
-                        </h1>
-                        <p className="text-[9px] font-bold text-slate-400 print:text-black -mt-1 tracking-wider">DISTRIBUIDORA</p>
+                    <div className="flex items-center justify-center">
+                        <img
+                          src="/nsa.png"
+                          alt="NSA"
+                          className="h-16 w-auto object-contain"
+                        />
                     </div>
                 )}
                 </div>
