@@ -77,6 +77,10 @@ body {
     .print-judicial-container {
         border-bottom: 1px solid black !important;
     }
+
+    table input[type="text"], table input[type="number"] {
+        border: none !important;
+    }
 }
 
 .react-resizable {
