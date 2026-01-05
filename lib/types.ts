@@ -63,6 +63,7 @@ export interface Orgao {
   nome: string;
   uasg: string;
   portal: string;
+  uf?: string;
 }
 
 export interface Resultado {
@@ -109,5 +110,16 @@ export interface CompanyConfig {
     id: string;
     headerData: HeaderData;
     itens: ItemGrade[];
+  }
+
+  export interface AgendaRow {
+    empresa: string;
+    edital: string;
+    orgao: string;
+    uf: string;
+    data: string;
+    hora: string;
+    portal: string;
+    codigoGrade: string;
   }
   

@@ -100,13 +100,14 @@ export interface Orgao {
     nome: string;
     portal: string;
     uasg: string;
+    uf?: string;
 }
 
 export const bancoOrgaos: Orgao[] = [
-    { nome: "HOSPITAL UNIVERSITÁRIO POLYDORO ERNANI SÃO THIAGO / SC", portal: "COMPRASNET", uasg: "155024" },
-    { nome: "SECRETARIA DE ESTADO DA SAUDE / DF", portal: "COMPRASNET", uasg: "926118" },
-    { nome: "PREFEITURA MUNICIPAL DE VILA VELHA / ES", portal: "BLL COMPRAS", uasg: "986198" },
-    { nome: "MINISTÉRIO DA SAÚDE", portal: "COMPRASNET", uasg: "250005" },
+    { nome: "HOSPITAL UNIVERSITÁRIO POLYDORO ERNANI SÃO THIAGO / SC", portal: "COMPRASNET", uasg: "155913" },
+    { nome: "SECRETARIA DE ESTADO DA SAUDE / DF", portal: "COMPRASNET", uasg: "926119" },
+    { nome: "PREFEITURA MUNICIPAL DO RIO DE JANEIRO / RJ", portal: "COMPRASNET", uasg: "986001" },
+    { nome: "MINISTÉRIO DA SAÚDE - DLOG / DF", portal: "COMPRASNET", uasg: "250005" },
 ];
 
 /**

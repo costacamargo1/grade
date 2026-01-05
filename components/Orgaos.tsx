@@ -1,6 +1,7 @@
-// components/Orgaos.tsx
+﻿// components/Orgaos.tsx
 import { useState, useRef } from 'react';
 import { Orgao } from '../lib/types';
+import { ufs } from '../lib/data';
 import { Building2, Globe, Hash, Trash2, Edit, X, Save, Upload, Download, FilePlus } from 'lucide-react';
 import { importOrgaosFromExcel } from '../lib/importService';
 import { exportOrgaosToExcel } from '../lib/exportService';
@@ -10,12 +11,35 @@ interface OrgaosProps {
   setOrgaos: (orgaos: Orgao[] | ((current: Orgao[]) => Orgao[])) => void;
 }
 
+const sanitizeUf = (value: string): string => (
+  value.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 2)
+);
+
+const splitNomeUf = (nome: string): { base: string; uf: string } => {
+  if (!nome) return { base: '', uf: '' };
+  const parts = nome.split('/');
+  if (parts.length < 2) return { base: nome.trim(), uf: '' };
+  const possibleUf = parts[parts.length - 1].trim().toUpperCase();
+  if (/^[A-Z]{2}$/.test(possibleUf)) {
+    return { base: parts.slice(0, -1).join('/').trim(), uf: possibleUf };
+  }
+  return { base: nome.trim(), uf: '' };
+};
+
+const normalizeOrgao = (orgao: Orgao): Orgao => {
+  const parsed = splitNomeUf(orgao.nome);
+  const uf = sanitizeUf(orgao.uf || '') || parsed.uf;
+  const base = parsed.base || orgao.nome.trim();
+  const nomeFinal = base ? `${base.toUpperCase()}${uf ? ` / ${uf}` : ''}` : '';
+  return { ...orgao, nome: nomeFinal, uf };
+};
+
 export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingOrgao, setEditingOrgao] = useState<Orgao | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [newOrgao, setNewOrgao] = useState<Orgao>({ nome: '', uasg: '', portal: '' });
+  const [newOrgao, setNewOrgao] = useState<Orgao>({ nome: '', uasg: '', portal: '', uf: '' });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDelete = (index: number) => {
@@ -25,7 +49,7 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
   };
 
   const handleEdit = (orgao: Orgao, index: number) => {
-    setEditingOrgao({ ...orgao });
+    setEditingOrgao(normalizeOrgao({ ...orgao }));
     setEditingIndex(index);
     setShowEditModal(true);
   };
@@ -33,7 +57,7 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
   const handleSave = () => {
     if (editingOrgao && editingIndex !== null) {
       const newOrgaos = [...orgaos];
-      newOrgaos[editingIndex] = editingOrgao;
+      newOrgaos[editingIndex] = normalizeOrgao(editingOrgao);
       setOrgaos(newOrgaos);
       setShowEditModal(false);
       setEditingOrgao(null);
@@ -43,9 +67,10 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
 
   const handleSaveNewOrgao = () => {
     if (newOrgao.nome) { // Basic validation: at least a name is required
-      setOrgaos(currentOrgaos => [...currentOrgaos, newOrgao]);
+      const normalized = normalizeOrgao(newOrgao);
+      setOrgaos(currentOrgaos => [...currentOrgaos, normalized]);
       setShowAddModal(false);
-      setNewOrgao({ nome: '', uasg: '', portal: '' }); // Reset for next time
+      setNewOrgao({ nome: '', uasg: '', portal: '', uf: '' }); // Reset for next time
     } else {
       alert("O nome do órgão é obrigatório.");
     }
@@ -202,14 +227,22 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
                   autoFocus
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                 <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">ID / UASG</label>
-                    <input type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500" placeholder="Opcional" value={newOrgao.uasg} onChange={(e) => setNewOrgao({ ...newOrgao, uasg: e.target.value })} />
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">UF</label>
+                    <input list="modal-ufs-list" maxLength={2} type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="" value={newOrgao.uf || ""} onChange={(e) => setNewOrgao({ ...newOrgao, uf: e.target.value.toUpperCase() })} />
+                    <datalist id="modal-ufs-list">
+                      {ufs.map((uf) => <option key={uf} value={uf} />)}
+                    </datalist>
                  </div>
                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">ID / UASG</label>
+                    <input type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500" placeholder="" value={newOrgao.uasg} onChange={(e) => setNewOrgao({ ...newOrgao, uasg: e.target.value })} />
+                 </div>
+
+                 <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Portal Padrão</label>
-                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="Opcional" value={newOrgao.portal} onChange={(e) => setNewOrgao({ ...newOrgao, portal: e.target.value })} />
+                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="" value={newOrgao.portal} onChange={(e) => setNewOrgao({ ...newOrgao, portal: e.target.value })} />
                  </div>
               </div>
             </div>
@@ -240,14 +273,21 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
                   autoFocus
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                  <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">ID / UASG</label>
-                    <input type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500" placeholder="Opcional" value={editingOrgao.uasg} onChange={(e) => setEditingOrgao({ ...editingOrgao, uasg: e.target.value })} />
+                    <input type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500" placeholder="" value={editingOrgao.uasg} onChange={(e) => setEditingOrgao({ ...editingOrgao, uasg: e.target.value })} />
+                 </div>
+                 <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">UF</label>
+                    <input list="modal-ufs-list" maxLength={2} type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="" value={editingOrgao.uf || ""} onChange={(e) => setEditingOrgao({ ...editingOrgao, uf: e.target.value.toUpperCase() })} />
+                    <datalist id="modal-ufs-list">
+                      {ufs.map((uf) => <option key={uf} value={uf} />)}
+                    </datalist>
                  </div>
                  <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Portal Padrão</label>
-                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="Opcional" value={editingOrgao.portal} onChange={(e) => setEditingOrgao({ ...editingOrgao, portal: e.target.value })} />
+                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="" value={editingOrgao.portal} onChange={(e) => setEditingOrgao({ ...editingOrgao, portal: e.target.value })} />
                  </div>
               </div>
             </div>
@@ -261,3 +301,9 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
     </div>
   );
 }
+
+
+
+
+
+

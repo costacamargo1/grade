@@ -8,6 +8,30 @@ const orgaoHeaderMapping: { [key: string]: keyof Orgao } = {
   'NOME': 'nome',
   'UASG': 'uasg',
   'PORTAL': 'portal',
+  'UF': 'uf',
+};
+
+const sanitizeUf = (value: string): string => (
+  value.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 2)
+);
+
+const splitNomeUf = (nome: string): { base: string; uf: string } => {
+  if (!nome) return { base: '', uf: '' };
+  const parts = nome.split('/');
+  if (parts.length < 2) return { base: nome.trim(), uf: '' };
+  const possibleUf = parts[parts.length - 1].trim().toUpperCase();
+  if (/^[A-Z]{2}$/.test(possibleUf)) {
+    return { base: parts.slice(0, -1).join('/').trim(), uf: possibleUf };
+  }
+  return { base: nome.trim(), uf: '' };
+};
+
+const normalizeOrgao = (nome: string, uf: string): { nome: string; uf: string } => {
+  const parsed = splitNomeUf(nome);
+  const ufFinal = sanitizeUf(uf) || parsed.uf;
+  const base = parsed.base || nome.trim();
+  const nomeFinal = base ? `${base.toUpperCase()}${ufFinal ? ` / ${ufFinal}` : ''}` : '';
+  return { nome: nomeFinal, uf: ufFinal };
 };
 
 export const importOrgaosFromExcel = (file: File): Promise<Orgao[]> => {
@@ -55,13 +79,16 @@ export const importOrgaosFromExcel = (file: File): Promise<Orgao[]> => {
             newOrgao.nome = String(rowData[0] || '');
             newOrgao.uasg = String(rowData[1] || '');
             newOrgao.portal = String(rowData[2] || '');
+            newOrgao.uf = String(rowData[3] || '');
           }
           
           if (newOrgao.nome) { // Only add if it has a name
+            const normalized = normalizeOrgao(newOrgao.nome || '', newOrgao.uf || '');
             importedOrgaos.push({
-              nome: newOrgao.nome || '',
+              nome: normalized.nome,
               uasg: newOrgao.uasg || '',
               portal: newOrgao.portal || '',
+              uf: normalized.uf,
             });
           }
         }

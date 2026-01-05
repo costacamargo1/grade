@@ -1,6 +1,12 @@
 // lib/exportService.ts
 import * as XLSX from 'xlsx';
-import { ItemGrade, HeaderData, Resultado, Orgao, Produto } from './types';
+import { ItemGrade, HeaderData, Resultado, Orgao, Produto, AgendaRow } from './types';
+
+const getUfFromOrgaoNome = (nome: string): string => {
+    if (!nome) return "";
+    const match = nome.match(/\/\s*([A-Z]{2})\s*$/);
+    return match ? match[1] : "";
+};
 
 export const exportOrgaosToExcel = (orgaos: Orgao[]) => {
     // 1. Map data to desired column headers
@@ -8,6 +14,7 @@ export const exportOrgaosToExcel = (orgaos: Orgao[]) => {
         "NOME DO ÓRGÃO": o.nome,
         "UASG": o.uasg,
         "PORTAL": o.portal,
+        "UF": o.uf || getUfFromOrgaoNome(o.nome),
     }));
 
     // 2. Create worksheet
@@ -274,5 +281,51 @@ export const exportGradeItensToExcel = (itens: ItemGrade[]) => {
 
     const today = new Date().toISOString().slice(0, 10);
     const fileName = `GRADE-ITENS-${today}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+};
+
+export const exportAgendaToExcel = (rows: AgendaRow[], periodLabel: string) => {
+    const dataToExport = rows.map((row) => ({
+        "EMPRESA": row.empresa,
+        "EDITAL": row.edital,
+        "ORGAO": row.orgao,
+        "UF": row.uf,
+        "DATA": row.data,
+        "HORA": row.hora,
+        "PORTAL": row.portal,
+        "CODIGO DA GRADE": row.codigoGrade,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+
+    if (ws['!ref']) {
+        const objectMaxLength: any[] = [];
+        const range = XLSX.utils.decode_range(ws['!ref']);
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            let max = 0;
+            const headerCell = ws[XLSX.utils.encode_cell({ c: C, r: 0 })];
+            const header = headerCell ? headerCell.v.toString() : "";
+            max = header.length;
+
+            for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+                const cell_address = { c: C, r: R };
+                const cell_ref = XLSX.utils.encode_cell(cell_address);
+                if (ws[cell_ref] && ws[cell_ref].v) {
+                    const length = ws[cell_ref].v.toString().length;
+                    if (length > max) {
+                        max = length;
+                    }
+                }
+            }
+            objectMaxLength.push({ wch: max + 2 });
+        }
+        ws['!cols'] = objectMaxLength;
+    }
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Agenda");
+
+    const sanitizedPeriod = periodLabel.replace(/[^0-9-]+/g, "-");
+    const fileName = `AGENDA-${sanitizedPeriod}.xlsx`;
     XLSX.writeFile(wb, fileName);
 };

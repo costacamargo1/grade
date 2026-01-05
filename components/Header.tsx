@@ -1,4 +1,4 @@
-// components/Header.tsx
+﻿// components/Header.tsx
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { 
@@ -6,7 +6,7 @@ import {
   Plus, X, Save, Clock, CheckSquare, AlertCircle, Microscope, 
   DollarSign, ListOrdered, Mail, Send, CaseSensitive
 } from "lucide-react";
-import { logoMap, LISTA_PORTAIS, Orgao } from "../lib/data";
+import { logoMap, LISTA_PORTAIS, Orgao, ufs } from "../lib/data";
 import { formatarEdital, formatarDataInteligente } from "../lib/formatters";
 import { buscarOrgao, buscarOrgaoPorUasg } from "../lib/orgaoService";
 import DropdownModoDisputa from "./DropdownModoDisputa";
@@ -27,6 +27,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
   const [novoOrgaoNome, setNovoOrgaoNome] = useState("");
   const [novoOrgaoUasg, setNovoOrgaoUasg] = useState("");
   const [novoOrgaoPortal, setNovoOrgaoPortal] = useState("");
+  const [novoOrgaoUf, setNovoOrgaoUf] = useState("");
   
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarDate, setCalendarDate] = useState(new Date());
@@ -159,15 +160,35 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
   }, []);
 
   // --- LOCAL MODAL LOGIC ---
+  const sanitizeUf = (value: string): string => (
+    value.replace(/[^A-Za-z]/g, "").toUpperCase().slice(0, 2)
+  );
+
+  const splitNomeUf = (nome: string): { base: string; uf: string } => {
+    if (!nome) return { base: "", uf: "" };
+    const parts = nome.split("/");
+    if (parts.length < 2) return { base: nome.trim(), uf: "" };
+    const possibleUf = parts[parts.length - 1].trim().toUpperCase();
+    if (/^[A-Z]{2}$/.test(possibleUf)) {
+      return { base: parts.slice(0, -1).join("/").trim(), uf: possibleUf };
+    }
+    return { base: nome.trim(), uf: "" };
+  };
+
   const handleSalvarNovoOrgao = () => {
-    if (!novoOrgaoNome) return alert("O nome do órgão é obrigatório!");
-    
+    const parsed = splitNomeUf(novoOrgaoNome);
+    const uf = sanitizeUf(novoOrgaoUf) || parsed.uf;
+    const base = parsed.base || novoOrgaoNome;
+    const nomeFinal = base ? `${base.toUpperCase()}${uf ? ` / ${uf}` : ""}` : "";
+    if (!nomeFinal) return alert("O nome do ÇürgÇœo Ç¸ obrigatÇürio!");
+
     const novoOrgao: Orgao = {
-      nome: novoOrgaoNome.toUpperCase(),
+      nome: nomeFinal,
       uasg: novoOrgaoUasg,
-      portal: novoOrgaoPortal
+      portal: novoOrgaoPortal,
+      uf,
     };
-    
+
     setOrgaos((orgaos) => [...orgaos, novoOrgao]);
 
     setHeaderData({
@@ -176,10 +197,11 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
       uasgInput: novoOrgao.uasg,
       portalInput: novoOrgao.portal,
     });
-    
+
     setNovoOrgaoNome("");
     setNovoOrgaoUasg("");
     setNovoOrgaoPortal("");
+    setNovoOrgaoUf("");
     setShowModalOrgao(false);
   };
 
@@ -592,14 +614,23 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                   autoFocus
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                 <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">ID / UASG</label>
-                    <input type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500" placeholder="Opcional" value={novoOrgaoUasg} onChange={(e) => setNovoOrgaoUasg(e.target.value)} />
+              
+              <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">UF</label>
+                    <input list="modal-ufs-list" maxLength={2} type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="" value={novoOrgaoUf} onChange={(e) => setNovoOrgaoUf(e.target.value.toUpperCase())} />
+                    <datalist id="modal-ufs-list">
+                      {ufs.map((uf) => <option key={uf} value={uf} />)}
+                    </datalist>
                  </div>
                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">ID / UASG</label>
+                    <input type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500" placeholder="" value={novoOrgaoUasg} onChange={(e) => setNovoOrgaoUasg(e.target.value)} />
+                 </div>
+
+                 <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Portal Padrão</label>
-                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="Opcional" value={novoOrgaoPortal} onChange={(e) => setNovoOrgaoPortal(e.target.value)} />
+                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="" value={novoOrgaoPortal} onChange={(e) => setNovoOrgaoPortal(e.target.value)} />
                     <datalist id="modal-portais-list">
                       {LISTA_PORTAIS.map(p => <option key={p} value={p} />)}
                     </datalist>
@@ -616,3 +647,4 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
     </>
   );
 }
+
