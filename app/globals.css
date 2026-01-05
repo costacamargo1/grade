@@ -81,6 +81,10 @@ body {
     table input[type="text"], table input[type="number"] {
         border: none !important;
     }
+
+    td.bg-orange-100\/50 {
+        background-color: #e9e8e89d !important;
+    }
 }
 
 .react-resizable {
