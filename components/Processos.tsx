@@ -14,8 +14,32 @@ interface ProcessosProps {
   setActiveTab: (tab: Tab) => void;
 }
 
+const getUfFromOrgao = (orgao: string): string => {
+    if (!orgao) return '';
+    const parts = orgao.split('/');
+    if (parts.length > 1) {
+        const uf = parts[parts.length - 1].trim();
+        if (uf.length === 2 && uf === uf.toUpperCase()) {
+            return uf;
+        }
+    }
+    return '';
+};
+
+const getOrgaoName = (orgao: string): string => {
+    if (!orgao) return '';
+    const parts = orgao.split('/');
+    if (parts.length > 1) {
+        const lastPart = parts[parts.length - 1].trim();
+        if (lastPart.length === 2 && lastPart.toUpperCase() === lastPart) {
+            return parts.slice(0, -1).join('/').trim();
+        }
+    }
+    return orgao;
+};
+
 type SortConfig = {
-  key: keyof HeaderData;
+  key: keyof HeaderData | 'uf';
   direction: 'ascending' | 'descending';
 } | null;
 
@@ -54,8 +78,17 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
     let sortableItems = [...filteredProcessos];
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
-        const aVal = a.headerData[sortConfig.key];
-        const bVal = b.headerData[sortConfig.key];
+        const key = sortConfig.key;
+        let aVal, bVal;
+
+        if (key === 'uf') {
+            aVal = getUfFromOrgao(a.headerData.orgao);
+            bVal = getUfFromOrgao(b.headerData.orgao);
+        } else {
+            aVal = a.headerData[key as keyof HeaderData];
+            bVal = b.headerData[key as keyof HeaderData];
+        }
+
         if (aVal < bVal) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
         }
@@ -68,7 +101,7 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
     return sortableItems;
   }, [filteredProcessos, sortConfig]);
 
-  const requestSort = (key: keyof HeaderData) => {
+  const requestSort = (key: keyof HeaderData | 'uf') => {
     let direction: 'ascending' | 'descending' = 'ascending';
     if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
       direction = 'descending';
@@ -78,9 +111,10 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
   
   const headers = [
     { key: 'numeroGrade', label: 'Nº GRADE' },
+    { key: 'empresa', label: 'EMPRESA' },
     { key: 'edital', label: 'EDITAL' },
     { key: 'orgao', label: 'ÓRGÃO' },
-    { key: 'empresa', label: 'EMPRESA' },
+    { key: 'uf', label: 'UF' },
     { key: 'dataAbertura', label: 'DATA DE ABERTURA' },
     { key: 'dataEdicao', label: 'DATA DE EDIÇÃO' },
   ];
@@ -108,7 +142,7 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
                 <th 
                   key={key}
                   className="px-4 py-3 text-sm font-semibold uppercase text-left"
-                  onClick={() => requestSort(key as keyof HeaderData)}
+                  onClick={() => requestSort(key as keyof HeaderData | 'uf')}
                 >
                   <div className="flex items-center gap-2 cursor-pointer">
                     {label}
@@ -125,9 +159,10 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
             {sortedProcessos.map((processo) => (
               <tr key={processo.id} className="border-b border-slate-200 hover:bg-slate-50">
                 <td className="px-4 py-2 text-sm">{processo.headerData.numeroGrade}</td>
-                <td className="px-4 py-2 text-sm">{processo.headerData.edital}</td>
-                <td className="px-4 py-2 text-sm">{processo.headerData.orgao}</td>
                 <td className="px-4 py-2 text-sm">{processo.headerData.empresa}</td>
+                <td className="px-4 py-2 text-sm">{processo.headerData.edital}</td>
+                <td className="px-4 py-2 text-sm">{getOrgaoName(processo.headerData.orgao)}</td>
+                <td className="px-4 py-2 text-sm">{getUfFromOrgao(processo.headerData.orgao)}</td>
                 <td className="px-4 py-2 text-sm">{processo.headerData.dataAbertura}</td>
                 <td className="px-4 py-2 text-sm">{processo.headerData.dataEdicao}</td>
                 <td className="px-4 py-2 text-sm">
