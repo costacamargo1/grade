@@ -80,7 +80,7 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
         accept=".xlsx, .xls"
       />
       <div className="flex justify-between items-center mb-6 gap-4">
-        <div className="flex-grow">
+        <div className="grow">
             <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
               <Building2 size={24} className="text-blue-500"/>
               Gestão de Órgãos

@@ -154,6 +154,11 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
       sortableItems.sort((a, b) => {
         const aVal = a[sortConfig.key];
         const bVal = b[sortConfig.key];
+
+        if (aVal === bVal) return 0;
+        if (aVal == null) return 1;
+        if (bVal == null) return -1;
+        
         if (aVal < bVal) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
         }
@@ -204,7 +209,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
       return (
         <input
           type={isNumeric ? 'number' : 'text'}
-          value={value}
+          value={value ?? ''}
           onChange={(e) => handleInputChange(row.id, field, e.target.value)}
           className="w-full px-2 py-1 border rounded-md bg-slate-50 uppercase"
           step={isNumeric ? "0.0001" : undefined}
@@ -213,15 +218,15 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
     }
     
     let formattedValue: any = value;
-    if (field === 'quantidade') formattedValue = formatQuantity(value);
-    if (['minimoCotacao', 'nossoPreco', 'precoConcorrente'].includes(field)) formattedValue = formatCurrency(value);
+    if (field === 'quantidade') formattedValue = formatQuantity(value ?? '');
+    if (['minimoCotacao', 'nossoPreco', 'precoConcorrente'].includes(field)) formattedValue = formatCurrency(value ?? '');
     if (field === 'data' && typeof value === 'string') formattedValue = new Date(value).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
     
     const isPriceBold = (row.status === 'ganho' && field === 'nossoPreco') || (row.status === 'perdido' && field === 'precoConcorrente');
     
     if (field === 'empresa') {
-        const style = getCompanyStyle(value as string);
-        return <span style={style} className="w-full block font-bold px-2 py-1 rounded-sm uppercase">{formattedValue}</span>;
+        const style = getCompanyStyle(String(value ?? ''));
+        return <span style={style} className="w-full block font-bold px-2 py-1 rounded-sm uppercase">{String(formattedValue ?? '')}</span>;
     }
 
     return <span className={`w-full block px-2 py-1 uppercase ${isPriceBold ? 'font-bold' : ''} ${row.status === 'perdido' && field === 'precoConcorrente' ? 'text-red-600' : ''}`}>{formattedValue}</span>;
@@ -300,7 +305,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
             </button>
         </div>
       </div>
-      <div className="overflow-auto flex-grow">
+      <div className="overflow-auto grow">
         <table className="w-full bg-white border-2 border-slate-200 rounded-lg">
           <thead className="bg-slate-800 text-white select-none sticky top-0 z-10">
             <tr>
