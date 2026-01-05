@@ -572,7 +572,7 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
       precoConcorrente: precoConcorrente,
       concorrente: concorrente,
       marca: marcaConcorrente,
-      webCotacao: '',
+      webCotacao: headerData.webCotacao,
       minimoCotacao: '',
     };
 

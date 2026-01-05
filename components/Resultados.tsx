@@ -223,7 +223,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
         return <span style={style} className="w-full block font-bold px-2 py-1 rounded-sm uppercase">{formattedValue}</span>;
     }
 
-    return <span className={`w-full block px-2 py-1 uppercase ${isPriceBold ? 'font-bold' : ''}`}>{formattedValue}</span>;
+    return <span className={`w-full block px-2 py-1 uppercase ${isPriceBold ? 'font-bold' : ''} ${row.status === 'perdido' && field === 'precoConcorrente' ? 'text-red-600' : ''}`}>{formattedValue}</span>;
   };
 
   const tableHeaders: { key: keyof Resultado | 'actions', label: string | React.ReactNode }[] = [
