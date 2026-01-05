@@ -92,6 +92,11 @@ export interface Produto {
   valorInicial: string;
   codeuro: string;
   apresentacaoSugerida: string;
+  obs: string;
+  cap: boolean;
+  conv8702: boolean;
+  conv16294: boolean;
+  conv14001: boolean;
 }
 
 export interface CompanyConfig {

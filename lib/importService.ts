@@ -85,6 +85,11 @@ const produtoHeaderMapping: { [key: string]: keyof Produto } = {
   'CODEURO': 'codeuro',
   'APRESENTAÇÃO SUGERIDA': 'apresentacaoSugerida',
   'APRESENTACAO SUGERIDA': 'apresentacaoSugerida',
+  'OBS': 'obs',
+  'CAP 21,53%': 'cap',
+  'CONV. 87/02': 'conv8702',
+  'CONV. 162/94': 'conv16294',
+  'CONV. 140/01': 'conv14001',
 };
 
 export const importProdutosFromExcel = (file: File): Promise<Produto[]> => {
@@ -111,6 +116,11 @@ export const importProdutosFromExcel = (file: File): Promise<Produto[]> => {
         const mappedHeaders: (keyof Produto | null)[] = headerRow.map((h: string) => produtoHeaderMapping[String(h).toUpperCase()] || null);
 
         const importedProdutos: Produto[] = [];
+        const parseBool = (value: any): boolean => {
+          if (value === undefined || value === null) return false;
+          const normalized = String(value).trim().toUpperCase();
+          return normalized === 'SIM' || normalized === 'S' || normalized === '1' || normalized === 'TRUE';
+        };
 
         for (let i = 1; i < json.length; i++) {
           const rowData = json[i];
@@ -120,12 +130,21 @@ export const importProdutosFromExcel = (file: File): Promise<Produto[]> => {
 
           const newProduto: Partial<Produto> = {
             id: `${Date.now()}-${i}`,
+            obs: '',
+            cap: false,
+            conv8702: false,
+            conv16294: false,
+            conv14001: false,
           };
 
           mappedHeaders.forEach((key, index) => {
             if (key) {
               const value = rowData[index];
-              (newProduto as any)[key] = value !== undefined && value !== null ? String(value) : '';
+              if (key === 'cap' || key === 'conv8702' || key === 'conv16294' || key === 'conv14001') {
+                (newProduto as any)[key] = parseBool(value);
+              } else {
+                (newProduto as any)[key] = value !== undefined && value !== null ? String(value) : '';
+              }
             }
           });
 
@@ -136,6 +155,11 @@ export const importProdutosFromExcel = (file: File): Promise<Produto[]> => {
             newProduto.valorInicial = String(rowData[3] || '');
             newProduto.codeuro = String(rowData[4] || '');
             newProduto.apresentacaoSugerida = String(rowData[5] || '');
+            newProduto.obs = String(rowData[6] || '');
+            newProduto.cap = parseBool(rowData[7]);
+            newProduto.conv8702 = parseBool(rowData[8]);
+            newProduto.conv16294 = parseBool(rowData[9]);
+            newProduto.conv14001 = parseBool(rowData[10]);
           }
 
           if (
@@ -154,6 +178,11 @@ export const importProdutosFromExcel = (file: File): Promise<Produto[]> => {
               valorInicial: newProduto.valorInicial || '',
               codeuro: newProduto.codeuro || '',
               apresentacaoSugerida: newProduto.apresentacaoSugerida || '',
+              obs: newProduto.obs || '',
+              cap: Boolean(newProduto.cap),
+              conv8702: Boolean(newProduto.conv8702),
+              conv16294: Boolean(newProduto.conv16294),
+              conv14001: Boolean(newProduto.conv14001),
             });
           }
         }

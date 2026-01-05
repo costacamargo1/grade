@@ -101,13 +101,26 @@ export const exportResultadosToExcel = (resultados: Resultado[]) => {
 };
 
 export const exportProdutosToExcel = (produtos: Produto[]) => {
+    const getObsText = (produto: Produto): string => {
+        const hasConv = produto.conv8702 || produto.conv16294 || produto.conv14001;
+        if (produto.cap && hasConv) return "PMVG 0%";
+        if (produto.cap) return "PMVG DESTINO";
+        if (hasConv) return "PF 0%";
+        return "";
+    };
+
     const dataToExport = produtos.map((p) => ({
         "FABRICANTE": p.fabricante,
-        "DESCRIÇÃO": p.descricao,
+        "DESCRI??O": p.descricao,
         "UNIDADE": p.unidade,
         "VALOR INICIAL": p.valorInicial,
         "CODEURO": p.codeuro,
-        "APRESENTAÇÃO SUGERIDA": p.apresentacaoSugerida,
+        "APRESENTA??O SUGERIDA": p.apresentacaoSugerida,
+        "OBS": getObsText(p),
+        "CAP 21,53%": p.cap ? "SIM" : "NAO",
+        "CONV. 87/02": p.conv8702 ? "SIM" : "NAO",
+        "CONV. 162/94": p.conv16294 ? "SIM" : "NAO",
+        "CONV. 140/01": p.conv14001 ? "SIM" : "NAO",
     }));
 
     const ws = XLSX.utils.json_to_sheet(dataToExport);
