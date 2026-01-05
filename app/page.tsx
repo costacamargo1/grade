@@ -1,24 +1,28 @@
 "use client";
 import { useState, useRef } from 'react';
-import { ItemGrade, HeaderData, Orgao, Resultado } from '../lib/types';
+import { ItemGrade, HeaderData, Orgao, Resultado, Processo } from '../lib/types';
 import Header from '../components/Header';
 import Grid from '../components/Grid';
 import Orgaos from '../components/Orgaos';
 import Resultados from '../components/Resultados';
-import { Download, Printer } from 'lucide-react';
+import Processos from '../components/Processos';
+import { Download, Printer, Save, FilePlus } from 'lucide-react';
 import { exportToExcel } from '../lib/exportService';
 import DropdownEmpresa from '../components/DropdownEmpresa';
 
-type Tab = 'grade' | 'orgaos' | 'resultados';
+type Tab = 'grade' | 'orgaos' | 'resultados' | 'processos';
 
 export default function Home() {
   const [itens, setItens] = useState<ItemGrade[]>([]);
   const [orgaos, setOrgaos] = useState<Orgao[]>([]);
   const [resultados, setResultados] = useState<Resultado[]>([]);
+  const [processos, setProcessos] = useState<Processo[]>([]);
   const [headerData, setHeaderData] = useState<HeaderData>({
     edital: "",
     orgao: "",
     dataAbertura: "",
+    numeroGrade: "",
+    dataEdicao: "",
     empresa: "UNIQUE",
     portalInput: "",
     uasgInput: "",
@@ -42,6 +46,73 @@ export default function Home() {
     window.print();
   };
 
+  const handleNovaGrade = () => {
+    if (window.confirm('Tem certeza que deseja criar uma nova grade? As informações não salvas serão perdidas.')) {
+      setHeaderData({
+        edital: "",
+        orgao: "",
+        dataAbertura: "",
+        numeroGrade: "",
+        dataEdicao: "",
+        empresa: headerData.empresa, // Manter a empresa selecionada
+        portalInput: "",
+        uasgInput: "",
+        judicialInput: "NÃO",
+        modoDisputa: "",
+        webCotacao: "",
+        logoInput: headerData.empresa, // Manter a empresa selecionada
+        cadastro: "",
+        conferencia: "",
+        disputa: "",
+        proposta: "",
+        dataCadastro: "",
+        dataConferencia: "",
+        dataDisputa: "",
+        dataPropostaReajustada: "",
+        localEnvio: "PORTAL",
+        prazoEnvio: "",
+        cortaNoEstimado: "NAO",
+        disputaPorValor: "UNITARIO",
+        casasDecimais: "2",
+        amostra: "NAO",
+        observacoes: "",
+      });
+      setItens([]);
+    }
+  };
+
+  const handleGerarProcesso = () => {
+    const existingGrades = new Set(processos.map(p => parseInt(p.headerData.numeroGrade, 10)).filter(n => !isNaN(n)));
+    let newGrade = 1;
+    while (existingGrades.has(newGrade)) {
+      newGrade++;
+    }
+
+    if (newGrade > 999999) {
+      alert("Limite de grades atingido!");
+      return;
+    }
+
+    const newNumeroGrade = String(newGrade);
+    const dataEdicao = new Date().toLocaleDateString('pt-BR');
+
+    const newHeaderData = {
+      ...headerData,
+      numeroGrade: newNumeroGrade,
+      dataEdicao: dataEdicao,
+    };
+
+    const newProcesso: Processo = {
+      id: Date.now().toString(),
+      headerData: newHeaderData,
+      itens: itens,
+    };
+
+    setHeaderData(newHeaderData);
+    setProcessos([...processos, newProcesso]);
+    setActiveTab('processos');
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'grade':
@@ -50,6 +121,8 @@ export default function Home() {
         return <Orgaos orgaos={orgaos} setOrgaos={setOrgaos} />;
       case 'resultados':
         return <Resultados resultados={resultados} setResultados={setResultados} />;
+      case 'processos':
+        return <Processos processos={processos} setProcessos={setProcessos} setHeaderData={setHeaderData} setItens={setItens} setActiveTab={setActiveTab} />;
       default:
         return null;
     }
@@ -83,6 +156,9 @@ export default function Home() {
                 <button onClick={() => setActiveTab('resultados')} className={tabButtonClasses('resultados')}>
                     RESULTADOS
                 </button>
+                <button onClick={() => setActiveTab('processos')} className={tabButtonClasses('processos')}>
+                    PROCESSOS
+                </button>
             </div>
 
             {/* Container for DropdownEmpresa and Export Button */}
@@ -97,17 +173,31 @@ export default function Home() {
                 {activeTab === 'grade' && (
                     <>
                         <button
-                            onClick={handleExport}
-                            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                            onClick={handleNovaGrade}
+                            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                         >
-                            <Download size={18} />
+                            <FilePlus size={16} />
+                            Nova Grade
+                        </button>
+                        <button
+                            onClick={handleGerarProcesso}
+                            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        >
+                            <Save size={16} />
+                            Gerar Processo
+                        </button>
+                        <button
+                            onClick={handleExport}
+                            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        >
+                            <Download size={16} />
                             Exportar para Excel
                         </button>
                         <button
                           onClick={handlePrint}
-                          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                         >
-                          <Printer size={18} />
+                          <Printer size={16} />
                           Imprimir / PDF
                         </button>
                     </>
@@ -117,7 +207,7 @@ export default function Home() {
 
         <div ref={printableComponentRef} className="space-y-6">
             {/* 1. O CABEÇALHO INTELIGENTE */}
-            {activeTab !== 'resultados' && (
+            {activeTab !== 'resultados' && activeTab !== 'processos' && (
               <div className={activeTab !== 'grade' ? 'print:hidden' : ''}>
                   <Header headerData={headerData} setHeaderData={setHeaderData} orgaos={orgaos} setOrgaos={setOrgaos} />
               </div>

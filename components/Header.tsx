@@ -239,7 +239,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                   <input 
                     type="text" 
                     placeholder="dd/mm/aaaa - hh:mm" 
-                    className="w-50 pl-2 pr-5 py-2 bg-yellow-50/50 border border-yellow-200 print:border-black rounded-lg text-sm font-bold text-slate-700 print:text-black focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all placeholder:text-slate-400 uppercase"
+                    className="w-full pl-2 pr-8 py-2 bg-yellow-50/50 border border-yellow-200 print:border-black rounded-lg text-sm font-bold text-slate-700 print:text-black focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all placeholder:text-slate-400 uppercase"
                     value={headerData.dataAbertura}
                     onChange={(e) => updateHeader("dataAbertura", e.target.value)}
                     onBlur={handleBlurData}
@@ -262,6 +262,20 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                        </div>
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* Nº GRADE */}
+              <div className="md:col-span-2 group">
+                <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase tracking-wider mb-1 block">Nº Grade</label>
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    readOnly
+                    placeholder="-" 
+                    className="w-full pl-2 pr-2 py-2 bg-slate-50 border border-slate-200 print:border-black rounded-lg text-sm font-semibold text-slate-700 print:text-black focus:outline-none transition-all placeholder:text-slate-300 text-center"
+                    value={headerData.numeroGrade}
+                  />
                 </div>
               </div>
             </div>

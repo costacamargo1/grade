@@ -23,6 +23,8 @@ export interface HeaderData {
   edital: string;
   orgao: string;
   dataAbertura: string;
+  numeroGrade: string;
+  dataEdicao: string;
   empresa: string;
   portalInput: string;
   uasgInput: string;
@@ -84,5 +86,12 @@ export interface Resultado {
 export interface CompanyConfig {
   name: string;
   color: string;
-  fontColor?: string;
-}
+    fontColor?: string;
+  }
+  
+  export interface Processo {
+    id: string;
+    headerData: HeaderData;
+    itens: ItemGrade[];
+  }
+  
