@@ -283,7 +283,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
             {/* PARTE 2: DADOS SECUNDÁRIOS (Portal, ID, Judicial, Web) */}
             <div className="grid grid-cols-2 md:grid-cols-15 gap-3 bg-slate-50/50 p-3 rounded-xl border border-slate-100 print:border-black border-dashed items-end">
               
-              <div className="relative group md:col-span-4">
+              <div className="relative group md:col-span-4  max-w-[240px]">
                  <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">Portal</label>
                  <div className="flex items-center">
                     <Globe size={12} className="absolute left-0 text-slate-300 print:text-black" />
@@ -301,7 +301,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                  </div>
               </div>
 
-              <div className="relative group md:col-span-2">
+              <div className="relative group md:col-span-2 -ml-10 max-w-[80px]">
                  <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">ID / UASG</label>
                  <div className="flex items-center">
                     <Hash size={12} className="absolute left-0 text-slate-300 print:text-black" />
@@ -314,7 +314,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                  </div>
               </div>
 
-              <div className="relative group md:col-span-2">
+              <div className="relative group md:col-span-2 -ml-15 max-w-[100px]">
                  <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">Judicial</label>
                  <div className="flex items-center print-judicial-container">
                     <Gavel size={12} className="absolute left-0 text-red-300 print:text-black" />
