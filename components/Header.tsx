@@ -284,7 +284,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
             <div className="grid grid-cols-2 md:grid-cols-15 gap-3 bg-slate-50/50 p-3 rounded-xl border border-slate-100 print:border-black border-dashed items-end">
               
               <div className="relative group md:col-span-4">
-                 <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">Portal</label>
+                 <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">Portal</label>
                  <div className="flex items-center">
                     <Globe size={12} className="absolute left-0 text-slate-300 print:text-black" />
                     <input 
@@ -302,7 +302,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
               </div>
 
               <div className="relative group md:col-span-2">
-                 <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">ID / UASG</label>
+                 <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">ID / UASG</label>
                  <div className="flex items-center">
                     <Hash size={12} className="absolute left-0 text-slate-300 print:text-black" />
                     <input 
@@ -315,7 +315,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
               </div>
 
               <div className="relative group md:col-span-2">
-                 <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">Judicial</label>
+                 <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">Judicial</label>
                  <div className="flex items-center print-judicial-container">
                     <Gavel size={12} className="absolute left-0 text-red-300 print:text-black" />
                     <select
@@ -338,8 +338,8 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                 />
               </div>
               
-              <div className="relative group md:col-span-2">
-                 <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">WEB / Cotação</label>
+              <div className="relative group md:col-span-2 translate-x-3">
+                 <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase mb-0.5 block">WEB / Cotação</label>
                  <input
                    type="text"
                    className="w-full py-0.5 bg-transparent border-b border-slate-200 print:border-black focus:border-blue-500 text-xs font-bold text-slate-600 print:text-black focus:outline-none uppercase print-border-b"

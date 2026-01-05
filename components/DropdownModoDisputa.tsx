@@ -35,7 +35,7 @@ export default function DropdownModoDisputa({ value, onChange, onBlur }: Dropdow
   }, [isOpen, onBlur]);
 
   return (
-    <div className="relative w-full" ref={dropdownRef}>
+    <div className="relative w-38" ref={dropdownRef}>
       <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase mb-1 block">Modo de Disputa</label>
       <div className="relative">
         <input

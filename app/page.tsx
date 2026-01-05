@@ -209,36 +209,40 @@ export default function Home() {
 
                 {/* Botão de Exportação (condicional) */}
                 {activeTab === 'grade' && (
-                    <>
-                        <button
-                            onClick={handleNovaGrade}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                        >
-                            <FilePlus size={16} />
-                            Nova Grade
-                        </button>
-                        <button
-                            onClick={handleGerarProcesso}
-                            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                        >
-                            <Save size={16} />
-                            Gerar Processo
-                        </button>
-                        <button
-                            onClick={handleExport}
-                            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                        >
-                            <Download size={16} />
-                            Exportar para Excel
-                        </button>
-                        <button
-                          onClick={handlePrint}
-                          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                        >
-                          <Printer size={16} />
-                          Imprimir / PDF
-                        </button>
-                    </>
+                    <div className="flex gap-2">
+                        <div className="flex flex-col gap-2">
+                            <button
+                                onClick={handleNovaGrade}
+                                className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                            >
+                                <FilePlus size={16} />
+                                Nova Grade
+                            </button>
+                            <button
+                                onClick={handleGerarProcesso}
+                                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                            >
+                                <Save size={16} />
+                                Gerar Processo
+                            </button>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <button
+                                onClick={handleExport}
+                                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                            >
+                                <Download size={16} />
+                                Exportar para Excel
+                            </button>
+                            <button
+                              onClick={handlePrint}
+                              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                            >
+                              <Printer size={16} />
+                              Imprimir / PDF
+                            </button>
+                        </div>
+                    </div>
                 )}
             </div>
         </div>

@@ -71,16 +71,16 @@ export const LISTA_PORTAIS = [
  * Map for "Modo de Disputa" shortcuts.
  */
 export const MODO_DISPUTA_MAP = new Map<string, string>([
-  ["N", "Normal"],
-  ["A", "Aberto"],
-  ["AF", "Aberto e Fechado"],
-  ["FA", "Fechado e Aberto"]
+  ["N", "NORMAL"],
+  ["A", "ABERTO"],
+  ["AF", "ABERTO E FECHADO"],
+  ["FA", "FECHADO E ABERTO"]
 ]);
 
 /**
  * List of "Modo de Disputa" options for UI.
  */
-export const LISTA_MODOS = ["Normal", "Aberto", "Aberto e Fechado", "Fechado e Aberto", "Dispensa"];
+export const LISTA_MODOS = ["NORMAL", "ABERTO", "ABERTO E FECHADO", "FECHADO E ABERTO", "DISPENSA"];
 
 /**
  * Map for "Ação Judicial" shortcuts.
