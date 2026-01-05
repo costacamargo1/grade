@@ -1,6 +1,80 @@
 // lib/importService.ts
 import * as XLSX from 'xlsx';
-import { Resultado } from './types';
+import { Resultado, Orgao } from './types';
+
+const orgaoHeaderMapping: { [key: string]: keyof Orgao } = {
+  'NOME DO ÓRGÃO': 'nome',
+  'ÓRGÃO': 'nome',
+  'NOME': 'nome',
+  'UASG': 'uasg',
+  'PORTAL': 'portal',
+};
+
+export const importOrgaosFromExcel = (file: File): Promise<Orgao[]> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      try {
+        const data = e.target?.result;
+        if (!data) {
+          reject(new Error("File data is empty."));
+          return;
+        }
+        const workbook = XLSX.read(data, { type: 'binary' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const json: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        if (json.length < 2) {
+            resolve([]);
+            return;
+        }
+
+        const headerRow = json[0];
+        const mappedHeaders: (keyof Orgao | null)[] = headerRow.map((h: string) => orgaoHeaderMapping[h.toUpperCase()] || null);
+        
+        const importedOrgaos: Orgao[] = [];
+
+        for (let i = 1; i < json.length; i++) {
+          const rowData = json[i];
+          if (!rowData || rowData.length === 0 || !rowData[0]) {
+            continue; // Skip empty rows
+          }
+
+          const newOrgao: Partial<Orgao> = {};
+
+          mappedHeaders.forEach((key, index) => {
+            if (key) {
+              const value = rowData[index];
+              (newOrgao as any)[key] = value !== undefined && value !== null ? String(value) : '';
+            }
+          });
+
+          // Fallback if headers are not found, assume order: NOME, UASG, PORTAL
+          if (mappedHeaders.every(h => h === null)) {
+            newOrgao.nome = String(rowData[0] || '');
+            newOrgao.uasg = String(rowData[1] || '');
+            newOrgao.portal = String(rowData[2] || '');
+          }
+          
+          if (newOrgao.nome) { // Only add if it has a name
+            importedOrgaos.push({
+              nome: newOrgao.nome || '',
+              uasg: newOrgao.uasg || '',
+              portal: newOrgao.portal || '',
+            });
+          }
+        }
+
+        resolve(importedOrgaos);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.onerror = (error) => reject(error);
+    reader.readAsBinaryString(file);
+  });
+};
 
 const headerMapping: { [key: string]: keyof Resultado } = {
   'EMPRESA': 'empresa',

@@ -1,6 +1,50 @@
 // lib/exportService.ts
 import * as XLSX from 'xlsx';
-import { ItemGrade, HeaderData, Resultado } from './types';
+import { ItemGrade, HeaderData, Resultado, Orgao } from './types';
+
+export const exportOrgaosToExcel = (orgaos: Orgao[]) => {
+    // 1. Map data to desired column headers
+    const dataToExport = orgaos.map(o => ({
+        "NOME DO ÓRGÃO": o.nome,
+        "UASG": o.uasg,
+        "PORTAL": o.portal,
+    }));
+
+    // 2. Create worksheet
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+
+    // 3. Auto-fit columns
+    const objectMaxLength: any[] = [];
+    const range = XLSX.utils.decode_range(ws['!ref']!);
+    for(let C = range.s.c; C <= range.e.c; ++C) {
+        let max = 0;
+        const headerCell = ws[XLSX.utils.encode_cell({c:C, r:0})];
+        const header = headerCell ? headerCell.v : ""; // Get header
+        max = header.length; // Start with header length
+
+        for(let R = range.s.r + 1; R <= range.e.r; ++R) {
+            const cell_address = {c:C, r:R};
+            const cell_ref = XLSX.utils.encode_cell(cell_address);
+            if(ws[cell_ref] && ws[cell_ref].v) {
+                const length = ws[cell_ref].v.toString().length;
+                if(length > max) {
+                    max = length;
+                }
+            }
+        }
+        objectMaxLength.push({wch: max + 2}); // +2 for padding
+    }
+    ws['!cols'] = objectMaxLength;
+
+    // 4. Create workbook and append sheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Órgãos");
+
+    // 5. Trigger download
+    const today = new Date().toISOString().slice(0, 10);
+    const fileName = `ORGAOS-${today}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+};
 // ... (rest of the file)
 export const exportResultadosToExcel = (resultados: Resultado[]) => {
     // 1. Map data to desired column headers and format

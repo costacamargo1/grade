@@ -1,17 +1,20 @@
 // components/Orgaos.tsx
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Orgao } from '../lib/types';
-import { Building2, Globe, Hash, Trash2, Edit, X, Save } from 'lucide-react';
+import { Building2, Globe, Hash, Trash2, Edit, X, Save, Upload, Download } from 'lucide-react';
+import { importOrgaosFromExcel } from '../lib/importService';
+import { exportOrgaosToExcel } from '../lib/exportService';
 
 interface OrgaosProps {
   orgaos: Orgao[];
-  setOrgaos: (orgaos: Orgao[]) => void;
+  setOrgaos: (orgaos: Orgao[] | ((current: Orgao[]) => Orgao[])) => void;
 }
 
 export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingOrgao, setEditingOrgao] = useState<Orgao | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDelete = (index: number) => {
     const newOrgaos = [...orgaos];
@@ -35,22 +38,79 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
       setEditingIndex(null);
     }
   };
+
+  const handleExport = () => {
+    exportOrgaosToExcel(orgaos);
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      try {
+        const importedOrgaos = await importOrgaosFromExcel(file);
+        setOrgaos(currentOrgaos => {
+          const existingNames = new Set(currentOrgaos.map(o => o.nome.toUpperCase()));
+          const newOrgaos = importedOrgaos.filter(io => !existingNames.has(io.nome.toUpperCase()));
+          return [...currentOrgaos, ...newOrgaos];
+        });
+        alert(`${importedOrgaos.length} órgãos importados com sucesso!`);
+      } catch (error) {
+        console.error("Erro ao importar órgãos:", error);
+        alert("Ocorreu um erro ao importar o arquivo. Verifique o console para mais detalhes.");
+      } finally {
+        // Reset file input
+        if(fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      }
+    }
+  };
   
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 lg:p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-          <Building2 size={24} className="text-blue-500"/>
-          Gestão de Órgãos
-        </h2>
-        <span className="text-sm font-semibold bg-blue-100 text-blue-700 px-3 py-1 rounded-full">{orgaos.length} órgãos cadastrados</span>
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        onChange={handleFileImport}
+        className="hidden" 
+        accept=".xlsx, .xls"
+      />
+      <div className="flex justify-between items-center mb-6 gap-4">
+        <div className="flex-grow">
+            <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+              <Building2 size={24} className="text-blue-500"/>
+              Gestão de Órgãos
+            </h2>
+            <p className="text-sm text-slate-500 mt-1">{orgaos.length} órgãos cadastrados</p>
+        </div>
+        <div className="flex items-center gap-2">
+            <button
+              onClick={handleImportClick}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+            >
+              <Upload size={16} />
+              Importar
+            </button>
+            <button
+              onClick={handleExport}
+              disabled={orgaos.length === 0}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
+            >
+              <Download size={16} />
+              Exportar
+            </button>
+        </div>
       </div>
 
       {orgaos.length === 0 ? (
         <div className="text-center py-16 border-2 border-dashed border-slate-200 rounded-xl">
           <Building2 size={48} className="mx-auto text-slate-300" />
           <h3 className="mt-4 text-lg font-semibold text-slate-600">Nenhum órgão cadastrado</h3>
-          <p className="text-slate-400 mt-1">Use o botão "+" no cabeçalho para adicionar um novo órgão.</p>
+          <p className="text-slate-400 mt-1">Use o botão "Importar" ou o "+" no cabeçalho para adicionar um novo órgão.</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
