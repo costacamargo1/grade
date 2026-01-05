@@ -83,6 +83,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
         uf: '',
         pregao: '',
         data: new Date().toISOString().split('T')[0],
+        observacoes: '',
         status: 'neutro',
     };
     setResultados([newRow, ...resultados]);
@@ -241,6 +242,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
     { key: "uf", label: "UF" },
     { key: "pregao", label: "PREGÃO" },
     { key: "data", label: "DATA" },
+    { key: "observacoes", label: "OBSERVAÇÕES" },
     { key: "actions", label: "AÇÕES" },
   ];
   const fieldMapping: (keyof Omit<Resultado, 'id' | 'actions' | 'status'>)[] = tableHeaders.map(h => h.key).filter(k => !['actions', 'status'].includes(k as string)) as any;

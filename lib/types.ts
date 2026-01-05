@@ -80,6 +80,7 @@ export interface Resultado {
   uf: string;
   pregao: string;
   data: string;
+  observacoes?: string;
   status: 'ganho' | 'perdido' | 'neutro';
 }
 

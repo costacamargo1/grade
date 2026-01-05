@@ -94,6 +94,7 @@ const headerMapping: { [key: string]: keyof Resultado } = {
   'UF': 'uf',
   'PREGÃO': 'pregao',
   'DATA': 'data',
+  'OBSERVAÇÕES': 'observacoes',
   'STATUS': 'status',
 };
 

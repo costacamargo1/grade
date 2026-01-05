@@ -61,6 +61,7 @@ export const exportResultadosToExcel = (resultados: Resultado[]) => {
         "ÓRGÃO": r.orgao,
         "PREGÃO": r.pregao,
         "DATA": new Date(r.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
+        "OBSERVAÇÕES": r.observacoes,
         "STATUS": r.status,
     }));
 
