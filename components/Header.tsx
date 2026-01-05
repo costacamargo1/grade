@@ -478,7 +478,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                     {/* Seção de Regras de Valor */}
                     <div className="grid grid-cols-2 gap-2">
                         <div>
-                            <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase block mb-0.5">Corta Estimado?</label>
+                            <label className="text-[9px] font-bold text-slate-400 print:text-black uppercase block mb-0.5">Corta no Estimado?</label>
                             <select 
                                 className="w-full bg-white border border-amber-200 print:border-black rounded px-1 py-1 text-xs font-bold text-slate-700 print:text-black outline-none"
                                 value={headerData.cortaNoEstimado || 'NAO'}
