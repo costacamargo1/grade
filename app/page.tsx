@@ -82,35 +82,62 @@ export default function Home() {
   };
 
   const handleGerarProcesso = () => {
-    const existingGrades = new Set(processos.map(p => parseInt(p.headerData.numeroGrade, 10)).filter(n => !isNaN(n)));
-    let newGrade = 1;
-    while (existingGrades.has(newGrade)) {
-      newGrade++;
+    const isEditing = headerData.numeroGrade && headerData.numeroGrade !== "";
+
+    if (isEditing) {
+        const dataEdicao = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const updatedHeaderData = {
+            ...headerData,
+            dataEdicao: dataEdicao,
+        };
+
+        const updatedProcessos = processos.map(p => {
+            if (p.headerData.numeroGrade === headerData.numeroGrade) {
+                return {
+                    ...p, // preserve original id
+                    headerData: updatedHeaderData,
+                    itens: itens, // update itens
+                };
+            }
+            return p;
+        });
+
+        setHeaderData(updatedHeaderData);
+        setProcessos(updatedProcessos);
+        setActiveTab('processos');
+
+    } else {
+        // We are creating a new one - original logic
+        const existingGrades = new Set(processos.map(p => parseInt(p.headerData.numeroGrade, 10)).filter(n => !isNaN(n)));
+        let newGrade = 1;
+        while (existingGrades.has(newGrade)) {
+          newGrade++;
+        }
+
+        if (newGrade > 999999) {
+          alert("Limite de grades atingido!");
+          return;
+        }
+
+        const newNumeroGrade = String(newGrade);
+        const dataEdicao = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+        const newHeaderData = {
+          ...headerData,
+          numeroGrade: newNumeroGrade,
+          dataEdicao: dataEdicao,
+        };
+
+        const newProcesso: Processo = {
+          id: Date.now().toString(),
+          headerData: newHeaderData,
+          itens: itens,
+        };
+
+        setHeaderData(newHeaderData);
+        setProcessos([...processos, newProcesso]);
+        setActiveTab('processos');
     }
-
-    if (newGrade > 999999) {
-      alert("Limite de grades atingido!");
-      return;
-    }
-
-    const newNumeroGrade = String(newGrade);
-    const dataEdicao = new Date().toLocaleDateString('pt-BR');
-
-    const newHeaderData = {
-      ...headerData,
-      numeroGrade: newNumeroGrade,
-      dataEdicao: dataEdicao,
-    };
-
-    const newProcesso: Processo = {
-      id: Date.now().toString(),
-      headerData: newHeaderData,
-      itens: itens,
-    };
-
-    setHeaderData(newHeaderData);
-    setProcessos([...processos, newProcesso]);
-    setActiveTab('processos');
   };
 
   const renderContent = () => {
