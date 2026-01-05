@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { 
   Building2, Calendar, Search, Globe, Gavel, FileText, Hash, 
   Plus, X, Save, Clock, CheckSquare, AlertCircle, Microscope, 
-  DollarSign, ListOrdered, Mail, Send
+  DollarSign, ListOrdered, Mail, Send, CaseSensitive
 } from "lucide-react";
 import { logoMap, LISTA_PORTAIS, Orgao } from "../lib/data";
 import { formatarEdital, formatarDataInteligente } from "../lib/formatters";
@@ -32,6 +32,15 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [time, setTime] = useState({ hour: '09', minute: '00' });
   const calendarRef = useRef<HTMLDivElement>(null);
+
+  const [obsFontSize, setObsFontSize] = useState('text-xs');
+  const fontSizes = ['text-xs', 'text-sm', 'text-base', 'text-lg'];
+
+  const toggleObsFontSize = () => {
+    const currentIndex = fontSizes.indexOf(obsFontSize);
+    const nextIndex = (currentIndex + 1) % fontSizes.length;
+    setObsFontSize(fontSizes[nextIndex]);
+  };
 
   // --- DERIVED STATE ---
   const empresa = logoMap.get(headerData.empresa.toUpperCase()) || "UNIQUE";
@@ -523,11 +532,20 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
 
         {/* PARTE 4: OBSERVAÇÕES (RODAPÉ) */}
         <div className="mt-4 pt-3 border-t border-slate-100 print:border-black">
-            <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase mb-1 flex items-center gap-2">
+        <div className="flex justify-between items-center mb-1">
+            <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase flex items-center gap-2">
                 <AlertCircle size={12} className="print:text-black" /> Observações
             </label>
+            <button 
+                onClick={toggleObsFontSize}
+                className="text-slate-400 hover:text-blue-500 transition-colors p-1 rounded-md hover:bg-slate-100 print:hidden"
+                title="Alterar tamanho da fonte"
+            >
+                <CaseSensitive size={14} />
+            </button>
+        </div>
             <textarea 
-                className="w-full bg-slate-50 border border-slate-200 print:border-black rounded-lg p-3 text-xs text-slate-700 print:text-black font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 min-h-[60px] resize-y placeholder:text-slate-300"
+                className={`w-full bg-slate-50 border border-slate-200 print:border-black rounded-lg p-3 ${obsFontSize} text-slate-700 print:text-black font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 min-h-[60px] resize-y placeholder:text-slate-300`}
                 placeholder="Campo de observações..."
                 value={headerData.observacoes || ''}
                 onChange={(e) => updateHeader("observacoes", e.target.value)}

@@ -119,6 +119,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 onChange={(e) =>
                     props.handleQuantityChange(item.id, e.target.value)
                 }
+                size={props.formatQuantity(item.quantidade).length || 1}
                 />
             </td>
             <td className="p-1 border-r border-slate-200 print:border-black">
@@ -645,7 +646,7 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
                 <th className="p-2 border-r border-gray-600 w-24 text-center">
                   Marca
                 </th>
-                <th className="p-2 border-r border-gray-600 w-16 text-center">
+                <th className="p-2 border-r border-gray-600 text-center">
                   Qtd
                 </th>
                 <th className="p-2 border-r border-gray-600 w-24 text-center">
