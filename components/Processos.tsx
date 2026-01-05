@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { Processo, HeaderData, ItemGrade } from '../lib/types';
 import { Edit, Trash2, Search, ChevronUp, ChevronDown } from 'lucide-react';
 
-type Tab = 'grade' | 'orgaos' | 'resultados' | 'processos';
+type Tab = 'grade' | 'orgaos' | 'resultados' | 'processos' | 'produtos';
 
 interface ProcessosProps {
   processos: Processo[];

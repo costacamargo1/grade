@@ -1,22 +1,24 @@
 "use client";
 import { useState, useRef } from 'react';
-import { ItemGrade, HeaderData, Orgao, Resultado, Processo } from '../lib/types';
+import { ItemGrade, HeaderData, Orgao, Resultado, Processo, Produto } from '../lib/types';
 import Header from '../components/Header';
 import Grid from '../components/Grid';
 import Orgaos from '../components/Orgaos';
 import Resultados from '../components/Resultados';
 import Processos from '../components/Processos';
+import Produtos from '../components/Produtos';
 import { Download, Printer, Save, FilePlus } from 'lucide-react';
 import { exportToExcel } from '../lib/exportService';
 import DropdownEmpresa from '../components/DropdownEmpresa';
 
-type Tab = 'grade' | 'orgaos' | 'resultados' | 'processos';
+type Tab = 'grade' | 'orgaos' | 'resultados' | 'processos' | 'produtos';
 
 export default function Home() {
   const [itens, setItens] = useState<ItemGrade[]>([]);
   const [orgaos, setOrgaos] = useState<Orgao[]>([]);
   const [resultados, setResultados] = useState<Resultado[]>([]);
   const [processos, setProcessos] = useState<Processo[]>([]);
+  const [produtos, setProdutos] = useState<Produto[]>([]);
   const [headerData, setHeaderData] = useState<HeaderData>({
     edital: "",
     orgao: "",
@@ -161,6 +163,8 @@ export default function Home() {
         return <Resultados resultados={resultados} setResultados={setResultados} />;
       case 'processos':
         return <Processos processos={processos} setProcessos={setProcessos} setHeaderData={setHeaderData} setItens={setItens} setActiveTab={setActiveTab} />;
+      case 'produtos':
+        return <Produtos produtos={produtos} setProdutos={setProdutos} />;
       default:
         return null;
     }
@@ -196,6 +200,9 @@ export default function Home() {
                 </button>
                 <button onClick={() => setActiveTab('processos')} className={tabButtonClasses('processos')}>
                     PROCESSOS
+                </button>
+                <button onClick={() => setActiveTab('produtos')} className={tabButtonClasses('produtos')}>
+                    PRODUTOS
                 </button>
             </div>
 

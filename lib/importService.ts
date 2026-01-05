@@ -1,6 +1,6 @@
 // lib/importService.ts
 import * as XLSX from 'xlsx';
-import { Resultado, Orgao } from './types';
+import { Resultado, Orgao, Produto } from './types';
 
 const orgaoHeaderMapping: { [key: string]: keyof Orgao } = {
   'NOME DO ÓRGÃO': 'nome',
@@ -67,6 +67,98 @@ export const importOrgaosFromExcel = (file: File): Promise<Orgao[]> => {
         }
 
         resolve(importedOrgaos);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.onerror = (error) => reject(error);
+    reader.readAsBinaryString(file);
+  });
+};
+
+const produtoHeaderMapping: { [key: string]: keyof Produto } = {
+  'FABRICANTE': 'fabricante',
+  'DESCRIÇÃO': 'descricao',
+  'DESCRICAO': 'descricao',
+  'UNIDADE': 'unidade',
+  'VALOR INICIAL': 'valorInicial',
+  'CODEURO': 'codeuro',
+  'APRESENTAÇÃO SUGERIDA': 'apresentacaoSugerida',
+  'APRESENTACAO SUGERIDA': 'apresentacaoSugerida',
+};
+
+export const importProdutosFromExcel = (file: File): Promise<Produto[]> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      try {
+        const data = e.target?.result;
+        if (!data) {
+          reject(new Error("File data is empty."));
+          return;
+        }
+        const workbook = XLSX.read(data, { type: 'binary' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const json: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        if (json.length < 2) {
+          resolve([]);
+          return;
+        }
+
+        const headerRow = json[0];
+        const mappedHeaders: (keyof Produto | null)[] = headerRow.map((h: string) => produtoHeaderMapping[String(h).toUpperCase()] || null);
+
+        const importedProdutos: Produto[] = [];
+
+        for (let i = 1; i < json.length; i++) {
+          const rowData = json[i];
+          if (!rowData || rowData.length === 0) {
+            continue;
+          }
+
+          const newProduto: Partial<Produto> = {
+            id: `${Date.now()}-${i}`,
+          };
+
+          mappedHeaders.forEach((key, index) => {
+            if (key) {
+              const value = rowData[index];
+              (newProduto as any)[key] = value !== undefined && value !== null ? String(value) : '';
+            }
+          });
+
+          if (mappedHeaders.every(h => h === null)) {
+            newProduto.fabricante = String(rowData[0] || '');
+            newProduto.descricao = String(rowData[1] || '');
+            newProduto.unidade = String(rowData[2] || '');
+            newProduto.valorInicial = String(rowData[3] || '');
+            newProduto.codeuro = String(rowData[4] || '');
+            newProduto.apresentacaoSugerida = String(rowData[5] || '');
+          }
+
+          if (
+            newProduto.fabricante ||
+            newProduto.descricao ||
+            newProduto.unidade ||
+            newProduto.valorInicial ||
+            newProduto.codeuro ||
+            newProduto.apresentacaoSugerida
+          ) {
+            importedProdutos.push({
+              id: newProduto.id || `${Date.now()}-${i}`,
+              fabricante: newProduto.fabricante || '',
+              descricao: newProduto.descricao || '',
+              unidade: newProduto.unidade || '',
+              valorInicial: newProduto.valorInicial || '',
+              codeuro: newProduto.codeuro || '',
+              apresentacaoSugerida: newProduto.apresentacaoSugerida || '',
+            });
+          }
+        }
+
+        resolve(importedProdutos);
       } catch (error) {
         reject(error);
       }

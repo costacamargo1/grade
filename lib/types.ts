@@ -84,6 +84,16 @@ export interface Resultado {
   status: 'ganho' | 'perdido' | 'neutro';
 }
 
+export interface Produto {
+  id: string;
+  fabricante: string;
+  descricao: string;
+  unidade: string;
+  valorInicial: string;
+  codeuro: string;
+  apresentacaoSugerida: string;
+}
+
 export interface CompanyConfig {
   name: string;
   color: string;

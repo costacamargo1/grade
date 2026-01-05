@@ -1,6 +1,6 @@
 // lib/exportService.ts
 import * as XLSX from 'xlsx';
-import { ItemGrade, HeaderData, Resultado, Orgao } from './types';
+import { ItemGrade, HeaderData, Resultado, Orgao, Produto } from './types';
 
 export const exportOrgaosToExcel = (orgaos: Orgao[]) => {
     // 1. Map data to desired column headers
@@ -97,6 +97,47 @@ export const exportResultadosToExcel = (resultados: Resultado[]) => {
     // 5. Trigger download
     const today = new Date().toISOString().slice(0, 10);
     const fileName = `RESULTADOS-${today}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+};
+
+export const exportProdutosToExcel = (produtos: Produto[]) => {
+    const dataToExport = produtos.map((p) => ({
+        "FABRICANTE": p.fabricante,
+        "DESCRIÇÃO": p.descricao,
+        "UNIDADE": p.unidade,
+        "VALOR INICIAL": p.valorInicial,
+        "CODEURO": p.codeuro,
+        "APRESENTAÇÃO SUGERIDA": p.apresentacaoSugerida,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+
+    const objectMaxLength: any[] = [];
+    const range = XLSX.utils.decode_range(ws['!ref']!);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+        let max = 0;
+        const header = ws[XLSX.utils.encode_cell({ c: C, r: 0 })].v;
+        max = header.length;
+
+        for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+            const cell_address = { c: C, r: R };
+            const cell_ref = XLSX.utils.encode_cell(cell_address);
+            if (ws[cell_ref] && ws[cell_ref].v) {
+                const length = ws[cell_ref].v.toString().length;
+                if (length > max) {
+                    max = length;
+                }
+            }
+        }
+        objectMaxLength.push({ wch: max + 2 });
+    }
+    ws['!cols'] = objectMaxLength;
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Produtos");
+
+    const today = new Date().toISOString().slice(0, 10);
+    const fileName = `PRODUTOS-${today}.xlsx`;
     XLSX.writeFile(wb, fileName);
 };
 
