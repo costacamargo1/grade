@@ -66,7 +66,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
   };
 
   const handleOrgaoBlur = () => {
-      const result = buscarOrgao(headerData.orgao);
+      const result = buscarOrgao(headerData.orgao, orgaos);
       let updates: Partial<HeaderData> = { orgao: result.textoFinal };
       if (result.orgaoEncontrado) {
           updates.portalInput = result.orgaoEncontrado.portal;
@@ -78,7 +78,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
   const handleUasgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const uasg = e.target.value;
       updateHeader("uasgInput", uasg);
-      const orgaoEncontrado = buscarOrgaoPorUasg(uasg);
+      const orgaoEncontrado = buscarOrgaoPorUasg(uasg, orgaos);
       if (orgaoEncontrado) {
           setHeaderData({
               ...headerData,

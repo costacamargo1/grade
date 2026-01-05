@@ -14,9 +14,18 @@ export interface ResultadoBuscaOrgao {
  * @param textoEntrada The text input by the user.
  * @returns An object containing the found Orgao object and the formatted text.
  */
-export function buscarOrgao(textoEntrada: string): ResultadoBuscaOrgao {
+export function buscarOrgao(textoEntrada: string, orgaos: Orgao[]): ResultadoBuscaOrgao {
     if (!textoEntrada) {
         return { orgaoEncontrado: null, textoFinal: "" };
+    }
+
+    // Combine o banco de dados estático com os órgãos dinâmicos, evitando duplicatas
+    const orgaosUnicos = [...bancoOrgaos];
+    const nomesNoBanco = new Set(bancoOrgaos.map(o => o.nome.toUpperCase()));
+    for (const orgao of orgaos) {
+        if (!nomesNoBanco.has(orgao.nome.toUpperCase())) {
+            orgaosUnicos.push(orgao);
+        }
     }
 
     // 1. Clean the input text
@@ -45,7 +54,7 @@ export function buscarOrgao(textoEntrada: string): ResultadoBuscaOrgao {
     const palavrasBusca = textoBuscaLimpo.split(" ").filter(p => p);
 
     // 3. Iterate through the database of "órgãos"
-    for (const orgao of bancoOrgaos) {
+    for (const orgao of orgaosUnicos) {
         const nomeDbLimpo = removerAcentos(orgao.nome.toUpperCase());
         let prioridadeAtual = -1;
 
@@ -98,8 +107,18 @@ export function buscarOrgao(textoEntrada: string): ResultadoBuscaOrgao {
  * @param uasg The UASG code to search for.
  * @returns The found Orgao object or null.
  */
-export function buscarOrgaoPorUasg(uasg: string): Orgao | null {
+export function buscarOrgaoPorUasg(uasg: string, orgaos: Orgao[]): Orgao | null {
     if (!uasg) return null;
     const uasgLimpo = uasg.trim();
-    return bancoOrgaos.find(o => o.uasg === uasgLimpo) || null;
+    
+    // Combine o banco de dados estático com os órgãos dinâmicos, evitando duplicatas
+    const orgaosUnicos = [...bancoOrgaos];
+    const uasgsNoBanco = new Set(bancoOrgaos.map(o => o.uasg));
+    for (const orgao of orgaos) {
+        if (orgao.uasg && !uasgsNoBanco.has(orgao.uasg)) {
+            orgaosUnicos.push(orgao);
+        }
+    }
+
+    return orgaosUnicos.find(o => o.uasg === uasgLimpo) || null;
 }

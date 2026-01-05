@@ -1,7 +1,7 @@
 // components/Orgaos.tsx
 import { useState, useRef } from 'react';
 import { Orgao } from '../lib/types';
-import { Building2, Globe, Hash, Trash2, Edit, X, Save, Upload, Download } from 'lucide-react';
+import { Building2, Globe, Hash, Trash2, Edit, X, Save, Upload, Download, FilePlus } from 'lucide-react';
 import { importOrgaosFromExcel } from '../lib/importService';
 import { exportOrgaosToExcel } from '../lib/exportService';
 
@@ -12,8 +12,10 @@ interface OrgaosProps {
 
 export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [editingOrgao, setEditingOrgao] = useState<Orgao | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [newOrgao, setNewOrgao] = useState<Orgao>({ nome: '', uasg: '', portal: '' });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDelete = (index: number) => {
@@ -39,6 +41,16 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
     }
   };
 
+  const handleSaveNewOrgao = () => {
+    if (newOrgao.nome) { // Basic validation: at least a name is required
+      setOrgaos(currentOrgaos => [...currentOrgaos, newOrgao]);
+      setShowAddModal(false);
+      setNewOrgao({ nome: '', uasg: '', portal: '' }); // Reset for next time
+    } else {
+      alert("O nome do órgão é obrigatório.");
+    }
+  };
+  
   const handleExport = () => {
     exportOrgaosToExcel(orgaos);
   };
@@ -88,6 +100,13 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
             <p className="text-sm text-slate-500 mt-1">{orgaos.length} órgãos cadastrados</p>
         </div>
         <div className="flex items-center gap-2">
+           <button
+              onClick={() => setShowAddModal(true)}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+            >
+              <FilePlus size={16} />
+              Cadastrar Novo Órgão
+            </button>
             <button
               onClick={handleImportClick}
               className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
@@ -110,7 +129,7 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
         <div className="text-center py-16 border-2 border-dashed border-slate-200 rounded-xl">
           <Building2 size={48} className="mx-auto text-slate-300" />
           <h3 className="mt-4 text-lg font-semibold text-slate-600">Nenhum órgão cadastrado</h3>
-          <p className="text-slate-400 mt-1">Use o botão "Importar" ou o "+" no cabeçalho para adicionar um novo órgão.</p>
+          <p className="text-slate-400 mt-1">Use o botão "Importar" ou "Cadastrar Novo Órgão" para adicionar um novo órgão.</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -160,6 +179,45 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Add New Orgao Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="bg-slate-50 p-4 border-b border-slate-100 flex justify-between items-center">
+              <h3 className="font-bold text-slate-700 flex items-center gap-2"><FilePlus size={18} className="text-green-500" />Cadastrar Novo Órgão</h3>
+              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-red-500 transition"><X size={20} /></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Nome do Órgão *</label>
+                <input 
+                  type="text" 
+                  className="w-full p-3 border border-slate-200 rounded-lg text-sm font-semibold text-black focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase"
+                  placeholder="EX: PREFEITURA DE VILA VELHA"
+                  value={newOrgao.nome}
+                  onChange={(e) => setNewOrgao({ ...newOrgao, nome: e.target.value })}
+                  autoFocus
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                 <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">ID / UASG</label>
+                    <input type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500" placeholder="Opcional" value={newOrgao.uasg} onChange={(e) => setNewOrgao({ ...newOrgao, uasg: e.target.value })} />
+                 </div>
+                 <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Portal Padrão</label>
+                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="Opcional" value={newOrgao.portal} onChange={(e) => setNewOrgao({ ...newOrgao, portal: e.target.value })} />
+                 </div>
+              </div>
+            </div>
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+              <button onClick={() => setShowAddModal(false)} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 rounded-lg transition">Cancelar</button>
+              <button onClick={handleSaveNewOrgao} className="px-4 py-2 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg transition flex items-center gap-2 shadow-sm hover:shadow"><Save size={16} /> Salvar Órgão</button>
+            </div>
+          </div>
         </div>
       )}
 

@@ -245,7 +245,7 @@ export default function Home() {
 
         <div ref={printableComponentRef} className="space-y-6">
             {/* 1. O CABEÇALHO INTELIGENTE */}
-            {activeTab !== 'resultados' && activeTab !== 'processos' && (
+            {activeTab === 'grade' && (
               <div className={activeTab !== 'grade' ? 'print:hidden' : ''}>
                   <Header headerData={headerData} setHeaderData={setHeaderData} orgaos={orgaos} setOrgaos={setOrgaos} />
               </div>
