@@ -341,32 +341,44 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
 
   // Formata valor numérico para Moeda BRL (R$ 1.000,00)
   const formatCurrency = (value: number | undefined) => {
-    if (value === undefined || value === null || value === 0) return "";
-    return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  };
+  if (value === undefined || value === null || value === 0) return "";
+
+  return value.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+  });
+};
 
   // Lógica de digitação de dinheiro (Máscara)
   const handleCurrencyChange = (
-    id: string,
-    campo: keyof ItemGrade,
-    valorInput: string
-  ) => {
-    // Remove tudo que não é dígito
-    const apenasNumeros = valorInput.replace(/\D/g, "");
-    // Divide por 100 para considerar os centavos (Ex: 3300 -> 33.00)
-    const valorFinal = Number(apenasNumeros) / 100;
-    handleUpdate(id, campo, valorFinal);
-  };
+  id: string,
+  campo: keyof ItemGrade,
+  valorInput: string
+) => {
+  const apenasNumeros = valorInput.replace(/\D/g, "");
+
+  const valorFinal = apenasNumeros
+    ? Number(apenasNumeros) / 10000
+    : 0;
+
+  handleUpdate(id, campo, valorFinal);
+};
 
   const handleColocadoCurrencyChange = (
-    id: string,
-    colocado: keyof ItemGrade,
-    valorInput: string
-  ) => {
-    const apenasNumeros = valorInput.replace(/\D/g, "");
-    const valorFinal = Number(apenasNumeros) / 100;
-    handleColocadoChange(id, colocado, "valor", valorFinal);
-  };
+  id: string,
+  colocado: keyof ItemGrade,
+  valorInput: string
+) => {
+  const apenasNumeros = valorInput.replace(/\D/g, "");
+
+  const valorFinal = apenasNumeros
+    ? Number(apenasNumeros) / 10000
+    : 0;
+
+  handleColocadoChange(id, colocado, "valor", valorFinal);
+};
 
   // Formata Quantidade com ponto (1.000)
   const formatQuantity = (value: number | undefined) => {
