@@ -88,15 +88,15 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 />
             </td>
             <td className="p-1 border-r border-slate-200 print:border-black">
-                <input
-                type="text"
-                className="w-full px-2 bg-transparent outline-none focus:bg-white uppercase font-bold text-slate-700 print:text-black text-center"
+                <textarea
+                className="w-full px-2 bg-transparent outline-none focus:bg-white font-bold text-slate-700 print:text-black text-center"
                 placeholder="DIGITE PRODUTO, FABRICANTE OU CÓDIGO"
                 value={item.medicamento}
                 onChange={(e) =>
                     props.handleUpdate(item.id, "medicamento", e.target.value)
                 }
                 onBlur={(e) => props.handleSmartBlur(item.id, e.target.value)}
+                rows={4}
                 />
             </td>
             <td className="p-1 border-r border-slate-200 print:border-black">
