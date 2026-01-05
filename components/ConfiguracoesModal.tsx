@@ -58,7 +58,7 @@ const ConfiguracoesModal: React.FC<ConfiguracoesModalProps> = ({ isOpen, onClose
                 placeholder="Nome da Empresa"
                 value={config.name}
                 onChange={(e) => handleCompanyChange(index, 'name', e.target.value)}
-                className="flex-grow p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition uppercase text-black"
+                className="grow p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition uppercase text-black"
               />
               <div className="flex flex-col items-center">
                 <span className="text-xs font-semibold text-slate-700">Fundo</span>

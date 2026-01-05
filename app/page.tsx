@@ -34,6 +34,17 @@ export default function Home() {
     conferencia: "",
     disputa: "",
     proposta: "",
+    dataCadastro: "",
+    dataConferencia: "",
+    dataDisputa: "",
+    dataPropostaReajustada: "",
+    localEnvio: "PORTAL",
+    prazoEnvio: "",
+    cortaNoEstimado: "NAO",
+    disputaPorValor: "UNITARIO",
+    casasDecimais: "2",
+    amostra: "NAO",
+    observacoes: "",
   });
   const [activeTab, setActiveTab] = useState<Tab>('grade');
   const printableComponentRef = useRef(null);

@@ -38,10 +38,20 @@ const getOrgaoName = (orgao: string): string => {
     return orgao;
 };
 
-type SortConfig = {
-  key: keyof HeaderData | 'uf';
-  direction: 'ascending' | 'descending';
-} | null;
+const parseDateString = (dateString: string): Date | null => {
+    if (!dateString) return null;
+    const parts = dateString.match(/(\d{2})\/(\d{2})\/(\d{4}).*(\d{2}):(\d{2})/);
+    if (parts) {
+        const [, day, month, year, hour, minute] = parts;
+        return new Date(`${year}-${month}-${day}T${hour}:${minute}:00`);
+    }
+    const dateParts = dateString.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+    if(dateParts) {
+        const [, day, month, year] = dateParts;
+        return new Date(`${year}-${month}-${day}`);
+    }
+    return null;
+}
 
 const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeaderData, setItens, setActiveTab }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -84,10 +94,19 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
         if (key === 'uf') {
             aVal = getUfFromOrgao(a.headerData.orgao);
             bVal = getUfFromOrgao(b.headerData.orgao);
+        } else if (key === 'dataAbertura' || key === 'dataEdicao') {
+            aVal = parseDateString(a.headerData[key] || '');
+            bVal = parseDateString(b.headerData[key] || '');
+        } else if (key === 'numeroGrade') {
+            aVal = parseInt(a.headerData.numeroGrade, 10) || 0;
+            bVal = parseInt(b.headerData.numeroGrade, 10) || 0;
         } else {
             aVal = a.headerData[key as keyof HeaderData];
             bVal = b.headerData[key as keyof HeaderData];
         }
+
+        if (aVal === null || aVal === undefined) return sortConfig.direction === 'ascending' ? 1 : -1;
+        if (bVal === null || bVal === undefined) return sortConfig.direction === 'ascending' ? -1 : 1;
 
         if (aVal < bVal) {
           return sortConfig.direction === 'ascending' ? -1 : 1;

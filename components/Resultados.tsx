@@ -152,12 +152,23 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
     let sortableItems = [...filteredResultados];
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
-        const aVal = a[sortConfig.key];
-        const bVal = b[sortConfig.key];
+        const key = sortConfig.key;
+        let aVal: any = a[key];
+        let bVal: any = b[key];
+        
+        const numericKeys: (keyof Resultado)[] = ['quantidade', 'minimoCotacao', 'nossoPreco', 'precoConcorrente'];
+
+        if (key === 'data') {
+            aVal = aVal ? new Date(aVal) : null;
+            bVal = bVal ? new Date(bVal) : null;
+        } else if (numericKeys.includes(key)) {
+            aVal = aVal === '' || aVal === null || aVal === undefined ? -Infinity : parseFloat(String(aVal).replace(',', '.'));
+            bVal = bVal === '' || bVal === null || bVal === undefined ? -Infinity : parseFloat(String(bVal).replace(',', '.'));
+        }
 
         if (aVal === bVal) return 0;
-        if (aVal == null) return 1;
-        if (bVal == null) return -1;
+        if (aVal === null || aVal === undefined || (typeof aVal === 'number' && isNaN(aVal))) return 1;
+        if (bVal === null || bVal === undefined || (typeof bVal === 'number' && isNaN(bVal))) return -1;
         
         if (aVal < bVal) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
