@@ -188,18 +188,19 @@ export default function Home() {
         {/* Abas de Navegação e Botão de Exportação */}
         <div className="flex justify-between items-center print:hidden">
             {/* Abas */}
-            <div className="flex space-x-2 bg-slate-100 p-1 rounded-lg">
+            <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg">
                 <button onClick={() => setActiveTab('grade')} className={tabButtonClasses('grade')}>
                     GRADE
                 </button>
-                <button onClick={() => setActiveTab('orgaos')} className={tabButtonClasses('orgaos')}>
-                    ÓRGÃOS
+                <button onClick={() => setActiveTab('processos')} className={tabButtonClasses('processos')}>
+                    PROCESSOS
                 </button>
                 <button onClick={() => setActiveTab('resultados')} className={tabButtonClasses('resultados')}>
                     RESULTADOS
                 </button>
-                <button onClick={() => setActiveTab('processos')} className={tabButtonClasses('processos')}>
-                    PROCESSOS
+                <span aria-hidden className="h-6 w-px bg-slate-300 ml-2 mr-4" />
+                <button onClick={() => setActiveTab('orgaos')} className={tabButtonClasses('orgaos')}>
+                    ÓRGÃOS
                 </button>
                 <button onClick={() => setActiveTab('produtos')} className={tabButtonClasses('produtos')}>
                     PRODUTOS
