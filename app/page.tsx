@@ -191,42 +191,44 @@ export default function Home() {
                     onBlur={() => setHeaderData({ ...headerData, empresa: headerData.empresa, logoInput: headerData.empresa })}
                 />
 
-                {/* Botão de Exportação (condicional) */}
+                {/* Botões de Ação 2x2 com Cores Suaves */}
                 {activeTab === 'grade' && (
-                    <div className="flex gap-2">
-                        <div className="flex flex-col gap-2">
-                            <button
-                                onClick={handleNovaGrade}
-                                className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                            >
-                                <FilePlus size={16} />
-                                Nova Grade
-                            </button>
-                            <button
-                                onClick={handleGerarProcesso}
-                                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                            >
-                                <Save size={16} />
-                                Gerar Processo
-                            </button>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <button
-                                onClick={handleExport}
-                                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                            >
-                                <Download size={16} />
-                                Exportar para Excel
-                            </button>
-                            <button
-                              onClick={handlePrint}
-                              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 text-xs rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                            >
-                              <Printer size={16} />
-                              Imprimir / PDF
-                            </button>
-                        </div>
+                  <div className="flex gap-2">
+                    {/* Coluna 1 */}
+                    <div className="flex flex-col gap-1.5">
+                      <button
+                          onClick={handleNovaGrade}
+                          className="group flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold transition-colors bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                      >
+                          <FilePlus size={14} className="text-yellow-700" />
+                          <span>Nova Grade</span>
+                      </button>
+                      <button
+                          onClick={handleGerarProcesso}
+                          className="group flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold transition-colors bg-purple-100 text-purple-800 hover:bg-purple-200"
+                      >
+                          <Save size={14} className="text-purple-700" />
+                          <span>Gerar Processo</span>
+                      </button>
                     </div>
+                    {/* Coluna 2 */}
+                    <div className="flex flex-col gap-1.5">
+                      <button
+                          onClick={handleExport}
+                          className="group flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold transition-colors bg-green-100 text-green-800 hover:bg-green-200"
+                      >
+                          <Download size={14} className="text-green-700" />
+                          <span>Exportar</span>
+                      </button>
+                      <button
+                        onClick={handlePrint}
+                        className="group flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold transition-colors bg-blue-100 text-blue-800 hover:bg-blue-200"
+                      >
+                        <Printer size={14} className="text-blue-700" />
+                        <span>Imprimir</span>
+                      </button>
+                    </div>
+                  </div>
                 )}
             </div>
         </div>
