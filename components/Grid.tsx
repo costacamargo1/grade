@@ -40,7 +40,7 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
     };
 
     return (
-        <tr ref={setNodeRef} style={style} {...attributes} className="h-[170px] odd:bg-white even:bg-slate-50/70 hover:bg-blue-50 transition-colors group print:bg-white">
+        <tr ref={setNodeRef} style={style} {...attributes} className="h-[165px] odd:bg-white even:bg-slate-50/70 hover:bg-blue-50 transition-colors group print:bg-white">
             <td className="p-1 border-r border-slate-200 print:border-black text-center relative">
                 <span {...listeners} className="absolute -left-6 top-1/2 -translate-y-1/2 p-1 cursor-grab touch-none print:hidden">
                     <GripVertical size={14} />
