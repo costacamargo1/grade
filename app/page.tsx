@@ -10,6 +10,7 @@ import Produtos from '../components/Produtos';
 import { Download, Printer, Save, FilePlus } from 'lucide-react';
 import { exportToExcel } from '../lib/exportService';
 import DropdownEmpresa from '../components/DropdownEmpresa';
+import BentoMenu from '../components/BentoMenu';
 
 type Tab = 'grade' | 'orgaos' | 'resultados' | 'processos' | 'produtos';
 
@@ -169,13 +170,6 @@ export default function Home() {
         return null;
     }
   };
-  
-  const tabButtonClasses = (tabName: Tab) => 
-    `py-2 px-6 font-bold rounded-lg transition-colors duration-300 ${
-      activeTab === tabName 
-        ? 'bg-slate-800 text-white shadow-md' 
-        : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
-    }`;
 
   return (
     <main className="min-h-screen bg-slate-100 font-sans pb-20 print:bg-white">
@@ -186,26 +180,8 @@ export default function Home() {
       <div className={activeTab === 'resultados' ? 'w-full p-4 lg:p-6 space-y-6 mt-2 print:p-0 print:m-0' : 'max-w-[1600px] mx-auto p-4 lg:p-6 space-y-6 mt-2 print:p-0 print:m-0 print:max-w-full'}>
         
         {/* Abas de Navegação e Botão de Exportação */}
-        <div className="flex justify-between items-center print:hidden">
-            {/* Abas */}
-            <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg">
-                <button onClick={() => setActiveTab('grade')} className={tabButtonClasses('grade')}>
-                    GRADE
-                </button>
-                <button onClick={() => setActiveTab('processos')} className={tabButtonClasses('processos')}>
-                    PROCESSOS
-                </button>
-                <button onClick={() => setActiveTab('resultados')} className={tabButtonClasses('resultados')}>
-                    RESULTADOS
-                </button>
-                <span aria-hidden className="h-6 w-px bg-slate-300 ml-2 mr-4" />
-                <button onClick={() => setActiveTab('orgaos')} className={tabButtonClasses('orgaos')}>
-                    ÓRGÃOS
-                </button>
-                <button onClick={() => setActiveTab('produtos')} className={tabButtonClasses('produtos')}>
-                    PRODUTOS
-                </button>
-            </div>
+        <div className="flex justify-between items-start print:hidden">
+            <BentoMenu activeTab={activeTab} setActiveTab={setActiveTab} />
 
             {/* Container for DropdownEmpresa and Export Button */}
             <div className="flex items-center gap-4">
