@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { Resultado, CompanyConfig } from '../lib/types';
-import { PlusCircle, Trash2, Edit, Save, Search, ChevronDown, ChevronUp, Settings, Award, FileDown, FileUp, X } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, Save, Search, ChevronDown, ChevronUp, Settings, Award, FileDown, FileUp, X, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import ConfiguracoesModal from './ConfiguracoesModal';
 import { getContrastColor } from '../lib/formatters';
 import { exportResultadosToExcel } from '../lib/exportService';
@@ -42,10 +42,14 @@ const formatQuantity = (value: number | string) => {
 const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) => {
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [companyConfigs, setCompanyConfigs] = useState<CompanyConfig[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [viewMode, setViewMode] = useState<'normal' | 'compacto'>('compacto');
 
   useEffect(() => {
     try {
@@ -127,14 +131,13 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
         setResultados(prevResultados => [...importedResultados, ...prevResultados]);
       } catch (error) {
         console.error("Failed to import data from Excel file", error);
-        // Here you could add a user-facing error message
       }
     }
   };
 
   const handleImportClick = () => {
     if (fileInputRef.current) {
-        fileInputRef.current.value = ''; // Reset file input
+        fileInputRef.current.value = '';
         fileInputRef.current.click();
     }
   };
@@ -142,11 +145,15 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   const filteredResultados = useMemo(() => {
     return resultados.filter(res => {
       const search = searchTerm.toUpperCase();
-      return Object.values(res).some(value => 
+      const isSearchMatch = search === '' || Object.values(res).some(value => 
         String(value).toUpperCase().includes(search)
       );
+      
+      const isDateMatch = !dateFilter || (res.data && res.data.startsWith(dateFilter));
+
+      return isSearchMatch && isDateMatch;
     });
-  }, [resultados, searchTerm]);
+  }, [resultados, searchTerm, dateFilter]);
 
   const sortedResultados = useMemo(() => {
     let sortableItems = [...filteredResultados];
@@ -182,12 +189,18 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
     return sortableItems;
   }, [filteredResultados, sortConfig]);
 
+  const paginatedResultados = useMemo(() => {
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    return sortedResultados.slice(startIndex, startIndex + rowsPerPage);
+  }, [sortedResultados, currentPage, rowsPerPage]);
+
   const requestSort = (key: keyof Resultado) => {
     let direction: 'ascending' | 'descending' = 'ascending';
     if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
       direction = 'descending';
     }
     setSortConfig({ key, direction });
+    setCurrentPage(1);
   };
   
   const getRowStyling = (status: Resultado['status']) => {
@@ -214,6 +227,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   const renderCell = (row: Resultado, field: keyof Omit<Resultado, 'id' | 'actions' | 'status'>) => {
     const isEditing = editingRowId === row.id;
     const value = row[field];
+    const cellClass = viewMode === 'compacto' ? 'text-xs' : 'text-sm';
 
     if (isEditing) {
       const isNumeric = ['quantidade', 'minimoCotacao', 'nossoPreco', 'precoConcorrente'].includes(field);
@@ -222,7 +236,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
           type={isNumeric ? 'number' : 'text'}
           value={value ?? ''}
           onChange={(e) => handleInputChange(row.id, field, e.target.value)}
-          className="w-full px-2 py-1 border rounded-md bg-slate-50 uppercase"
+          className={`w-full px-2 py-1 border rounded-md bg-slate-50 uppercase ${cellClass}`}
           step={isNumeric ? "0.0001" : undefined}
         />
       );
@@ -237,10 +251,10 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
     
     if (field === 'empresa') {
         const style = getCompanyStyle(String(value ?? ''));
-        return <span style={style} className="w-full block font-bold px-2 py-1 rounded-sm uppercase">{String(formattedValue ?? '')}</span>;
+        return <span style={style} className={`w-full block font-bold px-2 py-1 rounded-sm uppercase ${cellClass}`}>{String(formattedValue ?? '')}</span>;
     }
 
-    return <span className={`w-full block px-2 py-1 uppercase ${isPriceBold ? 'font-bold' : ''} ${row.status === 'perdido' && field === 'precoConcorrente' ? 'text-red-600' : ''}`}>{formattedValue}</span>;
+    return <span className={`w-full block px-2 py-1 uppercase ${cellClass} ${isPriceBold ? 'font-bold' : ''} ${row.status === 'perdido' && field === 'precoConcorrente' ? 'text-red-600' : ''}`}>{formattedValue}</span>;
   };
 
   const tableHeaders: { key: keyof Resultado | 'actions', label: string | React.ReactNode }[] = [
@@ -263,6 +277,10 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   ];
   const fieldMapping: (keyof Omit<Resultado, 'id' | 'actions' | 'status'>)[] = tableHeaders.map(h => h.key).filter(k => !['actions', 'status'].includes(k as string)) as any;
 
+  const totalPages = Math.ceil(sortedResultados.length / rowsPerPage);
+  const cellPadding = viewMode === 'compacto' ? 'px-1 py-1' : 'px-2 py-2';
+  const headerPadding = viewMode === 'compacto' ? 'px-2 py-2 text-xs' : 'px-4 py-3 text-sm';
+
   return (
     <div className="bg-white p-4 rounded-xl shadow-lg w-full h-full flex flex-col resize overflow-auto">
       <ConfiguracoesModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} companyConfigs={companyConfigs} setCompanyConfigs={setCompanyConfigs} />
@@ -273,19 +291,27 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
         className="hidden"
         accept=".xlsx, .xls"
       />
-      <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+      <div className="flex flex-col xl:flex-row justify-between xl:items-center mb-4 gap-4">
         <h2 className="text-2xl font-bold text-slate-800">Resultados</h2>
-        <div className="relative w-full md:w-1/3">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+        <div className="flex flex-col sm:flex-row items-center gap-2">
+          <div className="relative w-full sm:w-auto">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <input
+              type="text"
+              placeholder="Buscar em tudo..."
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              className="w-full sm:w-64 pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase text-black"
+            />
+          </div>
           <input
-            type="text"
-            placeholder="Buscar em tudo..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase text-black"
+            type="date"
+            value={dateFilter}
+            onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }}
+            className="w-full sm:w-auto px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase text-black"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-2">
             <button
                 onClick={handleImportClick}
                 className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg"
@@ -323,7 +349,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
               {tableHeaders.map(({ key, label }) => (
                 <th 
                   key={key as string}
-                  className="px-4 py-3 text-sm font-semibold uppercase text-center whitespace-nowrap"
+                  className={`${headerPadding} font-semibold uppercase text-center whitespace-nowrap`}
                   onClick={() => key !== 'actions' && requestSort(key as keyof Resultado)}
                 >
                   <div className="flex items-center justify-center gap-2 cursor-pointer">
@@ -337,10 +363,10 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
             </tr>
           </thead>
           <tbody className="text-slate-700">
-            {sortedResultados.map((row) => (
+            {paginatedResultados.map((row) => (
               <tr key={row.id} className={`border-b border-slate-200 transition-colors ${getRowStyling(row.status)}`}>
-                <td className="px-1 py-1 text-sm">
-                  <div className="flex items-center gap-1">
+                <td className={cellPadding}>
+                  <div className="flex items-center justify-center gap-1">
                       <button onClick={() => handleStatusChange(row.id, 'ganho')} className={`p-2 rounded-full ${row.status === 'ganho' ? 'bg-green-500 text-white' : 'text-green-500 hover:bg-green-200'}`}>
                           <Award size={18} />
                       </button>
@@ -349,9 +375,9 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
                       </button>
                   </div>
                 </td>
-                {fieldMapping.map(field => <td key={field} className="px-1 py-1 text-sm truncate uppercase">{renderCell(row, field)}</td>)}
-                <td className="px-1 py-1 text-sm">
-                  <div className="flex items-center gap-2">
+                {fieldMapping.map(field => <td key={field} className={`${cellPadding} truncate uppercase`}>{renderCell(row, field)}</td>)}
+                <td className={cellPadding}>
+                  <div className="flex items-center justify-center gap-2">
                     {editingRowId === row.id ? (
                       <button onClick={() => setEditingRowId(null)} className="p-2 text-green-600 hover:text-green-800 transition-colors">
                         <Save size={18} />
@@ -370,6 +396,63 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-4">
+        <div className='text-sm text-slate-600'>
+          Mostrando {Math.min(paginatedResultados.length, sortedResultados.length)} de {sortedResultados.length} resultados
+        </div>
+        <div className="flex items-center gap-2">
+            <button onClick={() => setViewMode(v => v === 'normal' ? 'compacto' : 'normal')} className="text-sm px-3 py-2 border rounded-lg text-slate-900 hover:bg-slate-100 transition">
+                {viewMode === 'normal' ? 'Visão Compacta' : 'Visão Normal'}
+            </button>
+            <select
+                value={rowsPerPage}
+                onChange={(e) => {
+                    setRowsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                }}
+                className="text-sm px-3 py-2 border rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+                <option value={20}>20 por página</option>
+                <option value={50}>50 por página</option>
+                <option value={100}>100 por página</option>
+            <option value={Number.MAX_SAFE_INTEGER}>Visualizar Todos</option>
+                
+            </select>
+        </div>
+        <div className="flex items-center gap-2">
+            <button
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+                className="p-2 border rounded-lg text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition"
+            >
+                <ChevronsLeft size={16} />
+            </button>
+            <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-2 border rounded-lg text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition"
+            >
+                Anterior
+            </button>
+            <span className="text-sm px-4 py-2 border rounded-lg text-slate-900 bg-slate-100">
+                Página {currentPage} de {totalPages > 0 ? totalPages : 1}
+            </span>
+            <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages || totalPages === 0}
+                className="p-2 border rounded-lg text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition"
+            >
+                Próximo
+            </button>
+            <button
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage === totalPages || totalPages === 0}
+                className="p-2 border rounded-lg text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition"
+            >
+                <ChevronsRight size={16} />
+            </button>
+        </div>
       </div>
     </div>
   );
