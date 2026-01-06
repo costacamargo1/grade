@@ -49,7 +49,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(20);
-  const [viewMode, setViewMode] = useState<'normal' | 'compacto'>('compacto');
+  const [viewMode, setViewMode] = useState<'normal' | 'compacto' | 'supercompacto'>('compacto');
 
   useEffect(() => {
     try {
@@ -227,7 +227,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   const renderCell = (row: Resultado, field: keyof Omit<Resultado, 'id' | 'actions' | 'status'>) => {
     const isEditing = editingRowId === row.id;
     const value = row[field];
-    const cellClass = viewMode === 'compacto' ? 'text-xs' : 'text-sm';
+    const cellClass = viewMode === 'supercompacto' ? 'text-[10px]' : viewMode === 'compacto' ? 'text-xs' : 'text-sm';
 
     if (isEditing) {
       const isNumeric = ['quantidade', 'minimoCotacao', 'nossoPreco', 'precoConcorrente'].includes(field);
@@ -278,8 +278,8 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   const fieldMapping: (keyof Omit<Resultado, 'id' | 'actions' | 'status'>)[] = tableHeaders.map(h => h.key).filter(k => !['actions', 'status'].includes(k as string)) as any;
 
   const totalPages = Math.ceil(sortedResultados.length / rowsPerPage);
-  const cellPadding = viewMode === 'compacto' ? 'px-1 py-1' : 'px-2 py-2';
-  const headerPadding = viewMode === 'compacto' ? 'px-2 py-2 text-xs' : 'px-4 py-3 text-sm';
+  const cellPadding = viewMode === 'supercompacto' ? 'px-0.5 py-0.5' : viewMode === 'compacto' ? 'px-1 py-1' : 'px-2 py-2';
+  const headerPadding = viewMode === 'supercompacto' ? 'px-1 py-1 text-[10px]' : viewMode === 'compacto' ? 'px-2 py-2 text-xs' : 'px-4 py-3 text-sm';
 
   return (
     <div className="bg-white p-4 rounded-xl shadow-lg w-full h-full flex flex-col resize overflow-auto">
@@ -402,8 +402,8 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
           Mostrando {Math.min(paginatedResultados.length, sortedResultados.length)} de {sortedResultados.length} resultados
         </div>
         <div className="flex items-center gap-2">
-            <button onClick={() => setViewMode(v => v === 'normal' ? 'compacto' : 'normal')} className="text-sm px-3 py-2 border rounded-lg text-slate-900 hover:bg-slate-100 transition">
-                {viewMode === 'normal' ? 'Visão Compacta' : 'Visão Normal'}
+            <button onClick={() => setViewMode(v => v === 'normal' ? 'compacto' : v === 'compacto' ? 'supercompacto' : 'normal')} className="text-sm px-3 py-2 border rounded-lg text-slate-900 hover:bg-slate-100 transition">
+                {viewMode === 'normal' ? 'Visão Compacta' : viewMode === 'compacto' ? 'Visão Super Compacta' : 'Visão Normal'}
             </button>
             <select
                 value={rowsPerPage}

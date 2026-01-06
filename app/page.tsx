@@ -183,7 +183,7 @@ export default function Home() {
       {/* Faixa Superior (Estilo App) */}
       <div className="bg-slate-900 h-2 w-full fixed top-0 left-0 z-50 print:hidden"></div>
 
-      <div className="max-w-[1600px] mx-auto p-4 lg:p-6 space-y-6 mt-2 print:p-0 print:m-0 print:max-w-full">
+      <div className={activeTab === 'resultados' ? 'w-full p-4 lg:p-6 space-y-6 mt-2 print:p-0 print:m-0' : 'max-w-[1600px] mx-auto p-4 lg:p-6 space-y-6 mt-2 print:p-0 print:m-0 print:max-w-full'}>
         
         {/* Abas de Navegação e Botão de Exportação */}
         <div className="flex justify-between items-center print:hidden">
