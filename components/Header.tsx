@@ -479,7 +479,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
             </div>
 
             {/* COLUNA 2: REGRAS TÉCNICAS ("BOX AMARELO" ADAPTADO) (Ocupa 7 colunas) */}
-            <div className="xl:col-span-7 bg-amber-50/60 rounded-xl border border-amber-100 print:border-black p-3 relative">
+            <div className="xl:col-span-5 xl:col-start-7 bg-amber-50/60 rounded-xl border border-amber-100 print:border-black p-3 relative">
                 <span className="absolute top-0 right-0 bg-amber-100 text-[9px] font-bold text-amber-700 print:text-black px-2 py-0.5 rounded-bl-lg rounded-tr-lg">REGRAS DO PREGÃO</span>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 mt-1">

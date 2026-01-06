@@ -25,6 +25,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@page {
+  margin-top: 4mm;
+  margin-right: 7mm;
+  margin-bottom: 5mm;
+  margin-left: 7mm;
+}
+
 @media print {
   
     body {
