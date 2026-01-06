@@ -118,11 +118,11 @@ export const exportProdutosToExcel = (produtos: Produto[]) => {
 
     const dataToExport = produtos.map((p) => ({
         "FABRICANTE": p.fabricante,
-        "DESCRI??O": p.descricao,
+        "DESCRICAO": p.descricao,
         "UNIDADE": p.unidade,
         "VALOR INICIAL": p.valorInicial,
         "CODEURO": p.codeuro,
-        "APRESENTA??O SUGERIDA": p.apresentacaoSugerida,
+        "APRESENTACAO SUGERIDA": p.apresentacaoSugerida,
         "OBS": getObsText(p),
         "CAP 21,53%": p.cap ? "SIM" : "NAO",
         "CONV. 87/02": p.conv8702 ? "SIM" : "NAO",
