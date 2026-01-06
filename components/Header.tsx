@@ -255,7 +255,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
               </div>
 
               {/* DATA ABERTURA */}
-              <div className="md:col-span-2 group">
+              <div className="md:col-span-2 group w-50">
                 <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase tracking-wider mb-1 block">Abertura</label>
                 <div className="relative" ref={calendarRef}>
                   <input 
@@ -288,7 +288,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
               </div>
 
               {/* Nº GRADE */}
-              <div className="md:col-span-2 group">
+              <div className="md:col-span-2 group w-30 translate-x-[10px]">
                 <label className="text-[10px] font-bold text-slate-400 print:text-black uppercase tracking-wider mb-1 block">Nº Grade</label>
                 <div className="relative">
                   <input 
@@ -487,7 +487,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                     {/* Seção de Envio */}
                     <div className="space-y-2">
                         <label className="text-[10px] font-bold text-slate-500 print:text-black uppercase flex items-center gap-1">
-                            <Send size={10} className="print:text-black" /> Local de Envio
+                            <Send size={10} className="print:text-black" /> ENVIO DE DOCUMENTAÇÃO
                         </label>
                         <div className="flex gap-2 text-xs">
                            {['PORTAL', 'EMAIL', 'FISICO'].map((tipo) => (
@@ -503,11 +503,11 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                                </label>
                            ))}
                         </div>
-                        <div className="flex items-center gap-2 mt-1">
+                        <div className="flex items-center gap-2 mt-1 w-15">
                             <span className="text-[10px] font-bold text-slate-400 print:text-black">PRAZO:</span>
                             <input 
                                 type="text" 
-                                placeholder="--/--/----" 
+                                placeholder="" 
                                 className="flex-1 bg-white border border-amber-200 print:border-black rounded px-2 py-0.5 text-xs text-slate-700 print:text-black focus:border-amber-400 outline-none font-mono"
                                 value={headerData.prazoEnvio || ''}
                                 onChange={(e) => updateHeader("prazoEnvio", e.target.value)}
