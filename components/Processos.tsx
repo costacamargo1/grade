@@ -340,75 +340,82 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
   ];
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-lg w-full h-full flex flex-col">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-slate-800">Processos Salvos</h2>
-        <div className="flex items-center gap-3 w-2/3 justify-end">
+    <div className="bg-slate-100 p-4 sm:p-6 lg:p-8 w-full min-h-screen flex flex-col font-sans">
+      {/* Header */}
+      <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+        <h1 className="text-3xl font-bold text-slate-800">Painel de Processos</h1>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={18} />
+            <input
+              type="text"
+              placeholder="Buscar..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-64 pl-11 pr-4 py-2.5 border border-transparent bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-slate-700 shadow-sm"
+            />
+          </div>
           <button
             onClick={openAgendaModal}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 text-sm rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-5 text-sm rounded-md transition-colors shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30"
           >
             Gerar Agenda
           </button>
-          <div className="relative w-2/3">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-            <input
-              type="text"
-              placeholder="Buscar por N Grade, Edital, Orgao..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase text-black"
-            />
-          </div>
         </div>
       </div>
-      <div className="overflow-auto"> 
-        <table className="w-full bg-white border-2 border-slate-200 rounded-lg">
-          <thead className="bg-slate-800 text-white select-none">
-            <tr>
-              {headers.map(({ key, label }) => (
-                <th 
-                  key={key}
-                  className="px-4 py-3 text-sm font-semibold uppercase text-left"
-                  onClick={() => requestSort(key as SortKey)}
-                >
-                  <div className="flex items-center gap-2 cursor-pointer">
-                    {label}
-                    {sortConfig?.key === key && (
-                      sortConfig.direction === 'ascending' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
-                    )}
-                  </div>
-                </th>
-              ))}
-              <th className="px-4 py-3 text-sm font-semibold uppercase text-center">AÇÕES</th>
-            </tr>
-          </thead>
-          <tbody className="text-slate-700">
-            {sortedProcessos.map((processo) => (
-              <tr key={processo.id} className="border-b border-slate-200 hover:bg-slate-50">
-                <td className="px-4 py-2 text-sm">{processo.headerData.numeroGrade}</td>
-                <td className="px-4 py-2 text-sm">{processo.headerData.empresa}</td>
-                <td className="px-4 py-2 text-sm">{processo.headerData.edital}</td>
-                <td className="px-4 py-2 text-sm">{getOrgaoName(processo.headerData.orgao)}</td>
-                <td className="px-4 py-2 text-sm">{getUfFromOrgao(processo.headerData.orgao)}</td>
-                <td className="px-4 py-2 text-sm">{processo.headerData.dataAbertura}</td>
-                <td className="px-4 py-2 text-sm">{getTimeFromDataAbertura(processo.headerData.dataAbertura)}</td>
-                <td className="px-4 py-2 text-sm">{processo.headerData.dataEdicao}</td>
-                <td className="px-4 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <button onClick={() => handleEdit(processo.id)} className="p-2 text-blue-600 hover:text-blue-800 transition-colors">
-                      <Edit size={18} />
-                    </button>
-                    <button onClick={() => handleDelete(processo.id)} className="p-2 text-red-600 hover:text-red-800 transition-colors">
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </td>
+
+      {/* Main Content */}
+      <div className="flex-grow bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div className="overflow-auto h-full">
+          <table className="w-full">
+            <thead className="bg-slate-50 select-none sticky top-0 z-10">
+              <tr>
+                {headers.map(({ key, label }) => (
+                  <th 
+                    key={key}
+                    scope="col"
+                    className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                    onClick={() => requestSort(key as SortKey)}
+                  >
+                    <div className="flex items-center gap-1.5 cursor-pointer">
+                      {label}
+                      {sortConfig?.key === key && (
+                        sortConfig.direction === 'ascending' ? <ChevronUp size={14} /> : <ChevronDown size={14} />
+                      )}
+                    </div>
+                  </th>
+                ))}
+                <th scope="col" className="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-slate-200">
+              {sortedProcessos.map((processo) => (
+                <tr key={processo.id} className="hover:bg-slate-50/70 transition-colors duration-150">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{processo.headerData.numeroGrade}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{processo.headerData.empresa}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{processo.headerData.edital}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{getOrgaoName(processo.headerData.orgao)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{getUfFromOrgao(processo.headerData.orgao)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{processo.headerData.dataAbertura}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{getTimeFromDataAbertura(processo.headerData.dataAbertura)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{processo.headerData.dataEdicao}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                    <div className="flex items-center justify-center gap-1">
+                      <button onClick={() => handleEdit(processo.id)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors">
+                        <Edit size={16} />
+                      </button>
+                      <button onClick={() => handleDelete(processo.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
+      
       {agendaModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden">
