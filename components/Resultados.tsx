@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { Resultado, CompanyConfig } from '../lib/types';
-import { PlusCircle, Trash2, Edit, Save, Search, ChevronDown, ChevronUp, Settings, Award, FileDown, FileUp, X, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, Save, Search, ChevronDown, ChevronUp, Settings, Award, FileDown, FileUp, X } from 'lucide-react';
 import ConfiguracoesModal from './ConfiguracoesModal';
 import { getContrastColor } from '../lib/formatters';
 import { exportResultadosToExcel } from '../lib/exportService';
@@ -48,7 +48,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   const [companyConfigs, setCompanyConfigs] = useState<CompanyConfig[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [rowsPerPage, setRowsPerPage] = useState(50);
   const [viewMode, setViewMode] = useState<'normal' | 'compacto' | 'supercompacto'>('compacto');
 
   useEffect(() => {
@@ -69,6 +69,10 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
       console.error("Failed to save company configs to localStorage", error);
     }
   }, [companyConfigs]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, dateFilter]);
 
   const handleAddRow = () => {
     const newId = Date.now().toString();
@@ -190,6 +194,9 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   }, [filteredResultados, sortConfig]);
 
   const paginatedResultados = useMemo(() => {
+    if (rowsPerPage === 0) {
+      return sortedResultados;
+    }
     const startIndex = (currentPage - 1) * rowsPerPage;
     return sortedResultados.slice(startIndex, startIndex + rowsPerPage);
   }, [sortedResultados, currentPage, rowsPerPage]);
@@ -277,7 +284,11 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
   ];
   const fieldMapping: (keyof Omit<Resultado, 'id' | 'actions' | 'status'>)[] = tableHeaders.map(h => h.key).filter(k => !['actions', 'status'].includes(k as string)) as any;
 
-  const totalPages = Math.ceil(sortedResultados.length / rowsPerPage);
+  const totalPages = useMemo(() => {
+    if (rowsPerPage === 0) return 1;
+    return Math.ceil(sortedResultados.length / rowsPerPage);
+  }, [sortedResultados, rowsPerPage]);
+
   const cellPadding = viewMode === 'supercompacto' ? 'px-0.5 py-0.5' : viewMode === 'compacto' ? 'px-1 py-1' : 'px-2 py-2';
   const headerPadding = viewMode === 'supercompacto' ? 'px-1 py-1 text-[10px]' : viewMode === 'compacto' ? 'px-2 py-2 text-xs' : 'px-4 py-3 text-sm';
 
@@ -397,63 +408,52 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
           </tbody>
         </table>
       </div>
-      <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-4">
-        <div className='text-sm text-slate-600'>
-          Mostrando {Math.min(paginatedResultados.length, sortedResultados.length)} de {sortedResultados.length} resultados
-        </div>
+      <div className="flex justify-between items-center p-4 border-t border-slate-200 text-sm text-slate-600">
         <div className="flex items-center gap-2">
-            <button onClick={() => setViewMode(v => v === 'normal' ? 'compacto' : v === 'compacto' ? 'supercompacto' : 'normal')} className="text-sm px-3 py-2 border rounded-md text-slate-900 hover:bg-slate-100 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <button onClick={() => setViewMode(v => v === 'normal' ? 'compacto' : v === 'compacto' ? 'supercompacto' : 'normal')} className="text-sm px-3 py-1 border rounded-md text-slate-900 hover:bg-slate-100 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 {viewMode === 'normal' ? 'Visão Compacta' : viewMode === 'compacto' ? 'Visão Super Compacta' : 'Visão Normal'}
             </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="itemsPerPage" className="font-semibold">Linhas por pagina:</label>
             <select
-                value={rowsPerPage}
-                onChange={(e) => {
-                    setRowsPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                }}
-                className="text-sm px-3 py-2 border rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              id="itemsPerPage"
+              value={rowsPerPage}
+              onChange={(e) => {
+                setRowsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="px-2 py-1 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-                <option value={20}>20 por página</option>
-                <option value={50}>50 por página</option>
-                <option value={100}>100 por página</option>
-            <option value={Number.MAX_SAFE_INTEGER}>Visualizar Todos</option>
-                
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={500}>500</option>
+              <option value={1000}>1000</option>
+              <option value={0}>Todos</option>
             </select>
-        </div>
-        <div className="flex items-center gap-2">
-            <button
-                onClick={() => setCurrentPage(1)}
-                disabled={currentPage === 1}
-                className="p-2 border rounded-md text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-                <ChevronsLeft size={16} />
-            </button>
-            <button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="p-2 border rounded-md text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-                Anterior
-            </button>
-            <span className="text-sm px-4 py-2 border rounded-lg text-slate-900 bg-slate-100">
-                Página {currentPage} de {totalPages > 0 ? totalPages : 1}
+          </div>
+          <div className="flex items-center gap-4">
+            <span>
+              Pagina {currentPage} de {totalPages > 0 ? totalPages : 1}
             </span>
-            <button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 border border-slate-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100"
+              >
+                Anterior
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages || totalPages === 0}
-                className="p-2 border rounded-md text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-                Próximo
-            </button>
-            <button
-                onClick={() => setCurrentPage(totalPages)}
-                disabled={currentPage === totalPages || totalPages === 0}
-                className="p-2 border rounded-md text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-                <ChevronsRight size={16} />
-            </button>
+                className="px-3 py-1 border border-slate-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100"
+              >
+                Próxima
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
     </div>
   );
 };
