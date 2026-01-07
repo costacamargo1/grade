@@ -304,12 +304,12 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
       />
       <div className="bg-white rounded-2xl shadow-md print:border-black overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between items-center p-4 gap-3 border-b border-slate-200">
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-3xl font-bold text-slate-800 self-start md:self-center">Produtos</h1>
-            <span className="text-sm font-semibold text-slate-500">
-              Quantidade de Produtos: {produtos.length}
-            </span>
-          </div>
+<div className="flex flex-col">
+  <h1 className="text-3xl font-bold text-slate-800">Gestão de Produtos</h1>
+  <span className="text-sm text-slate-500 mt-0.5">
+    {produtos.length} produtos cadastrados
+  </span>
+</div>
           <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
             <div className="relative w-full md:w-64">
               <TextSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
