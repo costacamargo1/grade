@@ -48,6 +48,12 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
   const [descricaoPreview, setDescricaoPreview] = useState<string | null>(null);
   const [descricaoWidth, setDescricaoWidth] = useState<number | null>(null);
 
+  const cellPadding = useMemo(() => {
+    if (columnSize === "compact") return "px-2 py-1";
+    if (columnSize === "normal") return "px-3 py-2";
+    return "px-3 py-3";
+  }, [columnSize]);
+
   const handleSaveProduto = () => {
     if (editingId) {
       setProdutos((current) =>
