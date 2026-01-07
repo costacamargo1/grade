@@ -261,7 +261,7 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-300 print:border-black overflow-hidden">
+    <div className="bg-slate-100 px-3 sm:px-4 lg:px-5 py-4 min-h-screen">
       <input
         type="file"
         ref={fileInputRef}
@@ -269,348 +269,350 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
         className="hidden"
         accept=".xlsx, .xls"
       />
-      <div className="flex flex-col md:flex-row justify-between items-center p-4 gap-3 border-b border-slate-200">
-        <h2 className="text-2xl font-bold text-slate-800">Produtos</h2>
-        <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
-          <div className="relative w-full md:w-64">
-            <TextSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-            <input
-              type="text"
-              placeholder="Buscar..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase text-black"
-            />
-          </div>
-          <button
-            onClick={cycleColumnSize}
-            className="group flex items-center gap-2 rounded-md py-2 px-3 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Ajustar colunas
-          </button>
-          <div className="flex gap-2">
+      <div className="bg-white rounded-2xl shadow-md print:border-black overflow-hidden">
+        <div className="flex flex-col md:flex-row justify-between items-center p-4 gap-3 border-b border-slate-200">
+          <h1 className="text-3xl font-bold text-slate-800 self-start md:self-center">Produtos</h1>
+          <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
+            <div className="relative w-full md:w-64">
+              <TextSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+              <input
+                type="text"
+                placeholder="Buscar..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-11 pr-4 py-2.5 border border-slate-200 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-slate-700"
+              />
+            </div>
             <button
-              onClick={() => {
-                setNewProduto(createEmptyProduto());
-                setEditingId(null);
-                setShowAddModal(true);
-              }}
-              className="group flex items-center gap-2 rounded-md py-2 px-4 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              onClick={cycleColumnSize}
+              className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-5 text-sm rounded-md transition-colors border border-slate-200 flex items-center gap-2 w-full justify-center md:w-auto"
             >
-              <Plus size={18} />
-              Adicionar
+              Ajustar colunas
             </button>
-            <button
-              onClick={handleImportClick}
-              className="group flex items-center gap-2 rounded-md py-2 px-4 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              <FileUp size={18} />
-              Importar
-            </button>
-            <button
-              onClick={() => exportProdutosToExcel(produtos)}
-              className="group flex items-center gap-2 rounded-md py-2 px-4 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-            >
-              <FileDown size={18} />
-              Exportar
-            </button>
+            <div className="flex gap-2 w-full md:w-auto">
+              <button
+                onClick={() => {
+                  setNewProduto(createEmptyProduto());
+                  setEditingId(null);
+                  setShowAddModal(true);
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-5 text-sm rounded-md transition-colors shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 flex items-center gap-2 justify-center flex-1"
+              >
+                <Plus size={16} />
+                Adicionar
+              </button>
+              <button
+                onClick={handleImportClick}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold p-2.5 text-sm rounded-md transition-colors border border-slate-200 flex items-center gap-2 justify-center"
+                title="Importar"
+              >
+                <FileUp size={16} />
+              </button>
+              <button
+                onClick={() => exportProdutosToExcel(produtos)}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold p-2.5 text-sm rounded-md transition-colors border border-slate-200 flex items-center gap-2 justify-center"
+                title="Exportar"
+              >
+                <FileDown size={16} />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-xs text-left border-collapse min-w-[1500px]">
-          <thead className="text-white bg-slate-800 uppercase font-bold tracking-tighter leading-tight print:bg-black print:text-white">
-            <tr>
-              <th
-                className={`p-2 border-r border-gray-600 text-center ${getColumnClass("fabricante")}`}
-                onClick={() => requestSort("fabricante")}
-              >
-                <span className="flex items-center justify-center gap-1 cursor-pointer">
-                  FABRICANTE
-                  {sortConfig?.key === "fabricante" &&
-                    (sortConfig.direction === "ascending" ? (
-                      <ChevronUp size={12} />
-                    ) : (
-                      <ChevronDown size={12} />
-                    ))}
-                </span>
-              </th>
-              <th
-                className={`p-2 border-r border-gray-600 text-center relative ${getColumnClass("descricao")}`}
-                onClick={() => requestSort("descricao")}
-                style={descricaoWidth ? { width: `${descricaoWidth}px` } : undefined}
-              >
-                <span className="flex items-center justify-center gap-1 cursor-pointer">
-                  DESCRICAO
-                  {sortConfig?.key === "descricao" &&
-                    (sortConfig.direction === "ascending" ? (
-                      <ChevronUp size={12} />
-                    ) : (
-                      <ChevronDown size={12} />
-                    ))}
-                </span>
-                <div
-                  onMouseDown={handleDescricaoResizeStart}
-                  className="absolute right-0 top-0 h-full w-2 cursor-col-resize"
-                  title="Arraste para ajustar a largura"
-                />
-              </th>
-              <th
-                className={`p-2 border-r border-gray-600 text-center ${getColumnClass("unidade")}`}
-                onClick={() => requestSort("unidade")}
-              >
-                <span className="flex items-center justify-center gap-1 cursor-pointer">
-                  UNIDADE
-                  {sortConfig?.key === "unidade" &&
-                    (sortConfig.direction === "ascending" ? (
-                      <ChevronUp size={12} />
-                    ) : (
-                      <ChevronDown size={12} />
-                    ))}
-                </span>
-              </th>
-              <th
-                className={`p-2 border-r border-gray-600 text-center ${getColumnClass("valorInicial")}`}
-                onClick={() => requestSort("valorInicial")}
-              >
-                <span className="flex items-center justify-center gap-1 cursor-pointer">
-                  VALOR<br />INICIAL
-                  {sortConfig?.key === "valorInicial" &&
-                    (sortConfig.direction === "ascending" ? (
-                      <ChevronUp size={12} />
-                    ) : (
-                      <ChevronDown size={12} />
-                    ))}
-                </span>
-              </th>
-              <th
-                className={`p-2 border-r border-gray-600 text-center ${getColumnClass("codeuro")}`}
-                onClick={() => requestSort("codeuro")}
-              >
-                <span className="flex items-center justify-center gap-1 cursor-pointer">
-                  CODEURO
-                  {sortConfig?.key === "codeuro" &&
-                    (sortConfig.direction === "ascending" ? (
-                      <ChevronUp size={12} />
-                    ) : (
-                      <ChevronDown size={12} />
-                    ))}
-                </span>
-              </th>
-              <th
-                className={`p-2 border-r border-gray-600 text-center ${getColumnClass("apresentacaoSugerida")}`}
-                onClick={() => requestSort("apresentacaoSugerida")}
-              >
-                <span className="flex items-center justify-center gap-1 cursor-pointer">
-                  APRESENTACAO SUGERIDA
-                  {sortConfig?.key === "apresentacaoSugerida" &&
-                    (sortConfig.direction === "ascending" ? (
-                      <ChevronUp size={12} />
-                    ) : (
-                      <ChevronDown size={12} />
-                    ))}
-                </span>
-              </th>
-              <th
-                className={`p-2 border-r border-gray-600 text-center ${getColumnClass("obs")}`}
-                onClick={() => requestSort("obs")}
-              >
-                <span className="flex items-center justify-center gap-1 cursor-pointer">
-                  OBS
-                  {sortConfig?.key === "obs" &&
-                    (sortConfig.direction === "ascending" ? (
-                      <ChevronUp size={12} />
-                    ) : (
-                      <ChevronDown size={12} />
-                    ))}
-                </span>
-              </th>
-              <th
-                className={`p-2 border-r border-gray-600 text-center ${getColumnClass("cap")}`}
-                onClick={() => requestSort("cap")}
-              >
-                <span className="flex items-center justify-center gap-1 cursor-pointer">
-                  CAP<br />21,53%
-                  {sortConfig?.key === "cap" &&
-                    (sortConfig.direction === "ascending" ? (
-                      <ChevronUp size={12} />
-                    ) : (
-                      <ChevronDown size={12} />
-                    ))}
-                </span>
-              </th>
-              <th
-                className={`p-2 border-r border-gray-600 text-center ${getColumnClass("conv8702")}`}
-                onClick={() => requestSort("conv8702")}
-              >
-                <span className="flex items-center justify-center gap-1 cursor-pointer">
-                  CONV.<br />87/02
-                  {sortConfig?.key === "conv8702" &&
-                    (sortConfig.direction === "ascending" ? (
-                      <ChevronUp size={12} />
-                    ) : (
-                      <ChevronDown size={12} />
-                    ))}
-                </span>
-              </th>
-              <th
-                className={`p-2 border-r border-gray-600 text-center ${getColumnClass("conv16294")}`}
-                onClick={() => requestSort("conv16294")}
-              >
-                <span className="flex items-center justify-center gap-1 cursor-pointer">
-                  CONV.<br />162/94
-                  {sortConfig?.key === "conv16294" &&
-                    (sortConfig.direction === "ascending" ? (
-                      <ChevronUp size={12} />
-                    ) : (
-                      <ChevronDown size={12} />
-                    ))}
-                </span>
-              </th>
-              <th
-                className={`p-2 text-center ${getColumnClass("conv14001")}`}
-                onClick={() => requestSort("conv14001")}
-              >
-                <span className="flex items-center justify-center gap-1 cursor-pointer">
-                  CONV.<br />140/01
-                  {sortConfig?.key === "conv14001" &&
-                    (sortConfig.direction === "ascending" ? (
-                      <ChevronUp size={12} />
-                    ) : (
-                      <ChevronDown size={12} />
-                    ))}
-                </span>
-              </th>
-              <th className="w-8"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200 print:divide-black text-slate-800 font-medium print:text-black">
-            {sortedProdutos.map((produto) => {
-              const obsConfig = getObsConfig(produto);
-              return (
-                <tr
-                  key={produto.id}
-                  className="odd:bg-white even:bg-slate-50/70 hover:bg-blue-50 transition-colors group print:bg-white"
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-left border-collapse min-w-[1500px]">
+            <thead className="text-white bg-slate-800 uppercase font-bold tracking-tighter leading-tight print:bg-black print:text-white">
+              <tr>
+                <th
+                  className={`p-2 border-r border-gray-600 text-center ${getColumnClass("fabricante")}`}
+                  onClick={() => requestSort("fabricante")}
                 >
-                  <td className={`p-1 border-r border-slate-200 print:border-black ${getColumnClass("fabricante")}`}>
-                    <span className="w-full text-center block uppercase print:text-black">
-                      {produto.fabricante}
-                    </span>
-                  </td>
-                  <td
-                    className={`p-1 border-r border-slate-200 print:border-black ${getColumnClass("descricao")}`}
-                    style={descricaoWidth ? { width: `${descricaoWidth}px` } : undefined}
+                  <span className="flex items-center justify-center gap-1 cursor-pointer">
+                    FABRICANTE
+                    {sortConfig?.key === "fabricante" &&
+                      (sortConfig.direction === "ascending" ? (
+                        <ChevronUp size={12} />
+                      ) : (
+                        <ChevronDown size={12} />
+                      ))}
+                  </span>
+                </th>
+                <th
+                  className={`p-2 border-r border-gray-600 text-center relative ${getColumnClass("descricao")}`}
+                  onClick={() => requestSort("descricao")}
+                  style={descricaoWidth ? { width: `${descricaoWidth}px` } : undefined}
+                >
+                  <span className="flex items-center justify-center gap-1 cursor-pointer">
+                    DESCRICAO
+                    {sortConfig?.key === "descricao" &&
+                      (sortConfig.direction === "ascending" ? (
+                        <ChevronUp size={12} />
+                      ) : (
+                        <ChevronDown size={12} />
+                      ))}
+                  </span>
+                  <div
+                    onMouseDown={handleDescricaoResizeStart}
+                    className="absolute right-0 top-0 h-full w-2 cursor-col-resize"
+                    title="Arraste para ajustar a largura"
+                  />
+                </th>
+                <th
+                  className={`p-2 border-r border-gray-600 text-center ${getColumnClass("unidade")}`}
+                  onClick={() => requestSort("unidade")}
+                >
+                  <span className="flex items-center justify-center gap-1 cursor-pointer">
+                    UNIDADE
+                    {sortConfig?.key === "unidade" &&
+                      (sortConfig.direction === "ascending" ? (
+                        <ChevronUp size={12} />
+                      ) : (
+                        <ChevronDown size={12} />
+                      ))}
+                  </span>
+                </th>
+                <th
+                  className={`p-2 border-r border-gray-600 text-center ${getColumnClass("valorInicial")}`}
+                  onClick={() => requestSort("valorInicial")}
+                >
+                  <span className="flex items-center justify-center gap-1 cursor-pointer">
+                    VALOR<br />INICIAL
+                    {sortConfig?.key === "valorInicial" &&
+                      (sortConfig.direction === "ascending" ? (
+                        <ChevronUp size={12} />
+                      ) : (
+                        <ChevronDown size={12} />
+                      ))}
+                  </span>
+                </th>
+                <th
+                  className={`p-2 border-r border-gray-600 text-center ${getColumnClass("codeuro")}`}
+                  onClick={() => requestSort("codeuro")}
+                >
+                  <span className="flex items-center justify-center gap-1 cursor-pointer">
+                    CODEURO
+                    {sortConfig?.key === "codeuro" &&
+                      (sortConfig.direction === "ascending" ? (
+                        <ChevronUp size={12} />
+                      ) : (
+                        <ChevronDown size={12} />
+                      ))}
+                  </span>
+                </th>
+                <th
+                  className={`p-2 border-r border-gray-600 text-center ${getColumnClass("apresentacaoSugerida")}`}
+                  onClick={() => requestSort("apresentacaoSugerida")}
+                >
+                  <span className="flex items-center justify-center gap-1 cursor-pointer">
+                    APRESENTACAO SUGERIDA
+                    {sortConfig?.key === "apresentacaoSugerida" &&
+                      (sortConfig.direction === "ascending" ? (
+                        <ChevronUp size={12} />
+                      ) : (
+                        <ChevronDown size={12} />
+                      ))}
+                  </span>
+                </th>
+                <th
+                  className={`p-2 border-r border-gray-600 text-center ${getColumnClass("obs")}`}
+                  onClick={() => requestSort("obs")}
+                >
+                  <span className="flex items-center justify-center gap-1 cursor-pointer">
+                    OBS
+                    {sortConfig?.key === "obs" &&
+                      (sortConfig.direction === "ascending" ? (
+                        <ChevronUp size={12} />
+                      ) : (
+                        <ChevronDown size={12} />
+                      ))}
+                  </span>
+                </th>
+                <th
+                  className={`p-2 border-r border-gray-600 text-center ${getColumnClass("cap")}`}
+                  onClick={() => requestSort("cap")}
+                >
+                  <span className="flex items-center justify-center gap-1 cursor-pointer">
+                    CAP<br />21,53%
+                    {sortConfig?.key === "cap" &&
+                      (sortConfig.direction === "ascending" ? (
+                        <ChevronUp size={12} />
+                      ) : (
+                        <ChevronDown size={12} />
+                      ))}
+                  </span>
+                </th>
+                <th
+                  className={`p-2 border-r border-gray-600 text-center ${getColumnClass("conv8702")}`}
+                  onClick={() => requestSort("conv8702")}
+                >
+                  <span className="flex items-center justify-center gap-1 cursor-pointer">
+                    CONV.<br />87/02
+                    {sortConfig?.key === "conv8702" &&
+                      (sortConfig.direction === "ascending" ? (
+                        <ChevronUp size={12} />
+                      ) : (
+                        <ChevronDown size={12} />
+                      ))}
+                  </span>
+                </th>
+                <th
+                  className={`p-2 border-r border-gray-600 text-center ${getColumnClass("conv16294")}`}
+                  onClick={() => requestSort("conv16294")}
+                >
+                  <span className="flex items-center justify-center gap-1 cursor-pointer">
+                    CONV.<br />162/94
+                    {sortConfig?.key === "conv16294" &&
+                      (sortConfig.direction === "ascending" ? (
+                        <ChevronUp size={12} />
+                      ) : (
+                        <ChevronDown size={12} />
+                      ))}
+                  </span>
+                </th>
+                <th
+                  className={`p-2 text-center ${getColumnClass("conv14001")}`}
+                  onClick={() => requestSort("conv14001")}
+                >
+                  <span className="flex items-center justify-center gap-1 cursor-pointer">
+                    CONV.<br />140/01
+                    {sortConfig?.key === "conv14001" &&
+                      (sortConfig.direction === "ascending" ? (
+                        <ChevronUp size={12} />
+                      ) : (
+                        <ChevronDown size={12} />
+                      ))}
+                  </span>
+                </th>
+                <th className="w-8"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200 print:divide-black text-slate-800 font-medium print:text-black">
+              {sortedProdutos.map((produto) => {
+                const obsConfig = getObsConfig(produto);
+                return (
+                  <tr
+                    key={produto.id}
+                    className="odd:bg-white even:bg-slate-50/70 hover:bg-slate-100/50 transition-colors group print:bg-white"
                   >
-                    <span
-                      className="w-full text-center block print:text-black"
-                      style={
-                        columnSize === "wide"
-                          ? {
-                              display: "-webkit-box",
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: "vertical",
-                              overflow: "hidden",
-                            }
-                          : undefined
-                      }
-                      onClick={() => {
-                        if (produto.descricao) {
-                          setDescricaoPreview(produto.descricao);
+                    <td className={`px-3 py-3 border-r border-slate-200 print:border-black ${getColumnClass("fabricante")}`}>
+                      <span className="w-full text-center block uppercase print:text-black">
+                        {produto.fabricante}
+                      </span>
+                    </td>
+                    <td
+                      className={`px-3 py-3 border-r border-slate-200 print:border-black ${getColumnClass("descricao")}`}
+                      style={descricaoWidth ? { width: `${descricaoWidth}px` } : undefined}
+                    >
+                      <span
+                        className="w-full text-center block print:text-black"
+                        style={
+                          columnSize === "wide"
+                            ? {
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                              }
+                            : undefined
                         }
+                        onClick={() => {
+                          if (produto.descricao) {
+                            setDescricaoPreview(produto.descricao);
+                          }
+                        }}
+                        title={produto.descricao}
+                      >
+                        {produto.descricao}
+                      </span>
+                    </td>
+                    <td className={`px-2 py-1.5 border-r border-slate-200 print:border-black ${getColumnClass("unidade")}`}>
+                      <span className="w-full text-center block uppercase print:text-black">
+                        {produto.unidade}
+                      </span>
+                    </td>
+                    <td className={`px-2 py-1.5 border-r border-slate-200 print:border-black ${getColumnClass("valorInicial")}`}>
+                      <span className="w-full text-center block print:text-black">
+                        {produto.valorInicial}
+                      </span>
+                    </td>
+                    <td className={`px-2 py-1.5 border-r border-slate-200 print:border-black ${getColumnClass("codeuro")}`}>
+                      <span className="w-full text-center block uppercase print:text-black">
+                        {produto.codeuro}
+                      </span>
+                    </td>
+                    <td className={`px-2 py-1.5 border-r border-slate-200 print:border-black ${getColumnClass("apresentacaoSugerida")}`}>
+                      <span className="w-full text-center block print:text-black">
+                        {produto.apresentacaoSugerida}
+                      </span>
+                    </td>
+                    <td
+                      className={`px-2 py-1.5 border-r border-slate-200 print:border-black text-center font-bold ${getColumnClass("obs")}`}
+                      style={{ backgroundColor: obsConfig.bg, color: obsConfig.color }}
+                    >
+                      {obsConfig.text}
+                    </td>
+                    <td
+                      className={`px-2 py-1.5 border-r border-slate-200 print:border-black text-center ${getColumnClass("cap")}`}
+                      style={{
+                        backgroundColor: produto.cap ? "#92D050" : "transparent",
+                        color: "#000000",
                       }}
-                      title={produto.descricao}
                     >
-                      {produto.descricao}
-                    </span>
-                  </td>
-                  <td className={`p-1 border-r border-slate-200 print:border-black ${getColumnClass("unidade")}`}>
-                    <span className="w-full text-center block uppercase print:text-black">
-                      {produto.unidade}
-                    </span>
-                  </td>
-                  <td className={`p-1 border-r border-slate-200 print:border-black ${getColumnClass("valorInicial")}`}>
-                    <span className="w-full text-center block print:text-black">
-                      {produto.valorInicial}
-                    </span>
-                  </td>
-                  <td className={`p-1 border-r border-slate-200 print:border-black ${getColumnClass("codeuro")}`}>
-                    <span className="w-full text-center block uppercase print:text-black">
-                      {produto.codeuro}
-                    </span>
-                  </td>
-                  <td className={`p-1 border-r border-slate-200 print:border-black ${getColumnClass("apresentacaoSugerida")}`}>
-                    <span className="w-full text-center block print:text-black">
-                      {produto.apresentacaoSugerida}
-                    </span>
-                  </td>
-                  <td
-                    className={`p-1 border-r border-slate-200 print:border-black text-center font-bold ${getColumnClass("obs")}`}
-                    style={{ backgroundColor: obsConfig.bg, color: obsConfig.color }}
-                  >
-                    {obsConfig.text}
-                  </td>
-                  <td
-                    className={`p-1 border-r border-slate-200 print:border-black text-center ${getColumnClass("cap")}`}
-                    style={{
-                      backgroundColor: produto.cap ? "#92D050" : "transparent",
-                      color: "#000000",
-                    }}
-                  >
-                    <span className="w-full font-bold">{produto.cap ? "SIM" : "NAO"}</span>
-                  </td>
-                  <td
-                    className={`p-1 border-r border-slate-200 print:border-black text-center ${getColumnClass("conv8702")}`}
-                    style={{
-                      backgroundColor: produto.conv8702 ? "#00B0F0" : "transparent",
-                      color: "#000000",
-                    }}
-                  >
-                    <span className="w-full font-bold">{produto.conv8702 ? "SIM" : "NAO"}</span>
-                  </td>
-                  <td
-                    className={`p-1 border-r border-slate-200 print:border-black text-center ${getColumnClass("conv16294")}`}
-                    style={{
-                      backgroundColor: produto.conv16294 ? "#FFC000" : "transparent",
-                      color: "#000000",
-                    }}
-                  >
-                    <span className="w-full font-bold">{produto.conv16294 ? "SIM" : "NAO"}</span>
-                  </td>
-                  <td
-                    className={`p-1 border-r border-slate-200 print:border-black text-center ${getColumnClass("conv14001")}`}
-                    style={{
-                      backgroundColor: produto.conv14001 ? "#C662C6" : "transparent",
-                      color: "#000000",
-                    }}
-                  >
-                    <span className="w-full font-bold">{produto.conv14001 ? "SIM" : "NAO"}</span>
-                  </td>
-                  <td className="p-1 text-center">
-                    <button
-                      onClick={() => handleEditProduto(produto)}
-                      className="text-blue-600 hover:text-blue-800 print:hidden mr-2"
+                      <span className="w-full font-bold">{produto.cap ? "SIM" : "NAO"}</span>
+                    </td>
+                    <td
+                      className={`px-2 py-1.5 border-r border-slate-200 print:border-black text-center ${getColumnClass("conv8702")}`}
+                      style={{
+                        backgroundColor: produto.conv8702 ? "#00B0F0" : "transparent",
+                        color: "#000000",
+                      }}
                     >
-                      <Edit size={12} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(produto.id)}
-                      className="text-red-600 hover:text-red-800 print:hidden"
+                      <span className="w-full font-bold">{produto.conv8702 ? "SIM" : "NAO"}</span>
+                    </td>
+                    <td
+                      className={`px-2 py-1.5 border-r border-slate-200 print:border-black text-center ${getColumnClass("conv16294")}`}
+                      style={{
+                        backgroundColor: produto.conv16294 ? "#FFC000" : "transparent",
+                        color: "#000000",
+                      }}
                     >
-                      <Trash2 size={12} />
-                    </button>
+                      <span className="w-full font-bold">{produto.conv16294 ? "SIM" : "NAO"}</span>
+                    </td>
+                    <td
+                      className={`px-2 py-1.5 border-r border-slate-200 print:border-black text-center ${getColumnClass("conv14001")}`}
+                      style={{
+                        backgroundColor: produto.conv14001 ? "#C662C6" : "transparent",
+                        color: "#000000",
+                      }}
+                    >
+                      <span className="w-full font-bold">{produto.conv14001 ? "SIM" : "NAO"}</span>
+                    </td>
+                    <td className="px-2 py-1.5 text-center">
+                      <button
+                        onClick={() => handleEditProduto(produto)}
+                        className="text-slate-400 hover:text-blue-600 print:hidden p-2 hover:bg-blue-100 rounded-lg"
+                      >
+                        <Edit size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(produto.id)}
+                        className="text-slate-400 hover:text-red-600 print:hidden p-2 hover:bg-red-100 rounded-lg"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+              {sortedProdutos.length === 0 && (
+                <tr>
+                  <td colSpan={12} className="p-8 text-center text-slate-400 text-sm">
+                    Nenhum produto cadastrado.
                   </td>
                 </tr>
-              );
-            })}
-            {sortedProdutos.length === 0 && (
-              <tr>
-                <td colSpan={12} className="p-8 text-center text-slate-400 text-sm">
-                  Nenhum produto cadastrado.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {showAddModal && (
@@ -626,7 +628,7 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
                   setShowAddModal(false);
                   setEditingId(null);
                 }}
-                className="text-slate-400 hover:text-red-500 transition"
+                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-100 rounded-lg transition"
               >
                 <X size={20} />
               </button>

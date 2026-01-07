@@ -108,7 +108,7 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
   };
   
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 lg:p-8">
+    <div className="bg-slate-100 p-4 sm:p-6 lg:p-8 w-full min-h-screen">
       <input 
         type="file" 
         ref={fileInputRef} 
@@ -116,96 +116,96 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
         className="hidden" 
         accept=".xlsx, .xls"
       />
-      <div className="flex justify-between items-center mb-6 gap-4">
-        <div className="grow">
-            <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-              <Building2 size={24} className="text-blue-500"/>
-              Gestão de Órgãos
-            </h2>
-            <p className="text-sm text-slate-500 mt-1">{orgaos.length} órgãos cadastrados</p>
+      
+      <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8">
+        <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
+          <div className="grow">
+              <h1 className="text-3xl font-bold text-slate-800">Gestão de Órgãos</h1>
+              <p className="text-sm text-slate-500 mt-1">{orgaos.length} órgãos cadastrados</p>
+          </div>
+          <div className="flex items-center gap-3">
+             <button
+                onClick={() => setShowAddModal(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-5 text-sm rounded-md transition-colors shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 flex items-center gap-2"
+              >
+                <FilePlus size={16} />
+                <span>Novo Órgão</span>
+              </button>
+              <button
+                onClick={handleImportClick}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-5 text-sm rounded-md transition-colors border border-slate-200 flex items-center gap-2"
+              >
+                <Upload size={16} />
+                <span>Importar</span>
+              </button>
+              <button
+                onClick={handleExport}
+                disabled={orgaos.length === 0}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-5 text-sm rounded-md transition-colors border border-slate-200 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                <Download size={16} />
+                <span>Exportar</span>
+              </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-           <button
-              onClick={() => setShowAddModal(true)}
-              className="group flex items-center gap-2 rounded-md py-2 px-3 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-            >
-              <FilePlus size={16} />
-              Cadastrar Novo Órgão
-            </button>
-            <button
-              onClick={handleImportClick}
-              className="group flex items-center gap-2 rounded-md py-2 px-3 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              <Upload size={16} />
-              Importar
-            </button>
-            <button
-              onClick={handleExport}
-              disabled={orgaos.length === 0}
-              className="group flex items-center gap-2 rounded-md py-2 px-3 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
-            >
-              <Download size={16} />
-              Exportar
-            </button>
-        </div>
-      </div>
 
-      {orgaos.length === 0 ? (
-        <div className="text-center py-16 border-2 border-dashed border-slate-200 rounded-xl">
-          <Building2 size={48} className="mx-auto text-slate-300" />
-          <h3 className="mt-4 text-lg font-semibold text-slate-600">Nenhum órgão cadastrado</h3>
-          <p className="text-slate-400 mt-1">Use o botão "Importar" ou "Cadastrar Novo Órgão" para adicionar um novo órgão.</p>
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left table-auto">
-            <thead className="border-b-2 border-slate-200 bg-slate-50">
-              <tr>
-                <th className="p-4 text-sm font-bold text-slate-500 uppercase tracking-wider">Nome do Órgão</th>
-                <th className="p-4 text-sm font-bold text-slate-500 uppercase tracking-wider text-center">UASG</th>
-                <th className="p-4 text-sm font-bold text-slate-500 uppercase tracking-wider">Portal</th>
-                <th className="p-4 text-sm font-bold text-slate-500 uppercase tracking-wider text-right">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {orgaos.map((orgao, index) => (
-                <tr key={index} className="hover:bg-slate-50 transition-colors">
-                  <td className="p-4 font-semibold text-slate-700">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-slate-100 p-2 rounded-lg">
-                        <Building2 size={16} className="text-slate-500" />
-                      </div>
-                      <span>{orgao.nome}</span>
-                    </div>
-                  </td>
-                  <td className="p-4 text-slate-500 text-center">
-                    <div className="flex items-center justify-center gap-2">
-                       <Hash size={14} /> 
-                       {orgao.uasg || <span className="text-slate-300 italic">N/A</span>}
-                    </div>
-                  </td>
-                  <td className="p-4 text-slate-500">
-                    <div className="flex items-center gap-2">
-                      <Globe size={14} />
-                      {orgao.portal || <span className="text-slate-300 italic">N/A</span>}
-                    </div>
-                  </td>
-                  <td className="p-4 text-right">
-                    <div className="flex justify-end gap-2">
-                        <button onClick={() => handleEdit(orgao, index)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition">
-                            <Edit size={16} />
-                        </button>
-                        <button onClick={() => handleDelete(index)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition">
-                            <Trash2 size={16} />
-                        </button>
-                    </div>
-                  </td>
+        {orgaos.length === 0 ? (
+          <div className="text-center py-20 border-2 border-dashed border-slate-200 rounded-xl">
+            <Building2 size={48} className="mx-auto text-slate-300" />
+            <h3 className="mt-4 text-lg font-semibold text-slate-600">Nenhum órgão cadastrado</h3>
+            <p className="text-slate-400 mt-1.5">Clique em "Novo Órgão" ou "Importar" para começar.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="select-none">
+                <tr>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Nome do Órgão</th>
+                  <th scope="col" className="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">UASG</th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Portal</th>
+                  <th scope="col" className="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody className="bg-white divide-y divide-slate-200">
+                {orgaos.map((orgao, index) => (
+                  <tr key={index} className="hover:bg-slate-50/70 transition-colors duration-150">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-4">
+                        <div className="bg-slate-100 p-3 rounded-lg">
+                          <Building2 size={18} className="text-slate-500" />
+                        </div>
+                        <span className="font-semibold text-sm text-slate-800">{orgao.nome}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <div className="flex items-center justify-center gap-2 text-sm text-slate-600">
+                         <Hash size={14} /> 
+                         {orgao.uasg || <span className="text-slate-400 italic">N/A</span>}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-2 text-sm text-slate-600">
+                        <Globe size={14} />
+                        {orgao.portal || <span className="text-slate-400 italic">N/A</span>}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                      <div className="flex items-center justify-center gap-1">
+                          <button onClick={() => handleEdit(orgao, index)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors">
+                              <Edit size={16} />
+                          </button>
+                          <button onClick={() => handleDelete(index)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors">
+                              <Trash2 size={16} />
+                          </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       {/* Add New Orgao Modal */}
       {showAddModal && (
