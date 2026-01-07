@@ -1,8 +1,8 @@
 ﻿// components/Orgaos.tsx
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Orgao } from '../lib/types';
 import { ufs } from '../lib/data';
-import { Building2, Globe, Hash, Trash2, Edit, X, Save, Upload, Download, FilePlus } from 'lucide-react';
+import { Building2, Globe, Hash, Trash2, Edit, X, Save, Upload, Download, FilePlus, Search } from 'lucide-react';
 import { importOrgaosFromExcel } from '../lib/importService';
 import { exportOrgaosToExcel } from '../lib/exportService';
 
@@ -31,7 +31,8 @@ const normalizeOrgao = (orgao: Orgao): Orgao => {
   const uf = sanitizeUf(orgao.uf || '') || parsed.uf;
   const base = parsed.base || orgao.nome.trim();
   const nomeFinal = base ? `${base.toUpperCase()}${uf ? ` / ${uf}` : ''}` : '';
-  return { ...orgao, nome: nomeFinal, uf };
+  const portal = orgao.portal ? orgao.portal.toUpperCase() : '';
+  return { ...orgao, nome: nomeFinal, uf, portal };
 };
 
 export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
@@ -40,18 +41,27 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
   const [editingOrgao, setEditingOrgao] = useState<Orgao | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [newOrgao, setNewOrgao] = useState<Orgao>({ nome: '', uasg: '', portal: '', uf: '' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [searchTerm, setSearchTerm] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleDelete = (index: number) => {
-    const newOrgaos = [...orgaos];
-    newOrgaos.splice(index, 1);
-    setOrgaos(newOrgaos);
+  useEffect(() => {
+    setOrgaos(orgaos => orgaos.map(normalizeOrgao));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setOrgaos]);
+
+  const handleDelete = (orgaoToDelete: Orgao) => {
+    setOrgaos(currentOrgaos => currentOrgaos.filter(o => o.nome !== orgaoToDelete.nome));
   };
 
-  const handleEdit = (orgao: Orgao, index: number) => {
-    setEditingOrgao(normalizeOrgao({ ...orgao }));
-    setEditingIndex(index);
-    setShowEditModal(true);
+  const handleEdit = (orgaoToEdit: Orgao) => {
+    const originalIndex = orgaos.findIndex(o => o.nome === orgaoToEdit.nome);
+    if (originalIndex !== -1) {
+      setEditingOrgao(normalizeOrgao({ ...orgaoToEdit }));
+      setEditingIndex(originalIndex);
+      setShowEditModal(true);
+    }
   };
 
   const handleSave = () => {
@@ -74,6 +84,25 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
     } else {
       alert("O nome do órgão é obrigatório.");
     }
+  };
+
+  const filteredOrgaos = orgaos.filter(orgao =>
+    (orgao.nome?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (orgao.uasg?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (orgao.portal?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = rowsPerPage > 0 ? Math.ceil(filteredOrgaos.length / rowsPerPage) : 1;
+  const paginatedOrgaos = rowsPerPage > 0 ? filteredOrgaos.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage) : filteredOrgaos;
+  
+  const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setRowsPerPage(Number(event.target.value));
+    setCurrentPage(1);
+  };
+  
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1);
   };
   
   const handleExport = () => {
@@ -149,11 +178,43 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
           </div>
         </div>
 
-        {orgaos.length === 0 ? (
+        <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Buscar órgãos..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg w-full sm:w-80 text-slate-900"
+            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-900" size={18} />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label htmlFor="rows-per-page" className="text-sm text-slate-600">Linhas por página:</label>
+            <select
+              id="rows-per-page"
+              value={rowsPerPage}
+              onChange={handleRowsPerPageChange}
+              className="border border-slate-200 rounded-lg px-2 py-1 text-sm text-slate-900"
+            >
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={0}>Todos</option>
+            </select>
+          </div>
+        </div>
+
+        {filteredOrgaos.length === 0 ? (
           <div className="text-center py-20 border-2 border-dashed border-slate-200 rounded-xl">
             <Building2 size={48} className="mx-auto text-slate-300" />
-            <h3 className="mt-4 text-lg font-semibold text-slate-600">Nenhum órgão cadastrado</h3>
-            <p className="text-slate-400 mt-1.5">Clique em "Novo Órgão" ou "Importar" para começar.</p>
+            <h3 className="mt-4 text-lg font-semibold text-slate-600">
+              {searchTerm ? 'Nenhum órgão encontrado' : 'Nenhum órgão cadastrado'}
+            </h3>
+            <p className="text-slate-400 mt-1.5">
+              {searchTerm ? 'Tente ajustar sua busca.' : 'Clique em "Novo Órgão" ou "Importar" para começar.'}
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -167,8 +228,8 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-slate-200">
-                {orgaos.map((orgao, index) => (
-                  <tr key={index} className="hover:bg-slate-50/70 transition-colors duration-150">
+                {paginatedOrgaos.map((orgao) => (
+                  <tr key={orgao.nome} className="hover:bg-slate-50/70 transition-colors duration-150">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-4">
                         <div className="bg-slate-100 p-3 rounded-lg">
@@ -186,15 +247,15 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2 text-sm text-slate-600">
                         <Globe size={14} />
-                        {orgao.portal || <span className="text-slate-400 italic">N/A</span>}
+                        {orgao.portal ? orgao.portal.toUpperCase() : <span className="text-slate-400 italic">N/A</span>}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                       <div className="flex items-center justify-center gap-1">
-                          <button onClick={() => handleEdit(orgao, index)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors">
+                          <button onClick={() => handleEdit(orgao)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors">
                               <Edit size={16} />
                           </button>
-                          <button onClick={() => handleDelete(index)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors">
+                          <button onClick={() => handleDelete(orgao)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors">
                               <Trash2 size={16} />
                           </button>
                       </div>
@@ -203,6 +264,35 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {filteredOrgaos.length > 0 && (
+          <div className="flex flex-wrap justify-between items-center gap-4 mt-6">
+            <div className="text-sm text-slate-500">
+              Mostrando <span className="font-semibold">{paginatedOrgaos.length}</span> de <span className="font-semibold">{filteredOrgaos.length}</span> órgãos
+            </div>
+            {totalPages > 1 && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 text-sm font-semibold border bg-white hover:bg-slate-50 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Anterior
+                </button>
+                <span className="text-sm text-slate-600 px-2">
+                  Página <span className="font-semibold">{currentPage}</span> de <span className="font-semibold">{totalPages}</span>
+                </span>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 text-sm font-semibold border bg-white hover:bg-slate-50 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Próximo
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -242,7 +332,7 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
 
                  <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Portal Padrão</label>
-                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="" value={newOrgao.portal} onChange={(e) => setNewOrgao({ ...newOrgao, portal: e.target.value })} />
+                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="" value={newOrgao.portal} onChange={(e) => setNewOrgao({ ...newOrgao, portal: e.target.value.toUpperCase() })} />
                  </div>
               </div>
             </div>
@@ -287,7 +377,7 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
                  </div>
                  <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Portal Padrão</label>
-                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="" value={editingOrgao.portal} onChange={(e) => setEditingOrgao({ ...editingOrgao, portal: e.target.value })} />
+                    <input list="modal-portais-list" type="text" className="w-full p-3 border border-slate-200 rounded-lg text-sm text-black outline-none focus:border-blue-500 uppercase" placeholder="" value={editingOrgao.portal} onChange={(e) => setEditingOrgao({ ...editingOrgao, portal: e.target.value.toUpperCase() })} />
                  </div>
               </div>
             </div>

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { Resultado, CompanyConfig } from '../lib/types';
-import { PlusCircle, Trash2, Edit, Save, Search, ChevronDown, ChevronUp, Settings, Award, FileDown, FileUp, X } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, Save, Search, ChevronDown, ChevronUp, Settings, Award, FileDown, FileUp, X, Calendar, TextSearch } from 'lucide-react';
 import ConfiguracoesModal from './ConfiguracoesModal';
 import { getContrastColor } from '../lib/formatters';
 import { exportResultadosToExcel } from '../lib/exportService';
@@ -306,21 +306,24 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
         <h2 className="text-2xl font-bold text-slate-800">Resultados</h2>
         <div className="flex flex-col sm:flex-row items-center gap-2">
           <div className="relative w-full sm:w-auto">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <TextSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
             <input
               type="text"
               placeholder="Buscar em tudo..."
               value={searchTerm}
               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-              className="w-full sm:w-64 pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase text-black"
+              className="w-full sm:w-64 pl-11 pr-4 py-2.5 border border-slate-200 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-slate-700"
             />
           </div>
-          <input
-            type="date"
-            value={dateFilter}
-            onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }}
-            className="w-full sm:w-auto px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase text-black"
-          />
+          <div className="relative w-full sm:w-auto">
+            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+            <input
+              type="date"
+              value={dateFilter}
+              onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }}
+              className="w-full sm:w-auto pl-11 pr-4 py-2.5 border border-slate-200 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-slate-700"
+            />
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
             <button
