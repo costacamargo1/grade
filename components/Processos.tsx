@@ -122,9 +122,16 @@ const escapeHtml = (value: string): string => (
 const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeaderData, setItens, setActiveTab }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
   const [agendaModalOpen, setAgendaModalOpen] = useState(false);
   const [agendaStart, setAgendaStart] = useState('');
   const [agendaEnd, setAgendaEnd] = useState('');
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
   const handleDelete = (id: string) => {
     if (window.confirm('Tem certeza que deseja excluir este processo?')) {
@@ -192,12 +199,23 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
     return sortableItems;
   }, [filteredProcessos, sortConfig]);
 
+  const totalPages = pageSize === 0 ? 1 : Math.ceil(sortedProcessos.length / pageSize);
+
+  const paginatedProcessos = useMemo(() => {
+    if (pageSize === 0) {
+      return sortedProcessos;
+    }
+    const startIndex = (currentPage - 1) * pageSize;
+    return sortedProcessos.slice(startIndex, startIndex + pageSize);
+  }, [sortedProcessos, currentPage, pageSize]);
+
   const requestSort = (key: SortKey) => {
     let direction: 'ascending' | 'descending' = 'ascending';
     if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
       direction = 'descending';
     }
     setSortConfig({ key, direction });
+    setCurrentPage(1);
   };
 
   const openAgendaModal = () => {
@@ -351,7 +369,7 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
               type="text"
               placeholder="Buscar..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
               className="w-64 pl-11 pr-4 py-2.5 border border-transparent bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-slate-700 shadow-sm"
             />
           </div>
@@ -389,7 +407,7 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
-              {sortedProcessos.map((processo) => (
+              {paginatedProcessos.map((processo) => (
                 <tr key={processo.id} className="hover:bg-slate-50/70 transition-colors duration-150">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{processo.headerData.numeroGrade}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{processo.headerData.empresa}</td>
@@ -413,6 +431,51 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+      <div className="flex items-center justify-between pt-4">
+        <div className="flex items-center gap-2">
+            <label htmlFor="pageSize" className="text-sm text-slate-600">Linhas por página:</label>
+            <select
+                id="pageSize"
+                value={pageSize === 0 ? 'all' : pageSize}
+                onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === 'all') {
+                        setPageSize(0);
+                    } else {
+                        setPageSize(Number(value));
+                    }
+                    setCurrentPage(1);
+                }}
+                className="border border-slate-300 rounded-md px-2 py-1 text-sm text-slate-600"
+            >
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+                <option value={200}>200</option>
+                <option value="all">Todos</option>
+            </select>
+        </div>
+        <div className="flex items-center gap-4">
+            <span className="text-sm text-slate-600">
+                Página {currentPage} de {totalPages}
+            </span>
+            <div className="flex items-center gap-2">
+                <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 text-slate-700"
+                >
+                    Anterior
+                </button>
+                <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 text-slate-700"
+                >
+                    Próxima
+                </button>
+            </div>
         </div>
       </div>
       
