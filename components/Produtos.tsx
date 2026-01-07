@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useMemo, useRef, useState, type ChangeEvent, useEffect } from "react";
 import {
   FileDown,
   FileUp,
@@ -48,6 +48,9 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
   const [descricaoPreview, setDescricaoPreview] = useState<string | null>(null);
   const [descricaoWidth, setDescricaoWidth] = useState<number | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
+
   const cellPadding = useMemo(() => {
     if (columnSize === "compact") return "px-2 py-1";
     if (columnSize === "normal") return "px-3 py-2";
@@ -84,6 +87,7 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
         setProdutos((current) => [...importedProdutos, ...current]);
       } catch (error) {
         console.error("Erro ao importar produtos:", error);
+        alert("Ocorreu um erro ao importar os produtos. Verifique o console para mais detalhes.");
       } finally {
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
@@ -182,6 +186,29 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
     return sortableItems;
   }, [filteredProdutos, sortConfig]);
 
+  const totalPages = useMemo(() => {
+    if (itemsPerPage === 0) return 1;
+    return Math.ceil(sortedProdutos.length / itemsPerPage);
+  }, [sortedProdutos, itemsPerPage]);
+
+  const paginatedProdutos = useMemo(() => {
+    if (itemsPerPage === 0) {
+      return sortedProdutos;
+    }
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return sortedProdutos.slice(startIndex, startIndex + itemsPerPage);
+  }, [sortedProdutos, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages > 0 ? totalPages : 1);
+    }
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   const requestSort = (key: string) => {
     let direction: "ascending" | "descending" = "ascending";
     if (sortConfig && sortConfig.key === key && sortConfig.direction === "ascending") {
@@ -277,7 +304,12 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
       />
       <div className="bg-white rounded-2xl shadow-md print:border-black overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between items-center p-4 gap-3 border-b border-slate-200">
-          <h1 className="text-3xl font-bold text-slate-800 self-start md:self-center">Produtos</h1>
+          <div className="flex items-baseline gap-3">
+            <h1 className="text-3xl font-bold text-slate-800 self-start md:self-center">Produtos</h1>
+            <span className="text-sm font-semibold text-slate-500">
+              Quantidade de Produtos: {produtos.length}
+            </span>
+          </div>
           <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
             <div className="relative w-full md:w-64">
               <TextSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
@@ -492,7 +524,7 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 print:divide-black text-slate-800 font-medium print:text-black">
-              {sortedProdutos.map((produto) => {
+              {paginatedProdutos.map((produto) => {
                 const obsConfig = getObsConfig(produto);
                 return (
                   <tr
@@ -609,15 +641,56 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
                   </tr>
                 );
               })}
-              {sortedProdutos.length === 0 && (
+              {paginatedProdutos.length === 0 && (
                 <tr>
-                  <td colSpan={12} className="p-8 text-center text-slate-400 text-sm">
+                  <td colSpan={13} className="p-8 text-center text-slate-400 text-sm">
                     Nenhum produto cadastrado.
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+        </div>
+        <div className="flex justify-between items-center p-4 border-t border-slate-200 text-sm text-slate-600">
+          <div className="flex items-center gap-2">
+            <label htmlFor="itemsPerPage" className="font-semibold">Linhas por pagina:</label>
+            <select
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="px-2 py-1 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={500}>500</option>
+              <option value={1000}>1000</option>
+              <option value={0}>Todos</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-4">
+            <span>
+              Pagina {currentPage} de {totalPages}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 border border-slate-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100"
+              >
+                Anterior
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 border border-slate-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100"
+              >
+                Proxima
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
