@@ -11,6 +11,7 @@ import { Download, Printer, Save, FilePlus } from 'lucide-react';
 import { exportToExcel } from '../lib/exportService';
 import DropdownEmpresa from '../components/DropdownEmpresa';
 import BentoMenu from '../components/BentoMenu';
+import GerarProcessoModal from '../components/GerarProcessoModal';
 
 type Tab = 'grade' | 'orgaos' | 'resultados' | 'processos' | 'produtos';
 
@@ -20,6 +21,8 @@ export default function Home() {
   const [resultados, setResultados] = useState<Resultado[]>([]);
   const [processos, setProcessos] = useState<Processo[]>([]);
   const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [isGerarProcessoModalOpen, setIsGerarProcessoModalOpen] = useState(false);
+  const [generatedGrade, setGeneratedGrade] = useState('');
   const [headerData, setHeaderData] = useState<HeaderData>({
     edital: "",
     orgao: "",
@@ -118,15 +121,14 @@ export default function Home() {
 
         setHeaderData(updatedHeaderData);
         setProcessos(updatedProcessos);
-        setActiveTab('processos');
+        setGeneratedGrade(headerData.numeroGrade);
+        setIsGerarProcessoModalOpen(true);
 
     } else {
         // We are creating a new one - original logic
-        const existingGrades = new Set(processos.map(p => parseInt(p.headerData.numeroGrade, 10)).filter(n => !isNaN(n)));
-        let newGrade = 1;
-        while (existingGrades.has(newGrade)) {
-          newGrade++;
-        }
+        const existingGrades = processos.map(p => parseInt(p.headerData.numeroGrade, 10)).filter(n => !isNaN(n));
+        const maxGrade = existingGrades.length > 0 ? Math.max(...existingGrades) : 0;
+        const newGrade = maxGrade + 1;
 
         if (newGrade > 999999) {
           alert("Limite de grades atingido!");
@@ -150,7 +152,8 @@ export default function Home() {
 
         setHeaderData(newHeaderData);
         setProcessos([...processos, newProcesso]);
-        setActiveTab('processos');
+        setGeneratedGrade(newNumeroGrade);
+        setIsGerarProcessoModalOpen(true);
     }
   };
 
@@ -185,48 +188,49 @@ export default function Home() {
 
             {/* Container for DropdownEmpresa and Export Button */}
             <div className="flex items-center gap-4">
-                <DropdownEmpresa
-                    value={headerData.empresa}
-                    onChange={(newValue) => setHeaderData({ ...headerData, empresa: newValue, logoInput: newValue })}
-                    onBlur={() => setHeaderData({ ...headerData, empresa: headerData.empresa, logoInput: headerData.empresa })}
-                />
-
                 {/* Botões de Ação 2x2 com Cores Suaves */}
                 {activeTab === 'grade' && (
-                  <div className="flex gap-2">
-                    {/* Coluna 1 */}
-                    <div className="flex flex-col gap-1.5">
-                      <button
-                          onClick={handleNovaGrade}
-                          className="group flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold transition-colors bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-                      >
-                          <FilePlus size={14} className="text-yellow-700" />
-                          <span>Nova Grade</span>
-                      </button>
-                      <button
-                          onClick={handleGerarProcesso}
-                          className="group flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold transition-colors bg-purple-100 text-purple-800 hover:bg-purple-200"
-                      >
-                          <Save size={14} className="text-purple-700" />
-                          <span>Gerar Processo</span>
-                      </button>
-                    </div>
-                    {/* Coluna 2 */}
-                    <div className="flex flex-col gap-1.5">
-                      <button
-                          onClick={handleExport}
-                          className="group flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold transition-colors bg-green-100 text-green-800 hover:bg-green-200"
-                      >
-                          <Download size={14} className="text-green-700" />
-                          <span>Exportar</span>
-                      </button>
-                      <button
-                        onClick={handlePrint}
-                        className="group flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold transition-colors bg-blue-100 text-blue-800 hover:bg-blue-200"
-                      >
-                        <Printer size={14} className="text-blue-700" />
-                        <span>Imprimir</span>
-                      </button>
+                  <div className="flex items-center gap-4">
+                    <DropdownEmpresa
+                        value={headerData.empresa}
+                        onChange={(newValue) => setHeaderData({ ...headerData, empresa: newValue, logoInput: newValue })}
+                        onBlur={() => setHeaderData({ ...headerData, empresa: headerData.empresa, logoInput: headerData.empresa })}
+                    />
+                    <div className="flex gap-2">
+                      {/* Coluna 1 */}
+                      <div className="flex flex-col gap-1.5">
+                        <button
+                            onClick={handleNovaGrade}
+                            className="group flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold transition-colors bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                        >
+                            <FilePlus size={14} className="text-yellow-700" />
+                            <span>Nova Grade</span>
+                        </button>
+                        <button
+                            onClick={handleGerarProcesso}
+                            className="group flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold transition-colors bg-purple-100 text-purple-800 hover:bg-purple-200"
+                        >
+                            <Save size={14} className="text-purple-700" />
+                            <span>Gerar Processo</span>
+                        </button>
+                      </div>
+                      {/* Coluna 2 */}
+                      <div className="flex flex-col gap-1.5">
+                        <button
+                            onClick={handleExport}
+                            className="group flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold transition-colors bg-green-100 text-green-800 hover:bg-green-200"
+                        >
+                            <Download size={14} className="text-green-700" />
+                            <span>Exportar</span>
+                        </button>
+                        <button
+                          onClick={handlePrint}
+                          className="group flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold transition-colors bg-blue-100 text-blue-800 hover:bg-blue-200"
+                        >
+                          <Printer size={14} className="text-blue-700" />
+                          <span>Imprimir</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -248,6 +252,11 @@ export default function Home() {
         </div>
 
       </div>
+      <GerarProcessoModal 
+        isOpen={isGerarProcessoModalOpen}
+        onClose={() => setIsGerarProcessoModalOpen(false)}
+        numeroGrade={generatedGrade}
+      />
     </main>
   );
 }

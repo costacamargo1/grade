@@ -121,12 +121,14 @@ const escapeHtml = (value: string): string => (
 
 const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeaderData, setItens, setActiveTab }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortConfig, setSortConfig] = useState<SortConfig>(null);
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'dataAbertura', direction: 'descending' });
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
   const [agendaModalOpen, setAgendaModalOpen] = useState(false);
   const [agendaStart, setAgendaStart] = useState('');
   const [agendaEnd, setAgendaEnd] = useState('');
+  const [filterStartDate, setFilterStartDate] = useState<Date | null>(null);
+  const [filterEndDate, setFilterEndDate] = useState<Date | null>(null);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -149,16 +151,42 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
   };
 
   const filteredProcessos = useMemo(() => {
+    setCurrentPage(1);
     return processos.filter(processo => {
       const search = searchTerm.toLowerCase();
-      return (
+      
+      const searchMatch = (
         processo.headerData.numeroGrade.toLowerCase().includes(search) ||
         processo.headerData.edital.toLowerCase().includes(search) ||
         processo.headerData.orgao.toLowerCase().includes(search) ||
         processo.headerData.empresa.toLowerCase().includes(search)
       );
+
+      if (!searchMatch) {
+        return false;
+      }
+
+      const processoDate = getDatePartFromDataAbertura(processo.headerData.dataAbertura);
+      if (!processoDate) {
+        // If there's no date, it shouldn't be filtered out unless there is a date filter
+        if(filterStartDate || filterEndDate) return false;
+      } else {
+        if (filterStartDate && processoDate < filterStartDate) {
+          return false;
+        }
+        if (filterEndDate) {
+          // Add 1 day to include the end date
+          const nextDayOfEndDate = new Date(filterEndDate);
+          nextDayOfEndDate.setDate(nextDayOfEndDate.getDate() + 1);
+          if (processoDate >= nextDayOfEndDate) {
+            return false;
+          }
+        }
+      }
+
+      return true;
     });
-  }, [processos, searchTerm]);
+  }, [processos, searchTerm, filterStartDate, filterEndDate]);
 
   const sortedProcessos = useMemo(() => {
     let sortableItems = [...filteredProcessos];
@@ -213,6 +241,8 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
     let direction: 'ascending' | 'descending' = 'ascending';
     if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
       direction = 'descending';
+    } else if (sortConfig && sortConfig.key === key && sortConfig.direction === 'descending') {
+      direction = 'ascending';
     }
     setSortConfig({ key, direction });
     setCurrentPage(1);
@@ -371,6 +401,19 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
               value={searchTerm}
               onChange={handleSearchChange}
               className="w-64 pl-11 pr-4 py-2.5 border border-transparent bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-slate-700 shadow-sm"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <input 
+              type="date"
+              onChange={(e) => setFilterStartDate(e.target.value ? new Date(e.target.value) : null)}
+              className="border border-slate-300 rounded-md px-2 py-1.5 text-sm text-slate-600"
+            />
+            <span className="text-slate-500">até</span>
+            <input 
+              type="date"
+              onChange={(e) => setFilterEndDate(e.target.value ? new Date(e.target.value) : null)}
+              className="border border-slate-300 rounded-md px-2 py-1.5 text-sm text-slate-600"
             />
           </div>
           <button
