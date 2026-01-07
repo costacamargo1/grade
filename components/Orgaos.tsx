@@ -127,14 +127,14 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
         <div className="flex items-center gap-2">
            <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+              className="group flex items-center gap-2 rounded-md py-2 px-3 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
               <FilePlus size={16} />
               Cadastrar Novo Órgão
             </button>
             <button
               onClick={handleImportClick}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+              className="group flex items-center gap-2 rounded-md py-2 px-3 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <Upload size={16} />
               Importar
@@ -142,7 +142,7 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
             <button
               onClick={handleExport}
               disabled={orgaos.length === 0}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
+              className="group flex items-center gap-2 rounded-md py-2 px-3 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
             >
               <Download size={16} />
               Exportar
@@ -247,8 +247,8 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
               </div>
             </div>
             <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-              <button onClick={() => setShowAddModal(false)} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 rounded-lg transition">Cancelar</button>
-              <button onClick={handleSaveNewOrgao} className="px-4 py-2 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg transition flex items-center gap-2 shadow-sm hover:shadow"><Save size={16} /> Salvar Órgão</button>
+              <button onClick={() => setShowAddModal(false)} className="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Cancelar</button>
+              <button onClick={handleSaveNewOrgao} className="px-4 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 flex items-center gap-2"><Save size={16} /> Salvar Órgão</button>
             </div>
           </div>
         </div>
@@ -292,8 +292,8 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
               </div>
             </div>
             <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-              <button onClick={() => setShowEditModal(false)} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 rounded-lg transition">Cancelar</button>
-              <button onClick={handleSave} className="px-4 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition flex items-center gap-2 shadow-sm hover:shadow"><Save size={16} /> Salvar Alterações</button>
+              <button onClick={() => setShowEditModal(false)} className="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Cancelar</button>
+              <button onClick={handleSave} className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center gap-2"><Save size={16} /> Salvar Alterações</button>
             </div>
           </div>
         </div>

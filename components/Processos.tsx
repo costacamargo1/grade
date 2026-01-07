@@ -346,7 +346,7 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
         <div className="flex items-center gap-3 w-2/3 justify-end">
           <button
             onClick={openAgendaModal}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 text-sm rounded-lg transition shadow-sm"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 text-sm rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Gerar Agenda
           </button>
@@ -419,7 +419,7 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
               </div>
               <button
                 onClick={() => setAgendaModalOpen(false)}
-                className="text-slate-400 hover:text-red-500 transition text-sm font-semibold"
+                className="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Fechar
               </button>
@@ -447,13 +447,13 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
                 <div className="flex gap-2">
                   <button
                     onClick={handleExportAgenda}
-                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 text-sm rounded-lg transition shadow-sm"
+                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 text-sm rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                   >
                     Exportar Excel
                   </button>
                   <button
                     onClick={handlePrintAgenda}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 text-sm rounded-lg transition shadow-sm"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 text-sm rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     Imprimir / PDF
                   </button>

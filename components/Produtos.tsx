@@ -284,7 +284,7 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
           </div>
           <button
             onClick={cycleColumnSize}
-            className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-3 rounded-lg transition flex items-center gap-2"
+            className="group flex items-center gap-2 rounded-md py-2 px-3 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Ajustar colunas
           </button>
@@ -295,21 +295,21 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
                 setEditingId(null);
                 setShowAddModal(true);
               }}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg"
+              className="group flex items-center gap-2 rounded-md py-2 px-4 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <Plus size={18} />
               Adicionar
             </button>
             <button
               onClick={handleImportClick}
-              className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg"
+              className="group flex items-center gap-2 rounded-md py-2 px-4 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <FileUp size={18} />
               Importar
             </button>
             <button
               onClick={() => exportProdutosToExcel(produtos)}
-              className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg"
+              className="group flex items-center gap-2 rounded-md py-2 px-4 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
               <FileDown size={18} />
               Exportar
@@ -751,13 +751,13 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
                   setShowAddModal(false);
                   setEditingId(null);
                 }}
-                className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 rounded-lg transition"
+                className="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSaveProduto}
-                className="px-4 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition flex items-center gap-2 shadow-sm hover:shadow"
+                className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center gap-2"
               >
                 <Save size={16} /> {editingId ? "Salvar Alteracoes" : "Salvar Produto"}
               </button>
@@ -772,7 +772,7 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
               <h3 className="font-bold text-slate-700">Descricao Completa</h3>
               <button
                 onClick={() => setDescricaoPreview(null)}
-                className="text-slate-400 hover:text-red-500 transition"
+                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-100 rounded-lg transition"
               >
                 <X size={20} />
               </button>
@@ -783,7 +783,7 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
             <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
               <button
                 onClick={() => setDescricaoPreview(null)}
-                className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 rounded-lg transition"
+                className="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Fechar
               </button>

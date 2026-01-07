@@ -314,28 +314,28 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
         <div className="flex flex-wrap items-center gap-2">
             <button
                 onClick={handleImportClick}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg"
+                className="group flex items-center gap-2 rounded-md py-2 px-4 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
                 <FileUp size={18} />
                 Importar
             </button>
             <button
                 onClick={() => exportResultadosToExcel(sortedResultados)}
-                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg"
+                className="group flex items-center gap-2 rounded-md py-2 px-4 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
                 <FileDown size={18} />
                 Exportar
             </button>
             <button
                 onClick={() => setIsModalOpen(true)}
-                className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg"
+                className="group flex items-center gap-2 rounded-md py-2 px-4 text-sm font-semibold text-white bg-slate-600 hover:bg-slate-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500"
             >
                 <Settings size={18} />
                 Configurações
             </button>
             <button
             onClick={handleAddRow}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-lg"
+            className="group flex items-center gap-2 rounded-md py-2 px-4 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
             <PlusCircle size={18} />
             Adicionar
@@ -402,7 +402,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
           Mostrando {Math.min(paginatedResultados.length, sortedResultados.length)} de {sortedResultados.length} resultados
         </div>
         <div className="flex items-center gap-2">
-            <button onClick={() => setViewMode(v => v === 'normal' ? 'compacto' : v === 'compacto' ? 'supercompacto' : 'normal')} className="text-sm px-3 py-2 border rounded-lg text-slate-900 hover:bg-slate-100 transition">
+            <button onClick={() => setViewMode(v => v === 'normal' ? 'compacto' : v === 'compacto' ? 'supercompacto' : 'normal')} className="text-sm px-3 py-2 border rounded-md text-slate-900 hover:bg-slate-100 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 {viewMode === 'normal' ? 'Visão Compacta' : viewMode === 'compacto' ? 'Visão Super Compacta' : 'Visão Normal'}
             </button>
             <select
@@ -424,14 +424,14 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
             <button
                 onClick={() => setCurrentPage(1)}
                 disabled={currentPage === 1}
-                className="p-2 border rounded-lg text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition"
+                className="p-2 border rounded-md text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
                 <ChevronsLeft size={16} />
             </button>
             <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-2 border rounded-lg text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition"
+                className="p-2 border rounded-md text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
                 Anterior
             </button>
@@ -441,14 +441,14 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
             <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages || totalPages === 0}
-                className="p-2 border rounded-lg text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition"
+                className="p-2 border rounded-md text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
                 Próximo
             </button>
             <button
                 onClick={() => setCurrentPage(totalPages)}
                 disabled={currentPage === totalPages || totalPages === 0}
-                className="p-2 border rounded-lg text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition"
+                className="p-2 border rounded-md text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
                 <ChevronsRight size={16} />
             </button>

@@ -248,7 +248,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
                   </div>
                   <button 
                     onClick={() => setShowModalOrgao(true)}
-                    className="px-2.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg border border-blue-200 transition-colors print:hidden"
+                    className="group flex items-center justify-center p-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md border border-blue-200 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 print:hidden"
                   >
                     <Plus size={16} />
                   </button>
@@ -601,7 +601,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="bg-slate-50 p-4 border-b border-slate-100 flex justify-between items-center">
               <h3 className="font-bold text-slate-700 flex items-center gap-2"><Building2 size={18} className="text-blue-500" />Cadastrar Novo Órgão</h3>
-              <button onClick={() => setShowModalOrgao(false)} className="text-slate-400 hover:text-red-500 transition"><X size={20} /></button>
+              <button onClick={() => setShowModalOrgao(false)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-100 rounded-lg transition"><X size={20} /></button>
             </div>
             <div className="p-6 space-y-4">
               <div>
@@ -639,8 +639,8 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
               </div>
             </div>
             <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-              <button onClick={() => setShowModalOrgao(false)} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 rounded-lg transition">Cancelar</button>
-              <button onClick={handleSalvarNovoOrgao} className="px-4 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition flex items-center gap-2 shadow-sm hover:shadow"><Save size={16} /> Salvar Órgão</button>
+              <button onClick={() => setShowModalOrgao(false)} className="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Cancelar</button>
+              <button onClick={handleSalvarNovoOrgao} className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center gap-2"><Save size={16} /> Salvar Órgão</button>
             </div>
           </div>
         </div>

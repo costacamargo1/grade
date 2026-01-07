@@ -308,9 +308,9 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                         props.handleUpdate(item.id, "mapa", e.target.value)
                     }
                     />
-                    <button 
+                    <button
                         onClick={() => props.handleSaveToResultados(item)}
-                        className="p-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs font-bold print:hidden"
+                        className="p-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs font-bold transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 print:hidden"
                     >
                         SALVAR
                     </button>
@@ -731,7 +731,7 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
       <div className="flex justify-end p-2 print:hidden">
         <button
           onClick={() => setShowImportExportModal(true)}
-          className="text-xs font-bold px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md transition"
+          className="group flex items-center gap-2 rounded-md py-2 px-3 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           IMPORTAR / EXPORTAR
         </button>
@@ -833,7 +833,7 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
 
       <button
         onClick={handleAddRow}
-        className="w-full py-3 bg-slate-50 hover:bg-slate-100 border-t border-slate-200 text-slate-500 font-bold text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition-colors print:hidden"
+        className="w-full py-3 bg-slate-100 hover:bg-slate-200 border-t border-slate-200 text-slate-700 font-semibold text-sm uppercase tracking-wide flex items-center justify-center gap-2 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 print:hidden"
       >
         <Plus size={16} /> Adicionar Item
       </button>
@@ -844,7 +844,7 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
               <h3 className="font-bold text-slate-700">Importar / Exportar</h3>
               <button
                 onClick={() => setShowImportExportModal(false)}
-                className="text-slate-400 hover:text-red-500 transition"
+                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-100 rounded-lg transition"
               >
                 <X size={20} />
               </button>
@@ -852,14 +852,14 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
             <div className="p-6 flex flex-col gap-3">
               <button
                 onClick={handleImportClick}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 <Upload size={16} />
                 Importar
               </button>
               <button
                 onClick={() => exportGradeItensToExcel(itens)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg transition"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 <Download size={16} />
                 Exportar
