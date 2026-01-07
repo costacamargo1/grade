@@ -1,6 +1,6 @@
 ﻿// components/Orgaos.tsx
-import { useState, useRef, useEffect } from 'react';
-import { Orgao } from '../lib/types';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { Orgao, Processo } from '../lib/types';
 import { ufs } from '../lib/data';
 import { Building2, Globe, Hash, Trash2, Edit, X, Save, Upload, Download, FilePlus, Search } from 'lucide-react';
 import { importOrgaosFromExcel } from '../lib/importService';
@@ -9,6 +9,7 @@ import { exportOrgaosToExcel } from '../lib/exportService';
 interface OrgaosProps {
   orgaos: Orgao[];
   setOrgaos: (orgaos: Orgao[] | ((current: Orgao[]) => Orgao[])) => void;
+  processos?: Processo[];
 }
 
 const sanitizeUf = (value: string): string => (
@@ -35,7 +36,7 @@ const normalizeOrgao = (orgao: Orgao): Orgao => {
   return { ...orgao, nome: nomeFinal, uf, portal };
 };
 
-export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
+export default function Orgaos({ orgaos, setOrgaos, processos = [] }: OrgaosProps) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingOrgao, setEditingOrgao] = useState<Orgao | null>(null);
@@ -50,6 +51,21 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
     setOrgaos(orgaos => orgaos.map(normalizeOrgao));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setOrgaos]);
+
+  const participationCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    if (processos) {
+      processos.forEach(processo => {
+        const orgaoNameFromProcess = processo.headerData.orgao;
+        if (orgaoNameFromProcess) {
+            const { base, uf } = splitNomeUf(orgaoNameFromProcess);
+            const key = `${base.toUpperCase()}|${uf.toUpperCase()}`;
+            counts.set(key, (counts.get(key) || 0) + 1);
+        }
+      });
+    }
+    return counts;
+  }, [processos]);
 
   const handleDelete = (orgaoToDelete: Orgao) => {
     setOrgaos(currentOrgaos => currentOrgaos.filter(o => o.nome !== orgaoToDelete.nome));
@@ -222,21 +238,31 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
               <thead className="select-none">
                 <tr>
                   <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Nome do Órgão</th>
+                  <th scope="col" className="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">UF</th>
                   <th scope="col" className="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">UASG</th>
                   <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Portal</th>
+                  <th scope="col" className="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Participações</th>
                   <th scope="col" className="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Ações</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-slate-200">
-                {paginatedOrgaos.map((orgao) => (
+                {paginatedOrgaos.map((orgao) => {
+                  const { base, uf } = splitNomeUf(orgao.nome);
+                  const key = `${base.toUpperCase()}|${uf.toUpperCase()}`;
+                  const count = participationCounts.get(key) || 0;
+
+                  return (
                   <tr key={orgao.nome} className="hover:bg-slate-50/70 transition-colors duration-150">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-4">
                         <div className="bg-slate-100 p-3 rounded-lg">
                           <Building2 size={18} className="text-slate-500" />
                         </div>
-                        <span className="font-semibold text-sm text-slate-800">{orgao.nome}</span>
+                        <span className="font-semibold text-sm text-slate-800">{base}</span>
                       </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <span className="text-sm text-slate-600 font-medium">{uf}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       <div className="flex items-center justify-center gap-2 text-sm text-slate-600">
@@ -250,6 +276,11 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
                         {orgao.portal ? orgao.portal.toUpperCase() : <span className="text-slate-400 italic">N/A</span>}
                       </div>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <span className="text-sm text-slate-600 font-medium">
+                        {count}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                       <div className="flex items-center justify-center gap-1">
                           <button onClick={() => handleEdit(orgao)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors">
@@ -261,7 +292,8 @@ export default function Orgaos({ orgaos, setOrgaos }: OrgaosProps) {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
