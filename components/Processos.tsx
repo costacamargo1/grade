@@ -5,7 +5,7 @@ import { Processo, HeaderData, ItemGrade, AgendaRow } from '../lib/types';
 import { Edit, Trash2, Search, ChevronUp, ChevronDown } from 'lucide-react';
 import { exportAgendaToExcel } from '../lib/exportService';
 
-type Tab = 'grade' | 'orgaos' | 'resultados' | 'processos' | 'produtos';
+type Tab = 'grade' | 'proposta' | 'orgaos' | 'resultados' | 'processos' | 'produtos';
 type SortKey = keyof HeaderData | 'uf' | 'horaAbertura';
 type SortConfig = { key: SortKey; direction: 'ascending' | 'descending' } | null;
 

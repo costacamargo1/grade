@@ -1,0 +1,184 @@
+Private Sub Worksheet_Change(ByVal Target As Range)
+    On Error GoTo ErrorHandler
+    
+    Dim ws As Worksheet
+    Dim monitoredRanges As Range
+    Dim celula As Range
+    Dim DataHojeRange As Range
+    Dim convenio As String
+    Dim linhaLimite As Long
+    
+    Set ws = ActiveSheet
+    Application.EnableEvents = False
+    
+    ' Determina o limite da coluna B (usando LIMITELINHA ou última linha preenchida)
+    On Error Resume Next
+    linhaLimite = ws.Range("LIMITELINHA").Row
+    If Err.Number <> 0 Then linhaLimite = ws.Cells(ws.Rows.Count, "B").End(xlUp).Row
+    On Error GoTo 0
+    
+    ' Define os intervalos monitorados (ADICIONADO L48:L na lista)
+    Set monitoredRanges = Union(ws.Range("A1"), ws.Range("B48:B" & linhaLimite), ws.Range("D:D"), ws.Range("G:G"), ws.Range("I:I"), _
+                               ws.Range("L48:L" & linhaLimite), _
+                               ws.Range("NPREGAO"), ws.Range("NPROCESSO"), ws.Range("DATAABERTURA"), ws.Range("ValidadeProposta"), _
+                               ws.Range("PrazoPagamento"), ws.Range("VigenciaAta"), ws.Range("PrazoEntrega"), ws.Range("ValidadeMed"), _
+                               ws.Range("NOMEORGAO"), ws.Range("ESTADOUF"))
+    
+    ' Define o intervalo DataHoje, se existir
+    On Error Resume Next
+    Set DataHojeRange = ws.Names("DataHoje").RefersToRange
+    On Error GoTo 0
+    
+    If Not Intersect(Target, monitoredRanges) Is Nothing Then
+        ' Tratamento para alterações na coluna B (B48 em diante)
+        If Not Intersect(Target, ws.Range("B48:B" & linhaLimite)) Is Nothing Then
+            For Each celula In Intersect(Target, ws.Range("B48:B" & linhaLimite))
+                ' Autocompletar básico
+                Call AutocompletarColunaB(celula)
+                
+                ' Doublecheck melhorado: Força busca se detectar REGISTRO ANVISA
+                If Len(Trim(celula.Value)) > 0 Then
+                    Dim temGatilho As Boolean
+                    temGatilho = (InStr(1, UCase(celula.Value), "REGISTRO ANVISA:") > 0)
+                    
+                    If temGatilho Then
+                        Call AutocompletarColunaB(celula)
+                        Application.Calculate
+                        DoEvents
+                    End If
+                    
+                    ' Formatar com quebras de linha e marcadores
+                    Dim startPos As Long
+                    
+                    ' Substitui convenios por marcadores e aplica formatação
+Dim separador As String
+separador = vbCrLf & vbCrLf
+
+celula.Value = Replace(celula.Value, " - (CONFAZ 87/02: SIM | CAP: SIM)", separador & "• (CONFAZ 87/02: SIM | CAP: SIM)")
+celula.Value = Replace(celula.Value, " - (CONFAZ 87/02: SIM)", separador & "• (CONFAZ 87/02: SIM)")
+celula.Value = Replace(celula.Value, " - (CONV. 162/94: SIM | CAP: SIM)", separador & "• (CONV. 162/94: SIM | CAP: SIM)")
+celula.Value = Replace(celula.Value, " - (CONV. 162/94: SIM)", separador & "• (CONV. 162/94: SIM)")
+celula.Value = Replace(celula.Value, " - (CAP: SIM)", separador & "• (CAP: SIM)")
+celula.Value = Replace(celula.Value, " - (CONV. 140/01: SIM)", separador & "• (CONV. 140/01: SIM)")
+celula.Value = Replace(celula.Value, " - (CONV. 140/01: SIM | CAP: SIM)", separador & "• (CONV. 140/01: SIM | CAP: SIM)")
+celula.Value = Replace(celula.Value, " - (CONV. 10/02: SIM)", separador & "• (CONV. 10/02: SIM)")
+
+                    
+                    celula.WrapText = True
+                                        
+                    ' Ajustar altura da linha automaticamente baseado no conteúdo
+                    celula.EntireRow.AutoFit
+                    ' Adicionar 10 pixels extras à altura
+                    celula.EntireRow.RowHeight = celula.EntireRow.RowHeight + 7.5
+                End If
+            Next celula
+        End If
+        
+        ' TRATAMENTO PARA ALTERAÇÕES NA COLUNA L (L48 em diante) - PROCESSAMENTO CAP
+        If Not Intersect(Target, ws.Range("L48:L" & linhaLimite)) Is Nothing Then
+            Call ProcessarCAP(Target, ws)
+        End If
+        
+' TRATAMENTO DECLARAÇÕES ÓRGÃOS
+If Not Intersect(Target, Range("NOMEORGAO,ESTADOUF")) Is Nothing Then
+   DeclaracoesOrgaos
+End If
+        
+        
+        
+        ' Tratamento para colunas D, G, I
+        If Not Intersect(Target, Union(ws.Range("D:D"), ws.Range("G:G"), ws.Range("I:I"))) Is Nothing Then
+            Application.Calculate
+            DoEvents
+            Call RecalcularBloco
+        End If
+        
+        ' Tratamento específico para G48 em diante
+        If Not Intersect(Target, ws.Range("G:G")) Is Nothing Then
+            For Each celula In Intersect(Target, ws.Range("G48:G" & linhaLimite))
+                convenio = IdentificarConvenio(ws.Cells(celula.Row, "B").Value)
+                Dim targetI As Range
+                Dim valorOriginalI As Variant
+                Dim taxaICMS As Double
+                
+                If (convenio = "CONV_162_94" Or convenio = "CONV_140_01" Or convenio = "CONV_10_02") And IsNumeric(celula.Value) Then
+                    Set targetI = ws.Cells(celula.Row, "I")
+                    targetI.Value = celula.Value
+                    If IsNumeric(ws.Cells(celula.Row, "H").Value) Then ws.Cells(celula.Row, "J").Value = ws.Cells(celula.Row, "H").Value
+                    celula.Value = "" ' Zera G
+                    ws.Cells(celula.Row, "H").Value = "" ' Zera H
+                    
+                    If IsNumeric(ws.Cells(celula.Row, "D").Value) And IsNumeric(targetI.Value) Then
+                        ws.Cells(celula.Row, "J").Value = CDbl(ws.Cells(celula.Row, "D").Value) * CDbl(targetI.Value)
+                    End If
+                    
+                    Application.EnableEvents = True
+                    valorOriginalI = targetI.Value
+                    targetI.Value = valorOriginalI ' Força evento Change
+                    Application.EnableEvents = False
+                    
+                    Application.Calculate
+                    DoEvents
+                    Call CalcularSomaTotal
+                ElseIf convenio = "CONFAZ_87_02" And IsNumeric(celula.Value) Then
+                    taxaICMS = 0.12 ' Exemplo, ajuste conforme necessário
+                    Set targetI = ws.Cells(celula.Row, "I")
+                    targetI.Value = celula.Value
+                    celula.Value = "" ' Zera G
+                    ws.Cells(celula.Row, "H").Value = "" ' Zera H
+                    
+                    If IsNumeric(ws.Cells(celula.Row, "D").Value) And IsNumeric(targetI.Value) Then
+                        celula.Value = CDbl(ws.Cells(celula.Row, "D").Value) * CDbl(targetI.Value) * taxaICMS
+                    End If
+                    
+                    Application.EnableEvents = True
+                    valorOriginalI = targetI.Value
+                    targetI.Value = valorOriginalI ' Força evento Change
+                    Application.EnableEvents = False
+                    
+                    Application.Calculate
+                    DoEvents
+                    Call CalcularSomaTotal
+                End If
+            Next celula
+        End If
+        
+        ' Tratamento para outros intervalos
+        If Not Intersect(Target, ws.Range("ESTADOUF")) Is Nothing Then
+            Application.Calculate
+            DoEvents
+            Call RecalcularBloco
+            Application.Calculate
+        End If
+        If Not Intersect(Target, ws.Range("NPREGAO")) Is Nothing Then Call FormatPrefixo(Target, "Pregão Eletrônico N° ")
+        If Not Intersect(Target, ws.Range("NPROCESSO")) Is Nothing Then
+            If Left(Target.Value, 12) <> "Processo Nº " Then Target.Value = "Processo Nº " & Target.Value
+        End If
+        If Not Intersect(Target, ws.Range("DATAABERTURA")) Is Nothing Then Call FormatDataA42(Target)
+        If Not Intersect(Target, ws.Range("ValidadeProposta")) Is Nothing Then Call FormatValidadeProposta(Target)
+        If Not Intersect(Target, ws.Range("PrazoPagamento")) Is Nothing Then Call FormatPrazoPagamento(Target)
+        If Not Intersect(Target, ws.Range("VigenciaAta")) Is Nothing Then Call FormatVigenciaAta(Target)
+        If Not Intersect(Target, ws.Range("PrazoEntrega")) Is Nothing Then Call FormatPrazoEntrega(Target)
+        If Not Intersect(Target, ws.Range("ValidadeMed")) Is Nothing Then Call FormatValidadeMed(Target)
+        If Not Intersect(Target, ws.Range("NOMEORGAO")) Is Nothing Then Call FormatNomeOrgao(Target)
+        If Not Intersect(Target, ws.Range("ESTADOUF")) Is Nothing Then Call FormatEstadoUF(Target)
+    End If
+    
+    ' Tratamento para DataHoje
+    If Not DataHojeRange Is Nothing Then
+        If Not Intersect(Target, DataHojeRange) Is Nothing Then Call FormatDataHoje(Target, ws)
+    End If
+    
+    DoEvents
+    Call CalcularSomaTotal
+    Call VerificarCamposObrigatorios
+    
+    Application.EnableEvents = True
+    Exit Sub
+
+ErrorHandler:
+    Application.EnableEvents = True
+    MsgBox "Erro no Worksheet_Change: " & Err.Description, vbCritical
+End Sub
+
+

@@ -7,13 +7,14 @@ import Orgaos from '../components/Orgaos';
 import Resultados from '../components/Resultados';
 import Processos from '../components/Processos';
 import Produtos from '../components/Produtos';
+import Proposta from '../components/Proposta';
 import { Download, Printer, Save, FilePlus } from 'lucide-react';
 import { exportToExcel } from '../lib/exportService';
 import DropdownEmpresa from '../components/DropdownEmpresa';
 import BentoMenu from '../components/BentoMenu';
 import GerarProcessoModal from '../components/GerarProcessoModal';
 
-type Tab = 'grade' | 'orgaos' | 'resultados' | 'processos' | 'produtos';
+type Tab = 'grade' | 'proposta' | 'orgaos' | 'resultados' | 'processos' | 'produtos';
 
 export default function Home() {
   const [itens, setItens] = useState<ItemGrade[]>([]);
@@ -169,6 +170,8 @@ export default function Home() {
         return <Processos processos={processos} setProcessos={setProcessos} setHeaderData={setHeaderData} setItens={setItens} setActiveTab={setActiveTab} />;
       case 'produtos':
         return <Produtos produtos={produtos} setProdutos={setProdutos} />;
+      case 'proposta':
+        return <Proposta empresa={headerData.empresa} produtos={produtos} />;
       default:
         return null;
     }

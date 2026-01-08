@@ -1,9 +1,9 @@
 // components/BentoMenu.tsx
 "use client";
 
-import { LayoutGrid, FileText, BarChart3, Building, Package, type LucideIcon } from 'lucide-react';
+import { LayoutGrid, FileText, FileSignature, BarChart3, Building, Package, type LucideIcon } from 'lucide-react';
 
-type Tab = 'grade' | 'orgaos' | 'resultados' | 'processos' | 'produtos';
+type Tab = 'grade' | 'proposta' | 'orgaos' | 'resultados' | 'processos' | 'produtos';
 
 interface BentoMenuProps {
   activeTab: Tab;
@@ -18,6 +18,7 @@ interface MenuItem {
 
 const mainItems: MenuItem[] = [
   { id: 'grade', title: 'Grade', icon: LayoutGrid },
+  { id: 'proposta', title: 'Proposta', icon: FileSignature },
   { id: 'processos', title: 'Processos', icon: FileText },
   { id: 'orgaos', title: 'Órgãos', icon: Building },
   { id: 'produtos', title: 'Produtos', icon: Package },
