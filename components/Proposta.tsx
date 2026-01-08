@@ -19,8 +19,6 @@ interface PropostaHeader {
   pregao: string;
   processo: string;
   abertura: string;
-  web: string;
-  estadoFaturamento: string;
   validadeProposta: string;
   prazoPagamento: string;
   vigenciaAta: string;
@@ -192,8 +190,6 @@ const buildDefaultHeader = (): PropostaHeader => ({
   pregao: "",
   processo: "",
   abertura: "",
-  web: "",
-  estadoFaturamento: "ESPIRITO SANTO",
   validadeProposta: "",
   prazoPagamento: "",
   vigenciaAta: "",
@@ -553,7 +549,7 @@ const formatNomeOrgao = (valorInput: string): string => {
 
 const formatPrefixo = (value: string, prefixo: string): string => {
   let valorDigitado = value.trim();
-  if (!valorDigitado) return prefixo;
+  if (!valorDigitado) return "";
   if (valorDigitado.startsWith(prefixo)) {
     valorDigitado = valorDigitado.slice(prefixo.length).trim();
   }
@@ -564,7 +560,7 @@ const formatPrefixo = (value: string, prefixo: string): string => {
     if (/^\d+$/.test(numeroPregao) && /^\d+$/.test(ano)) {
       const anoNumerico = Number(ano);
       if (anoNumerico >= 2024 && anoNumerico <= 2030) {
-        return `${prefixo}${numeroPregao.padStart(4, "0")}/${ano}`;
+        return `${numeroPregao.padStart(4, "0")}/${ano}`;
       }
     }
   }
@@ -574,26 +570,26 @@ const formatPrefixo = (value: string, prefixo: string): string => {
       const numero = valorDigitado.slice(0, -4);
       const anoNum = Number(ano);
       if (anoNum >= 2024 && anoNum <= 2030) {
-        return `${prefixo}${numero.padStart(4, "0")}/${ano}`;
+        return `${numero.padStart(4, "0")}/${ano}`;
       }
     } else {
       const anoAtual = new Date().getFullYear();
-      return `${prefixo}${valorDigitado.padStart(4, "0")}/${anoAtual}`;
+      return `${valorDigitado.padStart(4, "0")}/${anoAtual}`;
     }
   }
-  return `${prefixo}${valorDigitado}`;
+  return valorDigitado;
 };
 
 const formatDataAbertura = (value: string): string => {
   const cleaned = value.replace(/^ABERTURA:\s*/i, "").trim();
-  if (!cleaned) return "Abertura:";
+  if (!cleaned) return "";
   const formatted = formatarDataInteligente(cleaned);
-  return `Abertura: ${formatted || cleaned}`;
+  return formatted || cleaned;
 };
 
 const formatValidadeProposta = (value: string): string => {
-  const prefixo = "Validade da Proposta: ";
-  const sufixo = " dias, a contar da data de sua apresentacao.";
+  const prefixo = "";
+  const sufixo = " dias, a contar da data de sua apresentação.";
   if (!value) return prefixo;
   if (/^\d+$/.test(value.trim())) {
     const numero = Number(value.trim());
@@ -605,7 +601,7 @@ const formatValidadeProposta = (value: string): string => {
 };
 
 const formatPrazoPagamento = (value: string): string => {
-  const prefixo = "Prazo de Pagamento: ";
+  const prefixo = "";
   const sufixo = " dias.";
   if (!value) return `${prefixo}Conforme edital.`;
   if (/^\d+$/.test(value.trim())) {
@@ -617,7 +613,7 @@ const formatPrazoPagamento = (value: string): string => {
 };
 
 const formatVigenciaAta = (value: string): string => {
-  const prefixo = "Vigencia da Ata: ";
+  const prefixo = "";
   const sufixo = " meses.";
   const numero = value.trim() ? Number(value.trim()) : 12;
   const extenso = numeroParaExtenso(numero);
@@ -625,7 +621,7 @@ const formatVigenciaAta = (value: string): string => {
 };
 
 const formatPrazoEntrega = (value: string): string => {
-  const prefixo = "Prazo de Entrega: ";
+  const prefixo = "";
   const sufixo = " do recebimento da Autorizacao de Fornecimento (AF) ou Nota de Empenho (NE).";
   const valor = value.trim().toLowerCase();
   if (!valor) return `${prefixo} dias corridos${sufixo}`;
@@ -646,7 +642,7 @@ const formatPrazoEntrega = (value: string): string => {
 };
 
 const formatValidadeObjeto = (value: string): string => {
-  const prefixo = "Validade do Objeto: ";
+  const prefixo = "";
   const valor = value.trim();
   if (!valor) return prefixo;
   if (valor.includes("%")) {
@@ -794,7 +790,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
         case "pregao":
           return { ...prev, pregao: formatPrefixo(prev.pregao, "Pregao Eletronico No ") };
         case "processo":
-          return { ...prev, processo: prev.processo ? `Processo No ${prev.processo.replace(/Processo No /i, "").trim()}` : "Processo No " };
+            return { ...prev, processo: prev.processo ? prev.processo.replace(/Processo No /i, "").trim() : "" };
         case "abertura":
           return { ...prev, abertura: formatDataAbertura(prev.abertura) };
         case "validadeProposta":
@@ -903,19 +899,20 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
   const removeItem = (id: string) => setItens((prev) => prev.filter((item) => item.id !== id));
 
   return (
-    <div className="bg-slate-100 min-h-screen p-4 sm:p-6 lg:p-10 font-['Times_New_Roman'] text-slate-900">
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex items-center justify-between print:hidden">
+    <div className="bg-slate-100 min-h-screen p-4 sm:p-6 lg:p-8 font-sans">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Bloco de Cabeçalho */}
+        <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
           <div>
-            <h1 className="text-xl font-bold uppercase">Proposta Comercial</h1>
-            <p className="text-sm text-slate-600">Layout dinamico por empresa e calculos automaticos.</p>
+            <h1 className="text-2xl font-bold text-slate-800">Proposta Comercial</h1>
+            <p className="text-sm text-slate-500 mt-1">Layout dinâmico por empresa e cálculos automáticos.</p>
           </div>
-          <div className="flex items-center gap-2">
-            <label className="text-xs font-semibold uppercase text-slate-500">Empresa</label>
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-semibold text-slate-600">Empresa:</label>
             <select
               value={selectedEmpresa}
               onChange={(e) => setSelectedEmpresa(e.target.value as Empresa)}
-              className="border border-slate-300 rounded px-2 py-1 text-sm uppercase"
+              className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="NSA">NSA</option>
               <option value="COSTA">COSTA CAMARGO</option>
@@ -924,30 +921,32 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
           </div>
         </div>
 
-        <div className="bg-white border border-slate-300 shadow-sm print:border-black">
-          <div className="border-b border-slate-300 print:border-black">
+        {/* Card Principal da Proposta */}
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 print:border-black print:shadow-none">
+          {/* Cabeçalho do Card */}
+          <div className="border-b border-slate-200 print:border-black">
             <div className="grid grid-cols-1 md:grid-cols-3 items-center">
-              <div className="p-4 space-y-2">
-                <div className="text-xs font-bold uppercase">Ao</div>
+              <div className="p-6">
+                <div className="text-xs font-bold uppercase text-slate-500 mb-2">AO</div>
                 <input
                   value={header.orgao}
                   onChange={(e) => updateHeader("orgao", e.target.value)}
                   onBlur={() => handleHeaderBlur("orgao")}
-                  className="w-full border-b border-slate-400 uppercase text-sm font-semibold"
-                  placeholder="Orgao Licitante"
+                  className="w-full border-b-2 border-slate-200 focus:border-blue-500 outline-none uppercase text-base font-semibold text-slate-800 pb-1"
+                  placeholder="Órgão Licitante"
                 />
                 <input
                   value={header.estadoUf}
                   onChange={(e) => updateHeader("estadoUf", e.target.value)}
                   onBlur={() => handleHeaderBlur("estadoUf")}
-                  className="w-full border-b border-slate-400 uppercase text-sm"
+                  className="w-full border-b-2 border-slate-200 focus:border-blue-500 outline-none uppercase text-sm text-slate-600 mt-2 pb-1"
                   placeholder="Estado / UF"
                 />
               </div>
-              <div className="flex items-center justify-center p-4">
-                <img src={config.logoSrc} alt={config.logoAlt} className="h-16 object-contain" />
+              <div className="flex items-center justify-center p-6 border-l border-r border-slate-200">
+                <img src={config.logoSrc} alt={config.logoAlt} className="h-20 object-contain" />
               </div>
-              <div className="p-4 text-right space-y-1 text-xs">
+              <div className="p-6 text-right space-y-1 text-xs text-slate-600">
                 {config.enderecoTopo?.map((linha) => (
                   <div key={linha}>{linha}</div>
                 ))}
@@ -955,136 +954,135 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
             </div>
           </div>
 
-          <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-sm border-b border-slate-300 print:border-black">
-            <input
-              value={header.pregao}
-              onChange={(e) => updateHeader("pregao", e.target.value)}
-              onBlur={() => handleHeaderBlur("pregao")}
-              className="border-b border-slate-400 text-red-600 font-semibold"
-              placeholder="Pregao Eletronico No"
-            />
-            <input
-              value={header.processo}
-              onChange={(e) => updateHeader("processo", e.target.value)}
-              onBlur={() => handleHeaderBlur("processo")}
-              className="border-b border-slate-400 text-red-600 font-semibold"
-              placeholder="Processo No"
-            />
-            <input
-              value={header.abertura}
-              onChange={(e) => updateHeader("abertura", e.target.value)}
-              onBlur={() => handleHeaderBlur("abertura")}
-              className="border-b border-slate-400 text-red-600 font-semibold"
-              placeholder="Abertura:"
-            />
-            <input
-              value={header.web}
-              onChange={(e) => updateHeader("web", e.target.value)}
-              className="border-b border-slate-400 uppercase"
-              placeholder="WEB"
-            />
+          {/* Detalhes do Processo */}
+          <div className="p-6 border-b border-slate-200 print:border-black">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-sm  text-slate-700 w-48">Pregão Eletrônico Nº:</span>
+                <input
+                  value={header.pregao}
+                  onChange={(e) => updateHeader("pregao", e.target.value)}
+                  onBlur={() => handleHeaderBlur("pregao")}
+                  className="w-full border-b-2 border-slate-200 focus:border-blue-500 outline-none text-sm font-semibold text-slate-900"
+                  placeholder="Ex: 123/2024"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-sm text-slate-700 w-48">Processo Nº:</span>
+                <input
+                  value={header.processo}
+                  onChange={(e) => updateHeader("processo", e.target.value)}
+                  onBlur={() => handleHeaderBlur("processo")}
+                  className="w-full border-b-2 border-slate-200 focus:border-blue-500 outline-none text-sm font-semibold text-slate-900"
+                  placeholder="Ex: 98765/2024"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-sm text-slate-700 w-48">Abertura:</span>
+                <input
+                  value={header.abertura}
+                  onChange={(e) => updateHeader("abertura", e.target.value)}
+                  onBlur={() => handleHeaderBlur("abertura")}
+                  className="w-full border-b-2 border-slate-200 focus:border-blue-500 outline-none text-sm font-semibold text-slate-900"
+                  placeholder="Ex: 10/10/2024 09:00"
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="bg-slate-200 text-center text-sm font-bold uppercase py-1 border-b border-slate-300 print:border-black">
+          <div className="bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-slate-200 print:border-black">
             Proposta Comercial
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs border-collapse">
-              <thead className="bg-black text-white uppercase">
+              <thead className="bg-slate-800 text-white uppercase font-semibold">
                 <tr>
-                  <th className="border border-slate-300 px-2 py-1">Item</th>
-                  <th className="border border-slate-300 px-2 py-1">Descricao</th>
-                  <th className="border border-slate-300 px-2 py-1">Unidade</th>
-                  <th className="border border-slate-300 px-2 py-1">Quantidade</th>
-                  <th className="border border-slate-300 px-2 py-1">Fabricante</th>
-                  <th className="border border-slate-300 px-2 py-1">Nome Comercial</th>
-                  <th className="border border-slate-300 px-2 py-1">Valor Unitario com ICMS</th>
-                  <th className="border border-slate-300 px-2 py-1">Valor Total com ICMS</th>
-                  <th className="border border-slate-300 px-2 py-1">Valor Unitario sem ICMS</th>
-                  <th className="border border-slate-300 px-2 py-1">Valor Total sem ICMS</th>
-                  <th className="border border-slate-300 px-2 py-1 print:hidden">CAP</th>
-                  <th className="border border-slate-300 px-2 py-1 print:hidden"></th>
+                  <th className="px-3 py-3 text-center">Item</th>
+                  <th className="px-3 py-3 text-left w-2/5">Descrição Detalhada</th>
+                  <th className="px-3 py-3 text-center">UNIDADE</th>
+                  <th className="px-3 py-3 text-center">QUANTIDADE</th>
+                  <th className="px-3 py-3 text-left">FABRICANTE</th>
+                  <th className="px-3 py-3 text-left">NOME COMERCIAL</th>
+                  <th className="px-3 py-3 text-right">Val. c/ ICMS</th>
+                  <th className="px-3 py-3 text-right">Total c/ ICMS</th>
+                  <th className="px-3 py-3 text-right">Val. s/ ICMS</th>
+                  <th className="px-3 py-3 text-right">Total s/ ICMS</th>
+                  <th className="px-3 py-3 text-center print:hidden">Ação</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-slate-200">
                 {itens.map((item) => (
-                  <tr key={item.id} className="align-top">
-                    <td className="border border-slate-300 px-2 py-1">
+                  <tr key={item.id} className="align-top hover:bg-slate-50">
+                    <td className="px-2 py-1">
                       <input
                         value={item.item}
                         onChange={(e) => handleItemChange(item.id, "item", e.target.value)}
-                        className="w-16 text-center"
+                        className="text-slate-900 w-16 p-2 border border-transparent rounded-md bg-transparent text-center focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
-                    <td className="border border-slate-300 px-2 py-1">
+                    <td className="px-2 py-1">
                       <textarea
                         value={item.descricao}
                         onChange={(e) => handleItemChange(item.id, "descricao", e.target.value)}
                         onBlur={() => handleDescricaoBlur(item.id)}
-                        className="w-72 min-h-[80px] whitespace-pre-line"
+                        className="text-slate-900 w-full min-h-[80px] p-2 border border-transparent rounded-md bg-transparent whitespace-pre-line focus:bg-white focus:border-slate-300 focus:outline-none"
+                        rows={3}
                       />
                     </td>
-                    <td className="border border-slate-300 px-2 py-1">
+                    <td className="px-2 py-1">
                       <input
                         value={item.unidade}
                         onChange={(e) => handleItemChange(item.id, "unidade", e.target.value)}
-                        className="w-20 text-center uppercase"
+                        className="text-slate-900 w-20 p-2 border border-transparent rounded-md bg-transparent text-center uppercase focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
-                    <td className="border border-slate-300 px-2 py-1">
+                    <td className="px-2 py-1">
                       <input
                         value={item.quantidade}
                         onChange={(e) => handleItemChange(item.id, "quantidade", e.target.value)}
-                        className="w-20 text-center"
+                        className="text-slate-900 w-20 p-2 border border-transparent rounded-md bg-transparent text-center focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
-                    <td className="border border-slate-300 px-2 py-1">
+                    <td className="px-2 py-1">
                       <input
                         value={item.fabricante}
                         onChange={(e) => handleItemChange(item.id, "fabricante", e.target.value)}
-                        className="w-28 uppercase"
+                        className="text-slate-900 w-32 p-2 border border-transparent rounded-md bg-transparent uppercase focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
-                    <td className="border border-slate-300 px-2 py-1">
+                    <td className="px-2 py-1">
                       <input
-                        value={item.nomeComercial}
-                        onChange={(e) => handleItemChange(item.id, "nomeComercial", e.target.value)}
-                        className="w-28 uppercase"
+                        value={item.marca}
+                        onChange={(e) => handleItemChange(item.id, "marca", e.target.value)}
+                        className="text-slate-900 w-32 p-2 border border-transparent rounded-md bg-transparent uppercase focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
-                    <td className="border border-slate-300 px-2 py-1 text-right">
+                    <td className="px-2 py-1 text-right">
                       <input
                         value={item.valorUnitarioComIcms}
                         onChange={(e) => handleItemChange(item.id, "valorUnitarioComIcms", e.target.value)}
-                        className="w-24 text-right"
+                        className="text-slate-900 w-28 p-2 border border-transparent rounded-md bg-transparent text-right focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
-                      <div className="text-[10px] text-slate-500">{formatMoney(item.valorUnitarioComIcms)}</div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">{formatMoney(item.valorUnitarioComIcms)}</div>
                     </td>
-                    <td className="border border-slate-300 px-2 py-1 text-right">
+                    <td className="px-2 py-1 text-right font-medium text-slate-700">
                       {formatMoney(item.valorTotalComIcms)}
                     </td>
-                    <td className="border border-slate-300 px-2 py-1 text-right">
+                    <td className="px-2 py-1 text-right">
                       <input
                         value={item.valorUnitarioSemIcms}
                         onChange={(e) => handleItemChange(item.id, "valorUnitarioSemIcms", e.target.value)}
-                        className="w-24 text-right"
+                        className="text-slate-900 w-28 p-2 border border-transparent rounded-md bg-transparent text-right focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
-                      <div className="text-[10px] text-slate-500">{formatMoney(item.valorUnitarioSemIcms)}</div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">{formatMoney(item.valorUnitarioSemIcms)}</div>
                     </td>
-                    <td className="border border-slate-300 px-2 py-1 text-right">
+                    <td className="px-2 py-1 text-right font-medium text-slate-700">
                       {formatMoney(item.valorTotalSemIcms)}
                     </td>
-                    <td className="border border-slate-300 px-2 py-1 text-center print:hidden">
-                      <input
-                        type="checkbox"
-                        checked={item.cap}
-                        onChange={(e) => handleItemChange(item.id, "cap", e.target.checked)}
-                      />
-                    </td>
-                    <td className="border border-slate-300 px-2 py-1 text-center print:hidden">
-                      <button onClick={() => removeItem(item.id)} className="text-red-600">
-                        <Trash2 size={14} />
+                    <td className="px-2 py-1 text-center print:hidden">
+                      <button onClick={() => removeItem(item.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors">
+                        <Trash2 size={16} />
                       </button>
                     </td>
                   </tr>
@@ -1093,141 +1091,150 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
             </table>
           </div>
 
-          <div className="border-t border-slate-300 print:border-black px-4 py-2 text-xs font-bold uppercase flex items-center justify-between">
-            <span>{totalExtenso}</span>
-            <span className="text-sm font-bold">{formatMoney(totalProposta)}</span>
+          {/* Total e Condições */}
+          <div className="border-t border-slate-200 print:border-black p-6">
+            <div className="flex justify-between items-center bg-slate-100 rounded-lg p-4 mb-6">
+              <span className="text-xs font-semibold uppercase text-slate-600">{totalExtenso}</span>
+              <span className="text-xl font-bold text-slate-800">{formatMoney(totalProposta)}</span>
+            </div>
+
+            <div className="bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-t border-slate-200 print:border-black mb-6 text-slate-700">
+              Condições do Edital
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
+              <div className="relative">
+                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">VALIDADE PROPOSTA</label>
+                <input
+                  value={header.validadeProposta}
+                  onChange={(e) => updateHeader("validadeProposta", e.target.value)}
+                  onBlur={() => handleHeaderBlur("validadeProposta")}
+                  className="text-slate-900 w-full pl-4 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  placeholder="Ex: 60 dias"
+                />
+              </div>
+              <div className="relative">
+                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">PRAZO DE PAGAMENTO</label>
+                <input
+                  value={header.prazoPagamento}
+                  onChange={(e) => updateHeader("prazoPagamento", e.target.value)}
+                  onBlur={() => handleHeaderBlur("prazoPagamento")}
+                  className="text-slate-900 w-full pl-4 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  placeholder="Ex: 30 dias"
+                />
+              </div>
+              <div className="relative">
+                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">VIGÊNCIA ATA</label>
+                <input
+                  value={header.vigenciaAta}
+                  onChange={(e) => updateHeader("vigenciaAta", e.target.value)}
+                  onBlur={() => handleHeaderBlur("vigenciaAta")}
+                  className="text-slate-900 w-full pl-4 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  placeholder="Ex: 12 meses"
+                />
+              </div>
+              <div className="relative">
+                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">PRAZO ENTREGA</label>
+                <input
+                  value={header.prazoEntrega}
+                  onChange={(e) => updateHeader("prazoEntrega", e.target.value)}
+                  onBlur={() => handleHeaderBlur("prazoEntrega")}
+                  className="text-slate-900 w-full pl-4 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  placeholder="Ex: 15 dias corridos"
+                />
+              </div>
+              <div className="relative">
+                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">VALIDADE OBJETO</label>
+                <input
+                  value={header.validadeObjeto}
+                  onChange={(e) => updateHeader("validadeObjeto", e.target.value)}
+                  onBlur={() => handleHeaderBlur("validadeObjeto")}
+                  className="text-slate-900 w-full pl-4 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  placeholder="Ex: 12 meses"
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="bg-slate-200 text-center text-xs font-bold uppercase py-1 border-t border-b border-slate-300 print:border-black">
-            Condicoes do Edital
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 text-sm">
-            <div>
-              <label className="font-semibold">Estado de Faturamento:</label>
-              <input
-                value={header.estadoFaturamento}
-                onChange={(e) => updateHeader("estadoFaturamento", e.target.value)}
-                className="ml-2 border-b border-slate-300 uppercase"
-              />
+          {/* Observações */}
+          <div className="border-t border-slate-200 print:border-black p-6">
+            <div className="bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-t border-slate-200 print:border-black mb-6">
+              Observações
             </div>
-            <div>
-              <input
-                value={header.validadeProposta}
-                onChange={(e) => updateHeader("validadeProposta", e.target.value)}
-                onBlur={() => handleHeaderBlur("validadeProposta")}
-                className="w-full border-b border-slate-300"
-                placeholder="Validade da Proposta"
-              />
-            </div>
-            <div>
-              <input
-                value={header.prazoPagamento}
-                onChange={(e) => updateHeader("prazoPagamento", e.target.value)}
-                onBlur={() => handleHeaderBlur("prazoPagamento")}
-                className="w-full border-b border-slate-300"
-                placeholder="Prazo de Pagamento"
-              />
-            </div>
-            <div>
-              <input
-                value={header.vigenciaAta}
-                onChange={(e) => updateHeader("vigenciaAta", e.target.value)}
-                onBlur={() => handleHeaderBlur("vigenciaAta")}
-                className="w-full border-b border-slate-300"
-                placeholder="Vigencia da Ata"
-              />
-            </div>
-            <div>
-              <input
-                value={header.prazoEntrega}
-                onChange={(e) => updateHeader("prazoEntrega", e.target.value)}
-                onBlur={() => handleHeaderBlur("prazoEntrega")}
-                className="w-full border-b border-slate-300"
-                placeholder="Prazo de Entrega"
-              />
-            </div>
-            <div>
-              <input
-                value={header.validadeObjeto}
-                onChange={(e) => updateHeader("validadeObjeto", e.target.value)}
-                onBlur={() => handleHeaderBlur("validadeObjeto")}
-                className="w-full border-b border-slate-300"
-                placeholder="Validade do Objeto"
-              />
-            </div>
-          </div>
-
-          <div className="bg-slate-200 text-center text-xs font-bold uppercase py-1 border-t border-b border-slate-300 print:border-black">
-            Observacoes
-          </div>
-
-          <div className="p-4 text-xs space-y-2">
-            {config.observacoesFixas.map((linha) => (
-              <p key={linha}>{linha}</p>
-            ))}
-            {declaracoesOrgao.map((linha) => (
-              <p key={linha} className="font-bold">{linha}</p>
-            ))}
-            <textarea
-              value={header.observacoes}
-              onChange={(e) => updateHeader("observacoes", e.target.value)}
-              className="w-full border border-slate-300 p-2 min-h-[80px]"
-              placeholder="Observacoes adicionais"
-            />
-          </div>
-
-          <div className="bg-slate-200 text-center text-xs font-bold uppercase py-1 border-t border-b border-slate-300 print:border-black">
-            Dados para assinatura de contrato
-          </div>
-
-          <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-            <div className="space-y-1">
-              {config.dadosEmpresa.map((linha) => (
-                <div key={linha.label}>
-                  <span className="font-semibold">{linha.label}:</span> {linha.value}
-                </div>
+            <div className="text-xs text-slate-600 space-y-3">
+              {config.observacoesFixas.map((linha) => (
+                <p key={linha}>{linha}</p>
               ))}
-            </div>
-            <div className="space-y-1">
-              {config.contatos.map((linha) => (
-                <div key={linha.label}>
-                  <span className="font-semibold">{linha.label}:</span> {linha.value}
-                </div>
+              {declaracoesOrgao.map((linha) => (
+                <p key={linha} className="font-bold text-slate-700">{linha}</p>
               ))}
+              <textarea
+                value={header.observacoes}
+                onChange={(e) => updateHeader("observacoes", e.target.value)}
+                className="w-full border border-slate-300 rounded-lg p-4 min-h-[100px] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Observações adicionais..."
+              />
             </div>
-            <div className="space-y-1">
-              {config.bancos.map((linha) => (
-                <div key={linha.label}>
-                  <span className="font-semibold">{linha.label}:</span> {linha.value}
-                </div>
-              ))}
+          </div>
+
+          {/* Dados e Declarações */}
+          <div className="border-t border-slate-200 print:border-black p-6">
+            <div className="bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-t border-slate-200 print:border-black mb-6">
+              Dados para Assinatura de Contrato
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-xs text-slate-600">
+              <div className="space-y-2">
+                {config.dadosEmpresa.map((linha) => (
+                  <div key={linha.label}>
+                    <span className="font-bold text-slate-700">{linha.label}:</span> {linha.value}
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-2">
+                {config.contatos.map((linha) => (
+                  <div key={linha.label}>
+                    <span className="font-bold text-slate-700">{linha.label}:</span> {linha.value}
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-2">
+                {config.bancos.map((linha) => (
+                  <div key={linha.label}>
+                    <span className="font-bold text-slate-700">{linha.label}:</span> {linha.value}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {config.declaracoesFixas.length > 0 && (
-            <div className="p-4 border-t border-slate-300 print:border-black text-xs space-y-2">
-              <div className="font-bold uppercase text-center">Declaracoes</div>
-              {config.declaracoesFixas.map((linha) => (
-                <p key={linha}>{linha}</p>
-              ))}
+            <div className="border-t border-slate-200 print:border-black p-6">
+              <div className="bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-t border-slate-200 print:border-black mb-6">
+                Declarações
+              </div>
+              <div className="text-xs text-slate-600 space-y-3">
+                {config.declaracoesFixas.map((linha) => (
+                  <p key={linha}>{linha}</p>
+                ))}
+              </div>
             </div>
           )}
 
           {selectedEmpresa === "UNIQUE" && (
-            <div className="p-4 border-t border-slate-300 print:border-black text-center text-xs text-red-600 font-bold uppercase">
-              Em virtude da legislacao vigente somos impossibilitados de efetuar fracionamento dos medicamentos
+            <div className="border-t border-slate-200 p-4 text-center text-sm text-red-600 font-bold uppercase bg-red-50">
+              Em virtude da legislação vigente somos impossibilitados de efetuar fracionamento dos medicamentos
             </div>
           )}
 
-          <div className="p-6 text-center text-xs space-y-4">
+          {/* Assinatura */}
+          <div className="border-t border-slate-200 print:border-black p-10 flex flex-col items-center">
             <input
               value={header.cidadeData}
               onChange={(e) => updateHeader("cidadeData", e.target.value)}
-              className="w-full text-center border-b border-slate-300"
-              placeholder="Cidade - UF, data."
+              className="w-full max-w-sm text-center border-b-2 border-slate-200 focus:border-blue-500 outline-none pb-1 mb-10 text-sm"
+              placeholder="Cidade - UF, DD de MM de AAAA."
             />
-            <div className="mt-6 border-t border-slate-400 inline-block px-10 pt-2 text-xs">
+            <div className="border-t-2 border-slate-300 w-80 text-center pt-3 text-sm">
               {config.assinatura.map((linha) => (
                 <div key={linha}>{linha}</div>
               ))}
@@ -1235,13 +1242,15 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
           </div>
         </div>
 
-        <button
-          onClick={addItem}
-          className="print:hidden flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded text-sm font-semibold"
-        >
-          <Plus size={16} />
-          Adicionar item
-        </button>
+        <div className="flex justify-start print:hidden">
+          <button
+            onClick={addItem}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 transition-all"
+          >
+            <Plus size={18} />
+            Adicionar Item
+          </button>
+        </div>
       </div>
     </div>
   );
