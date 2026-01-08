@@ -387,140 +387,187 @@ const Processos: React.FC<ProcessosProps> = ({ processos, setProcessos, setHeade
     { key: 'dataEdicao', label: 'DATA DE EDIÇÃO' },
   ];
 
-  return (
-    <div className="bg-slate-100 p-4 sm:p-6 lg:p-8 w-full min-h-screen flex flex-col font-sans">
-      {/* Header */}
-      <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-        <h1 className="text-3xl font-bold text-slate-800">Painel de Processos</h1>
-        <div className="flex items-center gap-3">
+return (
+  <div className="bg-slate-100 min-h-screen p-4 sm:p-6 lg:p-8 font-sans">
+    {/* CARD PRINCIPAL */}
+    <div className="bg-white rounded-2xl shadow-lg border border-slate-200 flex flex-col">
+
+      {/* HEADER DO CARD */}
+      <div className="flex flex-wrap justify-between items-center gap-4 p-6 border-b border-slate-200">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">
+            Painel de Processos
+          </h1>
+          <span className="text-sm text-slate-500 mt-1">
+            {processos.length} processos inseridos
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={18} />
+            <Search
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+              size={18}
+            />
             <input
               type="text"
               placeholder="Buscar..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className="w-64 pl-11 pr-4 py-2.5 border border-transparent bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-slate-700 shadow-sm"
+              className="w-64 pl-11 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-slate-700"
             />
           </div>
+
           <div className="flex items-center gap-2">
-            <input 
+            <input
               type="date"
-              onChange={(e) => setFilterStartDate(e.target.value ? new Date(e.target.value) : null)}
+              onChange={(e) =>
+                setFilterStartDate(e.target.value ? new Date(e.target.value) : null)
+              }
               className="border border-slate-300 rounded-md px-2 py-1.5 text-sm text-slate-600"
             />
             <span className="text-slate-500">até</span>
-            <input 
+            <input
               type="date"
-              onChange={(e) => setFilterEndDate(e.target.value ? new Date(e.target.value) : null)}
+              onChange={(e) =>
+                setFilterEndDate(e.target.value ? new Date(e.target.value) : null)
+              }
               className="border border-slate-300 rounded-md px-2 py-1.5 text-sm text-slate-600"
             />
           </div>
+
           <button
             onClick={openAgendaModal}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-5 text-sm rounded-md transition-colors shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-5 text-sm rounded-md transition-colors shadow-sm"
           >
             Gerar Agenda
           </button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-grow bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div className="overflow-auto h-full">
-          <table className="w-full">
-            <thead className="bg-slate-50 select-none sticky top-0 z-10">
-              <tr>
-                {headers.map(({ key, label }) => (
-                  <th 
-                    key={key}
-                    scope="col"
-                    className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
-                    onClick={() => requestSort(key as SortKey)}
-                  >
-                    <div className="flex items-center gap-1.5 cursor-pointer">
-                      {label}
-                      {sortConfig?.key === key && (
-                        sortConfig.direction === 'ascending' ? <ChevronUp size={14} /> : <ChevronDown size={14} />
-                      )}
-                    </div>
-                  </th>
-                ))}
-                <th scope="col" className="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-slate-200">
-              {paginatedProcessos.map((processo) => (
-                <tr key={processo.id} className="hover:bg-slate-50/70 transition-colors duration-150">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{processo.headerData.numeroGrade}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{processo.headerData.empresa}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{processo.headerData.edital}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{getOrgaoName(processo.headerData.orgao)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{getUfFromOrgao(processo.headerData.orgao)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{processo.headerData.dataAbertura}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{getTimeFromDataAbertura(processo.headerData.dataAbertura)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{processo.headerData.dataEdicao}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                    <div className="flex items-center justify-center gap-1">
-                      <button onClick={() => handleEdit(processo.id)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors">
-                        <Edit size={16} />
-                      </button>
-                      <button onClick={() => handleDelete(processo.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+      {/* CONTEÚDO */}
+      <div className="flex-grow overflow-auto">
+        <table className="w-full">
+          <thead className="bg-slate-50 sticky top-0 z-10">
+            <tr>
+              {headers.map(({ key, label }) => (
+                <th
+                  key={key}
+                  className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                  onClick={() => requestSort(key as SortKey)}
+                >
+                  <div className="flex items-center gap-1.5 cursor-pointer">
+                    {label}
+                    {sortConfig?.key === key &&
+                      (sortConfig.direction === 'ascending' ? (
+                        <ChevronUp size={14} />
+                      ) : (
+                        <ChevronDown size={14} />
+                      ))}
+                  </div>
+                </th>
               ))}
-            </tbody>
-          </table>
-        </div>
+              <th className="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase">
+                Ações
+              </th>
+            </tr>
+          </thead>
+
+          <tbody className="divide-y divide-slate-200">
+            {paginatedProcessos.map((processo) => (
+              <tr
+                key={processo.id}
+                className="hover:bg-slate-50 transition-colors"
+              >
+                <td className="px-6 py-4 text-sm font-medium text-slate-800">
+                  {processo.headerData.numeroGrade}
+                </td>
+                <td className="px-6 py-4 text-sm text-slate-600">
+                  {processo.headerData.empresa}
+                </td>
+                <td className="px-6 py-4 text-sm text-slate-600">
+                  {processo.headerData.edital}
+                </td>
+                <td className="px-6 py-4 text-sm text-slate-600">
+                  {getOrgaoName(processo.headerData.orgao)}
+                </td>
+                <td className="px-6 py-4 text-sm text-slate-600">
+                  {getUfFromOrgao(processo.headerData.orgao)}
+                </td>
+                <td className="px-6 py-4 text-sm text-slate-600">
+                  {processo.headerData.dataAbertura}
+                </td>
+                <td className="px-6 py-4 text-sm text-slate-600">
+                  {getTimeFromDataAbertura(processo.headerData.dataAbertura)}
+                </td>
+                <td className="px-6 py-4 text-sm text-slate-600">
+                  {processo.headerData.dataEdicao}
+                </td>
+                <td className="px-6 py-4 text-center">
+                  <div className="flex justify-center gap-1">
+                    <button
+                      onClick={() => handleEdit(processo.id)}
+                      className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(processo.id)}
+                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-lg"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-      <div className="flex items-center justify-between pt-4">
+
+      {/* PAGINAÇÃO */}
+      <div className="flex items-center justify-between p-4 border-t border-slate-200">
         <div className="flex items-center gap-2">
-            <label htmlFor="pageSize" className="text-sm text-slate-600">Linhas por página:</label>
-            <select
-                id="pageSize"
-                value={pageSize === 0 ? 'all' : pageSize}
-                onChange={(e) => {
-                    const value = e.target.value;
-                    if (value === 'all') {
-                        setPageSize(0);
-                    } else {
-                        setPageSize(Number(value));
-                    }
-                    setCurrentPage(1);
-                }}
-                className="border border-slate-300 rounded-md px-2 py-1 text-sm text-slate-600"
-            >
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-                <option value={200}>200</option>
-                <option value="all">Todos</option>
-            </select>
+          <label className="text-sm text-slate-600">Linhas por página:</label>
+          <select
+            value={pageSize === 0 ? 'all' : pageSize}
+            onChange={(e) => {
+              const value = e.target.value;
+              setPageSize(value === 'all' ? 0 : Number(value));
+              setCurrentPage(1);
+            }}
+            className="border border-slate-300 rounded-md px-2 py-1 text-sm text-slate-600"
+          >
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+            <option value={200}>200</option>
+            <option value="all">Todos</option>
+          </select>
         </div>
+
         <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-600">
-                Página {currentPage} de {totalPages}
-            </span>
-            <div className="flex items-center gap-2">
-                <button
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 text-slate-700"
-                >
-                    Anterior
-                </button>
-                <button
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                    className="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 text-slate-700"
-                >
-                    Próxima
-                </button>
-            </div>
+          <span className="text-sm text-slate-600">
+            Página {currentPage} de {totalPages}
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 border rounded-md text-sm disabled:opacity-50"
+            >
+              Anterior
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 border rounded-md text-sm disabled:opacity-50"
+            >
+              Próxima
+            </button>
+          </div>
         </div>
       </div>
+    </div>
       
       {agendaModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm p-4">

@@ -165,7 +165,7 @@ export default function Orgaos({ orgaos, setOrgaos, processos = [] }: OrgaosProp
       <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8">
         <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
           <div className="grow">
-              <h1 className="text-3xl font-bold text-slate-800">Gestão de Órgãos</h1>
+              <h1 className="text-2xl font-bold text-slate-800">Gestão de Órgãos</h1>
               <p className="text-sm text-slate-500 mt-1">{orgaos.length} órgãos cadastrados</p>
           </div>
           <div className="flex items-center gap-3">

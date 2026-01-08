@@ -305,7 +305,7 @@ export default function Produtos({ produtos, setProdutos }: ProdutosProps) {
       <div className="bg-white rounded-2xl shadow-md print:border-black overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between items-center p-4 gap-3 border-b border-slate-200">
 <div className="flex flex-col">
-  <h1 className="text-3xl font-bold text-slate-800">Gestão de Produtos</h1>
+  <h1 className="text-2xl font-bold text-slate-800">Gestão de Produtos</h1>
   <span className="text-sm text-slate-500 mt-0.5">
     {produtos.length} produtos cadastrados
   </span>

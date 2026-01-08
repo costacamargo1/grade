@@ -303,7 +303,12 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
         accept=".xlsx, .xls"
       />
       <div className="flex flex-col xl:flex-row justify-between xl:items-center mb-4 gap-4">
-        <h2 className="text-2xl font-bold text-slate-800">Resultados</h2>
+                <div>
+                  <h1 className="text-2xl font-bold text-slate-800">Painel de Resultados</h1>
+                  <span className="text-sm text-slate-500 mt-1">
+                    {resultados.length} resultados inseridos
+                  </span>
+                </div>
         <div className="flex flex-col sm:flex-row items-center gap-2">
           <div className="relative w-full sm:w-auto">
             <TextSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />

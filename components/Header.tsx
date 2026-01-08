@@ -208,7 +208,7 @@ export default function Header({ headerData, setHeaderData, orgaos, setOrgaos }:
   return (
     <>
     {/* ADICIONEI UMA BORDA PRETA ANTES ERA -> border border-slate-100 */}
-      <div className=" bg-white rounded-2xl shadow-sm border border-black p-5 transition-all hover:shadow-md relative z-20 ">
+      <div className=" bg-white rounded-2xl shadow-sm border border-black p-5 transition-all hover:shadow-md relative z-20 pt-4">
         
         {/* PARTE 1: CABEÇALHO PRINCIPAL (Edital, Órgão, Data) */}
         <div className="flex flex-col xl:flex-row gap-6 mb-5">
