@@ -1199,7 +1199,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                   value={header.prazoEntrega}
                   onChange={(e) => updateHeader("prazoEntrega", e.target.value)}
                   onBlur={() => handleHeaderBlur("prazoEntrega")}
-                  className="w-[75ch] text-slate-900 pl-4 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  className="w-[80ch] text-slate-900 pl-4 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   placeholder="Ex: 15 dias corridos"
                 />
               </div>
