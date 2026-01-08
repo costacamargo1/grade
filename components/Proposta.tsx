@@ -1158,7 +1158,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
 
           {/* Observações */}
           <div className="border-t border-slate-200 print:border-black p-6">
-            <div className="bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-t border-slate-200 print:border-black mb-6">
+            <div className="text-slate-700 bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-t border-slate-200 print:border-black mb-6">
               Observações
             </div>
             <div className="text-xs text-slate-600 space-y-3">
@@ -1179,7 +1179,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
 
           {/* Dados e Declarações */}
           <div className="border-t border-slate-200 print:border-black p-6">
-            <div className="bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-t border-slate-200 print:border-black mb-6">
+            <div className="text-slate-700 bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-t border-slate-200 print:border-black mb-6">
               Dados para Assinatura de Contrato
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-xs text-slate-600">
