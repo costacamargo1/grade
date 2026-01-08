@@ -1227,14 +1227,14 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
           )}
 
           {/* Assinatura */}
-          <div className="border-t border-slate-200 print:border-black p-10 flex flex-col items-center">
+          <div className="border-t border-slate-200 print:border-black p-10 flex flex-col items-center gap-8">
             <input
               value={header.cidadeData}
               onChange={(e) => updateHeader("cidadeData", e.target.value)}
-              className="w-full max-w-sm text-center border-b-2 border-slate-200 focus:border-blue-500 outline-none pb-1 mb-10 text-sm"
+              className="text-slate-900 w-full max-w-sm text-center outline-none pb-1 mb-10 text-sm"
               placeholder="Cidade - UF, DD de MM de AAAA."
             />
-            <div className="border-t-2 border-slate-300 w-80 text-center pt-3 text-sm">
+            <div className="text-slate-900 border-t-2 border-slate-900 w-80 text-center pt-3 text-sm">
               {config.assinatura.map((linha) => (
                 <div key={linha}>{linha}</div>
               ))}
