@@ -23,6 +23,13 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+import {
+  formatCurrencyForInput,
+  handleCurrencyInputChange,
+  parseCurrency,
+  formatCurrencyForDisplay,
+} from "../lib/currencyUtils";
+
 interface GridProps {
   itens: ItemGrade[];
   setItens: React.Dispatch<React.SetStateAction<ItemGrade[]>>;
@@ -38,6 +45,23 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
         transform: CSS.Transform.toString(transform),
         transition,
     };
+
+    const getDisplayValue = (field: keyof ItemGrade, isColocado = false, colocadoField: keyof ItemGrade | null = null) => {
+      const editing = props.editingField;
+      if (isColocado) {
+        if (editing && editing.id === item.id && editing.field === `${String(colocadoField)}.valor`) {
+          return editing.value;
+        }
+        const colocadoItem = item[colocadoField as keyof ItemGrade] as { valor: number };
+        return formatCurrencyForDisplay(colocadoItem.valor);
+      }
+
+      if (editing && editing.id === item.id && editing.field === field) {
+        return editing.value;
+      }
+      return formatCurrencyForDisplay(item[field] as number);
+    }
+
 
     return (
         <tr ref={setNodeRef} style={style} {...attributes} className="h-[165px] odd:bg-white even:bg-slate-50/70 hover:bg-blue-50 transition-colors group print:bg-white">
@@ -62,32 +86,32 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
             </td>
             <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
-                type="number"
-                className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
-                value={item.precoDoDia || ""}
-                onChange={(e) =>
-                    props.handleUpdate(item.id, "precoDoDia", e.target.value)
-                }
+                  type="text"
+                  className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
+                  value={getDisplayValue("precoDoDia")}
+                  onFocus={() => props.handleCurrencyFocus(item.id, "precoDoDia")}
+                  onChange={(e) => props.handleCurrencyChange(e.target.value)}
+                  onBlur={props.handleCurrencyBlur}
                 />
             </td>
             <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
-                type="number"
-                className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
-                value={item.melhorPreco || ""}
-                onChange={(e) =>
-                    props.handleUpdate(item.id, "melhorPreco", e.target.value)
-                }
+                  type="text"
+                  className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
+                  value={getDisplayValue("melhorPreco")}
+                  onFocus={() => props.handleCurrencyFocus(item.id, "melhorPreco")}
+                  onChange={(e) => props.handleCurrencyChange(e.target.value)}
+                  onBlur={props.handleCurrencyBlur}
                 />
             </td>
             <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
-                type="number"
-                className="w-full text-center bg-transparent outline-none focus:bg-white font-bold print:text-black"
-                value={item.precoFinal || ""}
-                onChange={(e) =>
-                    props.handleUpdate(item.id, "precoFinal", e.target.value)
-                }
+                  type="text"
+                  className="w-full text-center bg-transparent outline-none focus:bg-white font-bold print:text-black"
+                  value={getDisplayValue("precoFinal")}
+                  onFocus={() => props.handleCurrencyFocus(item.id, "precoFinal")}
+                  onChange={(e) => props.handleCurrencyChange(e.target.value)}
+                  onBlur={props.handleCurrencyBlur}
                 />
             </td>
             <td className="p-1 border-r border-slate-200 print:border-black">
@@ -127,40 +151,35 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
             </td>
             <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
-                type="text"
-                className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
-                value={props.formatCurrency(item.valorEstimado)}
-                onChange={(e) =>
-                    props.handleCurrencyChange(
-                    item.id,
-                    "valorEstimado",
-                    e.target.value
-                    )
-                }
+                  type="text"
+                  className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
+                  placeholder="R$ 0,0000"
+                  value={getDisplayValue("valorEstimado")}
+                  onFocus={() => props.handleCurrencyFocus(item.id, "valorEstimado")}
+                  onChange={(e) => props.handleCurrencyChange(e.target.value)}
+                  onBlur={props.handleCurrencyBlur}
                 />
             </td>
             <td className="p-1 border-r border-orange-300 print:border-black bg-orange-100/50 print:bg-white">
                 <input
-                type="text"
-                className="w-full text-center bg-transparent outline-none focus:bg-white font-bold text-slate-900 print:text-black"
-                value={props.formatCurrency(item.precoInicial)}
-                onChange={(e) =>
-                    props.handleCurrencyChange(
-                    item.id,
-                    "precoInicial",
-                    e.target.value
-                    )
-                }
+                  type="text"
+                  className="w-full text-center bg-transparent outline-none focus:bg-white font-bold text-slate-900 print:text-black"
+                  placeholder="R$ 0,0000"
+                  value={getDisplayValue("precoInicial")}
+                  onFocus={() => props.handleCurrencyFocus(item.id, "precoInicial")}
+                  onChange={(e) => props.handleCurrencyChange(e.target.value)}
+                  onBlur={props.handleCurrencyBlur}
                 />
             </td>
             <td className="p-1 border-r border-slate-200 print:border-black">
                 <input
-                type="text"
-                className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
-                value={props.formatCurrency(item.cotacao)}
-                onChange={(e) =>
-                    props.handleCurrencyChange(item.id, "cotacao", e.target.value)
-                }
+                  type="text"
+                  className="w-full text-center bg-transparent outline-none focus:bg-white print:text-black"
+                  placeholder="R$ 0,0000"
+                  value={getDisplayValue("cotacao")}
+                  onFocus={() => props.handleCurrencyFocus(item.id, "cotacao")}
+                  onChange={(e) => props.handleCurrencyChange(e.target.value)}
+                  onBlur={props.handleCurrencyBlur}
                 />
             </td>
             <td className="p-1 border-r border-slate-200 print:border-black">
@@ -196,15 +215,11 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 <input
                     type="text"
                     className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] print:text-black"
-                    placeholder="R$ 0,00"
-                    value={props.formatCurrency(item.primeiroColocado.valor)}
-                    onChange={(e) =>
-                    props.handleColocadoCurrencyChange(
-                        item.id,
-                        "primeiroColocado",
-                        e.target.value
-                    )
-                    }
+                    placeholder="R$ 0,0000"
+                    value={getDisplayValue("primeiroColocado", true, "primeiroColocado")}
+                    onFocus={() => props.handleColocadoCurrencyFocus(item.id, "primeiroColocado")}
+                    onChange={(e) => props.handleCurrencyChange(e.target.value)}
+                    onBlur={props.handleCurrencyBlur}
                 />
                 </div>
             </td>
@@ -241,15 +256,11 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 <input
                     type="text"
                     className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] print:text-black"
-                    placeholder="R$ 0,00"
-                    value={props.formatCurrency(item.segundoColocado.valor)}
-                    onChange={(e) =>
-                    props.handleColocadoCurrencyChange(
-                        item.id,
-                        "segundoColocado",
-                        e.target.value
-                    )
-                    }
+                    placeholder="R$ 0,0000"
+                    value={getDisplayValue("segundoColocado", true, "segundoColocado")}
+                    onFocus={() => props.handleColocadoCurrencyFocus(item.id, "segundoColocado")}
+                    onChange={(e) => props.handleCurrencyChange(e.target.value)}
+                    onBlur={props.handleCurrencyBlur}
                 />
                 </div>
             </td>
@@ -286,15 +297,11 @@ const DraggableRow = ({ item, index, ...props }: { item: ItemGrade, index: numbe
                 <input
                     type="text"
                     className="w-full text-center bg-transparent outline-none focus:bg-white text-[10px] print:text-black"
-                    placeholder="R$ 0,00"
-                    value={props.formatCurrency(item.terceiroColocado.valor)}
-                    onChange={(e) =>
-                    props.handleColocadoCurrencyChange(
-                        item.id,
-                        "terceiroColocado",
-                        e.target.value
-                    )
-                    }
+                    placeholder="R$ 0,0000"
+                    value={getDisplayValue("terceiroColocado", true, "terceiroColocado")}
+                    onFocus={() => props.handleColocadoCurrencyFocus(item.id, "terceiroColocado")}
+                    onChange={(e) => props.handleCurrencyChange(e.target.value)}
+                    onBlur={props.handleCurrencyBlur}
                 />
                 </div>
             </td>
@@ -335,6 +342,8 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
   } | null>(null);
   const [showImportExportModal, setShowImportExportModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [editingField, setEditingField] = useState<{ id: string; field: string; value: string } | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -343,48 +352,59 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
     })
   );
 
-  // --- FUNÇÕES AUXILIARES DE MÁSCARA ---
+  // --- NEW CURRENCY MASK LOGIC ---
 
-  // Formata valor numérico para Moeda BRL (R$ 1.000,00)
-  const formatCurrency = (value: number | undefined) => {
-  if (value === undefined || value === null || value === 0) return "";
+const handleCurrencyFocus = (id: string, field: keyof ItemGrade) => {
+  const item = itens.find(it => it.id === id);
+  if (!item) return;
 
-  return value.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 4,
-    maximumFractionDigits: 4,
+  const currentValue = item[field] as number;
+
+  setEditingField({
+    id,
+    field: field as string,
+    value: currentValue === 0 ? "" : formatCurrencyForInput(currentValue)
   });
 };
 
-  // Lógica de digitação de dinheiro (Máscara)
-  const handleCurrencyChange = (
-  id: string,
-  campo: keyof ItemGrade,
-  valorInput: string
-) => {
-  const apenasNumeros = valorInput.replace(/\D/g, "");
+const handleColocadoCurrencyFocus = (id: string, colocadoField: keyof ItemGrade) => {
+  const item = itens.find(it => it.id === id);
+  if (!item) return;
 
-  const valorFinal = apenasNumeros
-    ? Number(apenasNumeros) / 10000
-    : 0;
+  const currentItem = item[colocadoField] as { valor: number };
+  const currentValue = currentItem.valor;
 
-  handleUpdate(id, campo, valorFinal);
+  setEditingField({
+    id,
+    field: `${String(colocadoField)}.valor`,
+    value: currentValue === 0 ? "" : formatCurrencyForInput(currentValue)
+  });
 };
 
-  const handleColocadoCurrencyChange = (
-  id: string,
-  colocado: keyof ItemGrade,
-  valorInput: string
-) => {
-  const apenasNumeros = valorInput.replace(/\D/g, "");
+  const handleCurrencyChange = (value: string) => {
+    if (editingField) {
+      setEditingField({
+        ...editingField,
+        value: handleCurrencyInputChange(value),
+      });
+    }
+  };
 
-  const valorFinal = apenasNumeros
-    ? Number(apenasNumeros) / 10000
-    : 0;
+  const handleCurrencyBlur = () => {
+    if (editingField) {
+      const { id, field, value } = editingField;
+      const numericValue = parseCurrency(value);
 
-  handleColocadoChange(id, colocado, "valor", valorFinal);
-};
+      if (field.includes('.')) { // Handle "primeiroColocado.valor"
+        const [colocado, subField] = field.split('.');
+        handleColocadoChange(id, colocado as keyof ItemGrade, subField as "valor", numericValue);
+      } else {
+        handleUpdate(id, field as keyof ItemGrade, numericValue);
+      }
+      setEditingField(null);
+    }
+  };
+
 
   // Formata Quantidade com ponto (1.000)
   const formatQuantity = (value: number | undefined) => {
@@ -810,21 +830,22 @@ export default function Grid({ itens, setItens, resultados, setResultados, heade
                 <tbody className="divide-y divide-slate-200 print:divide-black text-slate-800 font-medium print:text-black">
                   {itens.map((item, index) => (
                     <DraggableRow 
-                      key={item.id} 
-                      item={item} 
-                      index={index}
-                      handleUpdate={handleUpdate}
-                      handleDelete={handleDelete}
-                      handleSmartBlur={handleSmartBlur}
-                      formatQuantity={formatQuantity}
-                      formatCurrency={formatCurrency}
-                      handleCurrencyChange={handleCurrencyChange}
-                      handleQuantityChange={handleQuantityChange}
-                      handleColocadoChange={handleColocadoChange}
-                      handleColocadoCurrencyChange={handleColocadoCurrencyChange}
-                      handleSaveToResultados={handleSaveToResultados}
-                      />
-                  ))}
+                                            key={item.id} 
+                                            item={item} 
+                                            index={index}
+                                            editingField={editingField}
+                                            handleUpdate={handleUpdate}
+                                            handleDelete={handleDelete}
+                                            handleSmartBlur={handleSmartBlur}
+                                            formatQuantity={formatQuantity}
+                                            handleQuantityChange={handleQuantityChange}
+                                            handleColocadoChange={handleColocadoChange}
+                                            handleSaveToResultados={handleSaveToResultados}
+                                            handleCurrencyFocus={handleCurrencyFocus}
+                                            handleColocadoCurrencyFocus={handleColocadoCurrencyFocus}
+                                            handleCurrencyChange={handleCurrencyChange}
+                                            handleCurrencyBlur={handleCurrencyBlur}
+                                            />                  ))}
                 </tbody>
             </SortableContext>
           </table>
