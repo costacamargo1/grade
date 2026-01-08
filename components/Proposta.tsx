@@ -900,7 +900,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
 
   return (
     <div className="bg-slate-100 min-h-screen p-4 sm:p-6 lg:p-8 font-sans">
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="max-w-screen-2xl mx-auto space-y-8">
         {/* Bloco de Cabeçalho */}
         <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
           <div>
@@ -996,10 +996,10 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs border-collapse">
-              <thead className="bg-slate-800 text-white uppercase font-semibold">
+              <thead className="bg-slate-800 text-white uppercase font-semibold divide-x divide-slate-600">
                 <tr>
                   <th className="px-3 py-3 text-center">Item</th>
-                  <th className="px-3 py-3 text-left w-2/5">Descrição Detalhada</th>
+                  <th className="px-3 py-3 text-center w-2/5">Descrição Detalhada</th>
                   <th className="px-3 py-3 text-center">UNIDADE</th>
                   <th className="px-3 py-3 text-center">QUANTIDADE</th>
                   <th className="px-3 py-3 text-center">FABRICANTE</th>
@@ -1011,7 +1011,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                   <th className="px-3 py-3 text-center print:hidden">Ação</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-x divide-slate-300">
                 {itens.map((item) => (
                   <tr key={item.id} className="align-top hover:bg-slate-50">
                     <td className="px-2 py-1">
