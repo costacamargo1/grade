@@ -5,6 +5,12 @@ import { Plus, Trash2 } from "lucide-react";
 import { Produto } from "../lib/types";
 import { bancoApresentacoes } from "../lib/data";
 import { formatarDataInteligente, removerAcentos } from "../lib/formatters";
+import {
+  formatCurrencyForInput,
+  formatCurrencyForDisplay,
+  handleCurrencyInputChange,
+  parseCurrency,
+} from "../lib/currencyUtils";
 
 type Empresa = "NSA" | "COSTA" | "UNIQUE";
 
@@ -223,23 +229,28 @@ const parseNumber = (value: string): number | null => {
   return Number.isNaN(parsed) ? null : parsed;
 };
 
-const formatMoney = (value: number | string): string => {
+const parseCurrencyValue = (value: string): number | null => {
+  if (!value) return null;
+  return parseCurrency(value);
+};
+
+const formatCurrencyDisplay = (value: number | string): string => {
   if (value === "" || value === null || value === undefined) return "";
-  const parsed = typeof value === "string" ? parseFloat(normalizeNumericInput(value)) : value;
+  const parsed = typeof value === "string" ? parseCurrency(value) : value;
+  if (Number.isNaN(parsed)) return "";
+  return formatCurrencyForDisplay(parsed);
+};
+
+const formatCurrencyTotalDisplay = (value: number | string): string => {
+  if (value === "" || value === null || value === undefined) return "";
+  const parsed = typeof value === "string" ? parseCurrency(value) : value;
   if (Number.isNaN(parsed)) return "";
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
-    minimumFractionDigits: 4,
-    maximumFractionDigits: 4,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(parsed);
-};
-
-const formatNumber = (value: number | string): string => {
-  if (value === "" || value === null || value === undefined) return "";
-  const parsed = typeof value === "string" ? parseFloat(normalizeNumericInput(value)) : value;
-  if (Number.isNaN(parsed)) return "";
-  return new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 4 }).format(parsed);
 };
 
 const round4 = (value: number): number => Math.round(value * 10000) / 10000;
@@ -758,6 +769,11 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
   const [selectedEmpresa, setSelectedEmpresa] = useState<Empresa>(empresa);
   const [header, setHeader] = useState<PropostaHeader>(buildDefaultHeader());
   const [itens, setItens] = useState<PropostaItem[]>([buildDefaultItem()]);
+  const [editingCurrency, setEditingCurrency] = useState<{
+    id: string;
+    field: "valorUnitarioComIcms" | "valorUnitarioSemIcms";
+    value: string;
+  } | null>(null);
 
   const config = COMPANY_CONFIG[selectedEmpresa];
 
@@ -768,8 +784,8 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
 
   const totalProposta = useMemo(() => {
     return itens.reduce((acc, item) => {
-      const valorJ = parseNumber(item.valorTotalSemIcms);
-      const valorH = parseNumber(item.valorTotalComIcms);
+      const valorJ = parseCurrencyValue(item.valorTotalSemIcms);
+      const valorH = parseCurrencyValue(item.valorTotalComIcms);
       if (valorJ && valorJ > 0) return acc + valorJ;
       if (valorH && valorH > 0) return acc + valorH;
       return acc;
@@ -815,8 +831,8 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
 
   const applyRecalculo = (item: PropostaItem): PropostaItem => {
     const quantidade = parseNumber(item.quantidade) || 0;
-    let valorG = parseNumber(item.valorUnitarioComIcms);
-    let valorI = parseNumber(item.valorUnitarioSemIcms);
+    let valorG = parseCurrencyValue(item.valorUnitarioComIcms);
+    let valorI = parseCurrencyValue(item.valorUnitarioSemIcms);
     const convenio = identificarConvenio(item.descricao);
     const uf = header.estadoUf || "SP";
 
@@ -857,6 +873,48 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
       }
       return updated;
     }));
+  };
+
+  const getCurrencyInputValue = (item: PropostaItem, field: "valorUnitarioComIcms" | "valorUnitarioSemIcms") => {
+    if (editingCurrency && editingCurrency.id === item.id && editingCurrency.field === field) {
+      return editingCurrency.value;
+    }
+    const parsed = parseCurrencyValue(item[field]);
+    return parsed ? formatCurrencyForDisplay(parsed) : "";
+  };
+
+  const handleCurrencyFocus = (id: string, field: "valorUnitarioComIcms" | "valorUnitarioSemIcms") => {
+    const item = itens.find((current) => current.id === id);
+    if (!item) return;
+    const parsed = parseCurrencyValue(item[field]);
+    setEditingCurrency({
+      id,
+      field,
+      value: parsed ? formatCurrencyForInput(parsed) : "",
+    });
+  };
+
+  const handleCurrencyChange = (value: string) => {
+    if (!editingCurrency) return;
+    setEditingCurrency({
+      ...editingCurrency,
+      value: handleCurrencyInputChange(value),
+    });
+  };
+
+  const handleCurrencyBlur = () => {
+    if (!editingCurrency) return;
+    const { id, field, value } = editingCurrency;
+    const numericValue = parseCurrency(value);
+    setItens((prev) => prev.map((item) => {
+      if (item.id !== id) return item;
+      const updated = {
+        ...item,
+        [field]: numericValue ? String(numericValue) : "",
+      } as PropostaItem;
+      return applyRecalculo(updated);
+    }));
+    setEditingCurrency(null);
   };
 
   const handleDescricaoBlur = (id: string) => {
@@ -996,7 +1054,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs border-collapse">
-              <thead className="bg-slate-800 text-white uppercase font-semibold divide-x divide-slate-600">
+              <thead className="bg-slate-800 text-white uppercase font-semibold divide-x divide-slate-500">
                 <tr>
                   <th className="px-3 py-3 text-center">Item</th>
                   <th className="px-3 py-3 text-center w-2/5">Descrição Detalhada</th>
@@ -1060,25 +1118,27 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                     </td>
                     <td className="px-2 py-1 text-right">
                       <input
-                        value={item.valorUnitarioComIcms}
-                        onChange={(e) => handleItemChange(item.id, "valorUnitarioComIcms", e.target.value)}
+                        value={getCurrencyInputValue(item, "valorUnitarioComIcms")}
+                        onFocus={() => handleCurrencyFocus(item.id, "valorUnitarioComIcms")}
+                        onChange={(e) => handleCurrencyChange(e.target.value)}
+                        onBlur={handleCurrencyBlur}
                         className="text-slate-900 w-28 p-2 border border-transparent rounded-md bg-transparent text-right focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
-                      <div className="text-[10px] text-slate-500 mt-0.5">{formatMoney(item.valorUnitarioComIcms)}</div>
                     </td>
                     <td className="px-2 py-1 text-right font-medium text-slate-700">
-                      {formatMoney(item.valorTotalComIcms)}
+                      {formatCurrencyTotalDisplay(item.valorTotalComIcms)}
                     </td>
                     <td className="px-2 py-1 text-right">
                       <input
-                        value={item.valorUnitarioSemIcms}
-                        onChange={(e) => handleItemChange(item.id, "valorUnitarioSemIcms", e.target.value)}
+                        value={getCurrencyInputValue(item, "valorUnitarioSemIcms")}
+                        onFocus={() => handleCurrencyFocus(item.id, "valorUnitarioSemIcms")}
+                        onChange={(e) => handleCurrencyChange(e.target.value)}
+                        onBlur={handleCurrencyBlur}
                         className="text-slate-900 w-28 p-2 border border-transparent rounded-md bg-transparent text-right focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
-                      <div className="text-[10px] text-slate-500 mt-0.5">{formatMoney(item.valorUnitarioSemIcms)}</div>
                     </td>
                     <td className="px-2 py-1 text-right font-medium text-slate-700">
-                      {formatMoney(item.valorTotalSemIcms)}
+                      {formatCurrencyTotalDisplay(item.valorTotalSemIcms)}
                     </td>
                     <td className="px-2 py-1 text-center print:hidden">
                       <button onClick={() => removeItem(item.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors">
@@ -1095,7 +1155,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
           <div className="border-t border-slate-200 print:border-black p-6">
             <div className="flex justify-between items-center bg-slate-100 rounded-lg p-4 mb-6">
               <span className="text-xs font-semibold uppercase text-slate-600">{totalExtenso}</span>
-              <span className="text-xl font-bold text-slate-800">{formatMoney(totalProposta)}</span>
+              <span className="text-xl font-bold text-slate-800">{formatCurrencyDisplay(totalProposta)}</span>
             </div>
 
             <div className="bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-t border-slate-200 print:border-black mb-6 text-slate-700">
@@ -1104,7 +1164,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
               <div className="relative">
-                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">VALIDADE PROPOSTA</label>
+                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">VALIDADE DA PROPOSTA</label>
                 <input
                   value={header.validadeProposta}
                   onChange={(e) => updateHeader("validadeProposta", e.target.value)}
@@ -1124,7 +1184,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                 />
               </div>
               <div className="relative">
-                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">VIGÊNCIA ATA</label>
+                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">VIGÊNCIA DA ATA</label>
                 <input
                   value={header.vigenciaAta}
                   onChange={(e) => updateHeader("vigenciaAta", e.target.value)}
@@ -1133,18 +1193,18 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                   placeholder="Ex: 12 meses"
                 />
               </div>
-              <div className="relative">
-                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">PRAZO ENTREGA</label>
+              <div className="relative md:col-span-2">
+                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">PRAZO DE ENTREGA</label>
                 <input
                   value={header.prazoEntrega}
                   onChange={(e) => updateHeader("prazoEntrega", e.target.value)}
                   onBlur={() => handleHeaderBlur("prazoEntrega")}
-                  className="text-slate-900 w-full pl-4 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  className="w-[75ch] text-slate-900 pl-4 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   placeholder="Ex: 15 dias corridos"
                 />
               </div>
               <div className="relative">
-                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">VALIDADE OBJETO</label>
+                <label className="absolute -top-2 left-3 bg-white px-1 text-xs font-bold text-slate-500">VALIDADE DO OBJETO</label>
                 <input
                   value={header.validadeObjeto}
                   onChange={(e) => updateHeader("validadeObjeto", e.target.value)}
@@ -1209,7 +1269,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
 
           {config.declaracoesFixas.length > 0 && (
             <div className="border-t border-slate-200 print:border-black p-6">
-              <div className="bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-t border-slate-200 print:border-black mb-6">
+              <div className="text-slate-700 bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-t border-slate-200 print:border-black mb-6">
                 Declarações
               </div>
               <div className="text-xs text-slate-600 space-y-3">
