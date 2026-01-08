@@ -990,7 +990,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
             </div>
           </div>
 
-          <div className="bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-slate-200 print:border-black">
+          <div className="bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-slate-200 print:border-black text-slate-700">
             Proposta Comercial
           </div>
 
@@ -1002,8 +1002,8 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                   <th className="px-3 py-3 text-left w-2/5">Descrição Detalhada</th>
                   <th className="px-3 py-3 text-center">UNIDADE</th>
                   <th className="px-3 py-3 text-center">QUANTIDADE</th>
-                  <th className="px-3 py-3 text-left">FABRICANTE</th>
-                  <th className="px-3 py-3 text-left">NOME COMERCIAL</th>
+                  <th className="px-3 py-3 text-center">FABRICANTE</th>
+                  <th className="px-3 py-3 text-center">NOME COMERCIAL</th>
                   <th className="px-3 py-3 text-right">Val. c/ ICMS</th>
                   <th className="px-3 py-3 text-right">Total c/ ICMS</th>
                   <th className="px-3 py-3 text-right">Val. s/ ICMS</th>
@@ -1041,21 +1041,21 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                       <input
                         value={item.quantidade}
                         onChange={(e) => handleItemChange(item.id, "quantidade", e.target.value)}
-                        className="text-slate-900 w-20 p-2 border border-transparent rounded-md bg-transparent text-center focus:bg-white focus:border-slate-300 focus:outline-none"
+                        className="text-slate-900 text-center w-20 p-2 border border-transparent rounded-md bg-transparent text-center focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
                     <td className="px-2 py-1">
                       <input
                         value={item.fabricante}
                         onChange={(e) => handleItemChange(item.id, "fabricante", e.target.value)}
-                        className="text-slate-900 w-32 p-2 border border-transparent rounded-md bg-transparent uppercase focus:bg-white focus:border-slate-300 focus:outline-none"
+                        className="text-slate-900 text-center w-32 p-2 border border-transparent rounded-md bg-transparent uppercase focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
                     <td className="px-2 py-1">
                       <input
                         value={item.marca}
                         onChange={(e) => handleItemChange(item.id, "marca", e.target.value)}
-                        className="text-slate-900 w-32 p-2 border border-transparent rounded-md bg-transparent uppercase focus:bg-white focus:border-slate-300 focus:outline-none"
+                        className="text-slate-900 text-center w-32 p-2 border border-transparent rounded-md bg-transparent uppercase focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
                     <td className="px-2 py-1 text-right">
