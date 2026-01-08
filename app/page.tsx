@@ -13,6 +13,7 @@ import { exportToExcel } from '../lib/exportService';
 import DropdownEmpresa from '../components/DropdownEmpresa';
 import BentoMenu from '../components/BentoMenu';
 import GerarProcessoModal from '../components/GerarProcessoModal';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type Tab = 'grade' | 'proposta' | 'orgaos' | 'resultados' | 'processos' | 'produtos';
 
@@ -249,9 +250,17 @@ export default function Home() {
             )}
 
             {/* 2. CONTEÚDO DINÂMICO (GRADE OU ÓRGÃOS) */}
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+              >
                 {renderContent()}
-            </div>
+              </motion.div>
+            </AnimatePresence>
         </div>
 
       </div>
