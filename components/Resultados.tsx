@@ -261,13 +261,29 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
     
     const isPriceBold = (row.status === 'ganho' && field === 'nossoPreco') || (row.status === 'perdido' && field === 'precoConcorrente');
     const isWinningOurPrice = row.status === 'ganho' && field === 'nossoPreco';
+    const isLosingCompetitorPrice = row.status === 'perdido' && field === 'precoConcorrente';
     
     if (field === 'empresa') {
         const style = getCompanyStyle(String(value ?? ''));
         return <span style={style} className={`w-full block font-medium px-3 py-2 rounded-md ${cellClass}`}>{String(formattedValue ?? '')}</span>;
     }
 
-    return <span className={`text-center w-full block px-3 py-2 ${cellClass} ${isPriceBold ? 'font-semibold' : ''}  ${ isWinningOurPrice ? 'bg-green-200 text-green-900 rounded-md' : '' } ${row.status === 'perdido' && field === 'precoConcorrente' ? 'text-red-600' : 'text-gray-800'}`}>{formattedValue}</span>;
+    return (
+  <span
+    className={`
+      text-center w-full block px-3 py-2
+      ${cellClass}
+      ${isPriceBold ? 'font-semibold' : ''}
+
+      ${isWinningOurPrice ? 'bg-green-200 text-green-900 rounded-md' : ''}
+      ${isLosingCompetitorPrice ? 'bg-red-200 text-red-600 rounded-md' : ''}
+
+      ${!isWinningOurPrice && !isLosingCompetitorPrice ? 'text-gray-800' : ''}
+    `}
+  >
+    {formattedValue}
+  </span>
+);
   };
 
   const tableHeaders: { key: keyof Resultado | 'actions', label: string | React.ReactNode }[] = [
@@ -331,12 +347,7 @@ const Resultados: React.FC<ResultadosProps> = ({ resultados, setResultados }) =>
           {/* Date picker styled similarly */}
           <div className="relative w-full sm:w-auto">
             <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-            <input
-              type="date"
-              value={dateFilter}
-              onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }}
-              className="w-full sm:w-auto pl-11 pr-4 py-3 rounded-full bg-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <input type="date" value={dateFilter} onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }} className=" w-full sm:w-44 pl-11 pr-4 py-3 rounded-full bg-gray-200 text-sm text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none " />
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
