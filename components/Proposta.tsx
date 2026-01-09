@@ -146,17 +146,35 @@ const COMPANY_CONFIG: Record<Empresa, {
         <strong>empenho@costacamargo.com.br</strong>
       </p>,
       <p key="costa-empenho-observacao" className="text-sm text-slate-700 leading-relaxed mt-1">
-        Observa??o: A empresa somente processar? os empenhos enviados para o endere?o
-        correto de correspond?ncia eletr?nica{" "}
-        <strong>empenho@costacamargo.com.br</strong>. Eventual envio para endere?o ou
-        setor diverso do informado na presente proposta ? de inteira responsabilidade
-        do remetente, sendo que a empresa n?o ser? respons?vel pelo atraso ou aus?ncia
+        Observação: A empresa somente processará os empenhos enviados para o endereço
+        correto de correspondência eletrônica{" "}
+        <strong>empenho@costacamargo.com.br</strong>. Eventual envio para endereço ou
+        setor diverso do informado na presente proposta é de inteira responsabilidade
+        do remetente, sendo que a empresa não será responsável pelo atraso ou ausência
         de resposta. A empresa esclarece que somente o setor de{" "}
         <strong>Empenho</strong> possui poderes para receber e processar os pedidos de
         empenho, sendo de inteira responsabilidade do Contratante realizar o pedido nos
-        moldes da presente proposta, sob pena de responder pelos seus pr?prios atos. Por
-        fim, a empresa n?o se responsabiliza caso os empenhos sejam enviados para
-        endere?os diversos ou incorretos.
+        moldes da presente proposta, sob pena de responder pelos seus próprios atos. Por
+        fim, a empresa não se responsabiliza caso os empenhos sejam enviados para
+        endereços diversos ou incorretos.
+      </p>,
+
+        <p key="costa-notificacoes-endereco" className="text-sm text-slate-800 leading-relaxed">
+        <strong>PARA ENVIO DE NOTIFICAÇÕES:</strong>{" "}
+        <strong>notificacoes@costacamargo.com.br</strong>
+      </p>,
+      <p key="costa-empenho-observacao" className="text-sm text-justify text-slate-700 leading-relaxed mt-1">
+        Observação: A empresa somente processará as notificações enviadas para o endereço
+        correto de correspondência eletrônica{" "}
+        <strong>notificacao@costacamargo.com.br</strong>. Eventual envio para endereço ou
+        setor diverso do informado na presente proposta é de inteira responsabilidade
+        do remetente, sendo que a empresa não será responsável pelo atraso ou ausência
+        de resposta. A empresa esclarece que somente o setor de{" "}
+        <strong>Notificação</strong> possui poderes para receber e processar os ofícios de
+        notificações, sendo de inteira responsabilidade do Contratante realizar o pedido nos
+        moldes da presente proposta, sob pena de responder pelos seus próprios atos. Por
+        fim, a empresa não se responsabiliza caso as notificações sejam enviadas para
+        endereços diversos ou incorretos.
       </p>,
     ],
     declaracoesFixas: [
@@ -191,8 +209,18 @@ const COMPANY_CONFIG: Record<Empresa, {
     ],
     bancos: [],
     observacoesFixas: [
-      "A empresa esclarece que somente o setor de EMPENHO e NOTIFICACOES possuem poderes para receber e processar os pedidos de empenho/autorizacao de fornecimento ou notificacoes respectivamente, sendo de inteira responsabilidade do CONTRATANTE realizar o pedido nos moldes da presente proposta, sob pena de responder pelos seus proprios atos.",
-      "Desta forma, a empresa nao se responsabiliza caso os empenhos ou as notificacoes sejam enviados para enderecos diversos ou incorretos.",
+        <p key="unique-empenho-observacao" className="text-sm text-justify text-slate-700 leading-relaxed mt-1">
+        A empresa esclarece que somente o setor de <strong>EMPENHO e NOTIFICAÇÕES</strong> possuem poderes para 
+        receber e processar os pedidos de <strong>empenho/autorizações de fornecimento OU notificações</strong> respectivamente, 
+        sendo de inteira responsabilidade do CONTRATANTE realizar o pedido nos moldes da presente proposta, sob 
+        pena de responder pelos seus próprios atos.  Desta forma, a empresa não se responsabiliza caso os <strong>empenhos </strong>
+        ou as <strong>notificações</strong> sejam enviados para endereços diversos ou incorretos.{" "}
+        </p>,
+      <p key="unique-empenho-emails" className="text-sm text-slate-800 leading-relaxed mt-2">
+        <strong>EMPENHOS: EMPENHO@UNIQUEMEDICAMENTOS.COM.BR</strong>
+        <br/>
+        <strong>NOTIFICAÇÕES: NOTIFICACAO@UNIQUEMEDICAMENTOS.COM.BR</strong>
+      </p>,
     ],
     declaracoesFixas: [
       "Conforme convenio 26/03, informamos que os precos contidos nessa proposta comercial estao deduzidos do ICMS e comprovados na nota fiscal de faturamento da venda.",
@@ -1114,7 +1142,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                         value={item.descricao}
                         onChange={(e) => handleItemChange(item.id, "descricao", e.target.value)}
                         onBlur={() => handleDescricaoBlur(item.id)}
-                        className="text-slate-900 w-full min-h-[80px] p-2 border border-transparent rounded-md bg-transparent whitespace-pre-line focus:bg-white focus:border-slate-300 focus:outline-none"
+                        className="text-slate-900 text-justify w-full min-h-[80px] p-2 border border-transparent rounded-md bg-transparent whitespace-pre-line focus:bg-white focus:border-slate-300 focus:outline-none"
                         rows={3}
                       />
                     </td>
@@ -1249,7 +1277,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
           {/* Observações */}
           <div className="border-t border-slate-200 print:border-black p-6">
             <div className="text-slate-700 bg-slate-50 text-center text-sm font-bold uppercase py-2 border-b border-t border-slate-200 print:border-black mb-6">
-              Observações
+              PARA ENVIO DE PEDIDOS DE EMPENHO OU NOTIFICAÇÕES
             </div>
             <div className="text-xs text-slate-600 space-y-3">
               {config.observacoesFixas.map((linha, index) =>
