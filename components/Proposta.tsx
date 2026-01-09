@@ -1147,10 +1147,10 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                   <th className="px-3 py-3 text-center">QUANTIDADE</th>
                   <th className="px-3 py-3 text-center">FABRICANTE</th>
                   <th className="px-3 py-3 text-center">NOME COMERCIAL</th>
-                  <th className="px-3 py-3 text-right">Val. c/ ICMS</th>
-                  <th className="px-3 py-3 text-right">Total c/ ICMS</th>
-                  <th className="px-3 py-3 text-right">Val. s/ ICMS</th>
-                  <th className="px-3 py-3 text-right">Total s/ ICMS</th>
+                  <th className="px-3 py-3 text-right">Val. COM ICMS</th>
+                  <th className="px-3 py-3 text-right">Total COM ICMS</th>
+                  <th className="px-3 py-3 text-right">VAL. UNIT. SEM ICMS</th>
+                  <th className="px-3 py-3 text-right">VAL. Total SEM ICMS</th>
                   <th className="px-3 py-3 text-center print:hidden">Ação</th>
                 </tr>
               </thead>
@@ -1161,7 +1161,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                       <input
                         value={item.item}
                         onChange={(e) => handleItemChange(item.id, "item", e.target.value)}
-                        className="text-slate-900 w-16 p-2 border border-transparent rounded-md bg-transparent text-center focus:bg-white focus:border-slate-300 focus:outline-none"
+                        className="text-slate-900 w-14 p-2 border border-transparent rounded-md bg-transparent text-center focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
                     <td className="px-2 py-1">
@@ -1192,7 +1192,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                           target.style.height = "auto";
                           target.style.height = `${target.scrollHeight}px`;
                         }}
-                        className="text-slate-900 text-center w-20 min-h-[32px] p-2 border border-transparent rounded-md bg-transparent uppercase resize-none overflow-hidden whitespace-pre-line break-words focus:bg-white focus:border-slate-300 focus:outline-none"
+                        className="text-slate-900 text-center w-25 min-h-[32px] p-2 border border-transparent rounded-md bg-transparent uppercase resize-none overflow-hidden whitespace-pre-line break-words focus:bg-white focus:border-slate-300 focus:outline-none"
                         rows={1}
                       />
                     </td>
@@ -1200,21 +1200,21 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                       <input
                         value={item.quantidade}
                         onChange={(e) => handleItemChange(item.id, "quantidade", e.target.value)}
-                        className="text-slate-900 text-center w-20 p-2 border border-transparent rounded-md bg-transparent text-center focus:bg-white focus:border-slate-300 focus:outline-none"
+                        className="text-slate-900 text-center w-25 p-2 border border-transparent rounded-md bg-transparent text-center focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
                     <td className="px-2 py-1">
                       <input
                         value={item.fabricante}
                         onChange={(e) => handleItemChange(item.id, "fabricante", e.target.value)}
-                        className="text-slate-900 text-center w-32 p-2 border border-transparent rounded-md bg-transparent uppercase focus:bg-white focus:border-slate-300 focus:outline-none"
+                        className="text-slate-900 text-center w-28 p-2 border border-transparent rounded-md bg-transparent uppercase focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
                     <td className="px-2 py-1">
                       <input
                         value={item.marca}
                         onChange={(e) => handleItemChange(item.id, "marca", e.target.value)}
-                        className="text-slate-900 text-center w-32 p-2 border border-transparent rounded-md bg-transparent uppercase focus:bg-white focus:border-slate-300 focus:outline-none"
+                        className="text-slate-900 text-center w-28 p-2 border border-transparent rounded-md bg-transparent uppercase focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
                     <td className="px-2 py-1 text-right">
@@ -1223,7 +1223,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                         onFocus={() => handleCurrencyFocus(item.id, "valorUnitarioComIcms")}
                         onChange={(e) => handleCurrencyChange(e.target.value)}
                         onBlur={handleCurrencyBlur}
-                        className="text-slate-900 w-28 p-2 border border-transparent rounded-md bg-transparent text-right focus:bg-white focus:border-slate-300 focus:outline-none"
+                        className="text-slate-900 w-25 p-2 border border-transparent rounded-md bg-transparent text-right focus:bg-white focus:border-slate-300 focus:outline-none"
                       />
                     </td>
                     <td className="px-2 py-1 text-right font-medium text-slate-700">
