@@ -3,7 +3,6 @@
 import { useMemo, useState, type ReactNode, Fragment } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Produto } from "../lib/types";
-import { bancoApresentacoes } from "../lib/data";
 import { formatarDataInteligente, removerAcentos } from "../lib/formatters";
 import {
   formatCurrencyForInput,
@@ -293,7 +292,12 @@ const formatCurrencyDisplay = (value: number | string): string => {
   if (value === "" || value === null || value === undefined) return "";
   const parsed = typeof value === "string" ? parseCurrency(value) : value;
   if (Number.isNaN(parsed)) return "";
-  return formatCurrencyForDisplay(parsed);
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(parsed);
 };
 
 const formatCurrencyTotalDisplay = (value: number | string): string => {
@@ -309,6 +313,19 @@ const formatCurrencyTotalDisplay = (value: number | string): string => {
 };
 
 const round4 = (value: number): number => Math.round(value * 10000) / 10000;
+
+const normalizeSearchText = (value: string): string =>
+  removerAcentos(value)
+    .toUpperCase()
+    .replace(/[^0-9A-Z\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const extractMarca = (descricao: string): string | null => {
+  if (!descricao) return null;
+  const match = descricao.match(/MARCA:\s*([^/]+)/i);
+  return match?.[1]?.trim() || null;
+};
 
 const identificarConvenio = (descricao: string): string => {
   const texto = descricao.toUpperCase();
@@ -981,28 +998,38 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
       const texto = item.descricao.trim();
       if (!texto) return item;
 
-      const codigoEncontrado = texto.match(/^\d+$/);
-      if (codigoEncontrado) {
-        const produto = produtos.find((p) => p.codeuro && p.codeuro.trim() === texto);
-        if (produto) {
-          const marcaMatch = produto.descricao.match(/MARCA:\s*([^\/]+)/i);
-          const marca = marcaMatch?.[1]?.trim() || item.marca;
+      const codigoDigitado = texto.toUpperCase();
+      const produtoPorCodigo = produtos.find(
+        (produto) =>
+          produto.codeuro &&
+          produto.codeuro.trim().toUpperCase() === codigoDigitado
+      );
+      if (produtoPorCodigo) {
+        const marca = extractMarca(produtoPorCodigo.descricao || "") || item.marca;
+        return applyRecalculo({
+          ...item,
+          descricao: produtoPorCodigo.descricao || item.descricao,
+          fabricante: produtoPorCodigo.fabricante || item.fabricante,
+          marca,
+          unidade: produtoPorCodigo.unidade || item.unidade,
+        });
+      }
+
+      const palavras = normalizeSearchText(texto).split(" ").filter(Boolean);
+      if (palavras.length) {
+        const produtoPorDescricao = produtos.find((produto) => {
+          if (!produto.descricao) return false;
+          const descricaoNormalizada = normalizeSearchText(produto.descricao);
+          return palavras.every((palavra) => descricaoNormalizada.includes(palavra));
+        });
+        if (produtoPorDescricao) {
+          const marca = extractMarca(produtoPorDescricao.descricao || "") || item.marca;
           return applyRecalculo({
             ...item,
-            descricao: produto.apresentacaoSugerida || produto.descricao || item.descricao,
-            fabricante: produto.fabricante || item.fabricante,
+            descricao: produtoPorDescricao.descricao || item.descricao,
+            fabricante: produtoPorDescricao.fabricante || item.fabricante,
             marca,
-            unidade: produto.unidade || item.unidade,
-          });
-        }
-        const apresentacao = bancoApresentacoes.find((p) => p.codigo === texto);
-        if (apresentacao) {
-          const marcaMatch = apresentacao.descCompleta.match(/MARCA:\s*([^\/]+)/i);
-          const marca = marcaMatch?.[1]?.trim() || item.marca;
-          return applyRecalculo({
-            ...item,
-            descricao: apresentacao.descCompleta,
-            fabricante: marca,
+            unidade: produtoPorDescricao.unidade || item.unidade,
           });
         }
       }
@@ -1142,15 +1169,31 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                         value={item.descricao}
                         onChange={(e) => handleItemChange(item.id, "descricao", e.target.value)}
                         onBlur={() => handleDescricaoBlur(item.id)}
-                        className="text-slate-900 text-justify w-full min-h-[80px] p-2 border border-transparent rounded-md bg-transparent whitespace-pre-line focus:bg-white focus:border-slate-300 focus:outline-none"
+                        ref={(el) => {
+                          if (!el) return;
+                          el.style.height = "auto";
+                          el.style.height = `${el.scrollHeight}px`;
+                        }}
+                        onInput={(e) => {
+                          const target = e.currentTarget;
+                          target.style.height = "auto";
+                          target.style.height = `${target.scrollHeight}px`;
+                        }}
+                        className="text-slate-900 text-justify w-full min-h-[80px] p-2 border border-transparent rounded-md bg-transparent whitespace-pre-line resize-none overflow-hidden focus:bg-white focus:border-slate-300 focus:outline-none"
                         rows={3}
                       />
                     </td>
                     <td className="px-2 py-1">
-                      <input
+                      <textarea
                         value={item.unidade}
                         onChange={(e) => handleItemChange(item.id, "unidade", e.target.value)}
-                        className="text-slate-900 w-20 p-2 border border-transparent rounded-md bg-transparent text-center uppercase focus:bg-white focus:border-slate-300 focus:outline-none"
+                        onInput={(e) => {
+                          const target = e.currentTarget;
+                          target.style.height = "auto";
+                          target.style.height = `${target.scrollHeight}px`;
+                        }}
+                        className="text-slate-900 text-center w-20 min-h-[32px] p-2 border border-transparent rounded-md bg-transparent uppercase resize-none overflow-hidden whitespace-pre-line break-words focus:bg-white focus:border-slate-300 focus:outline-none"
+                        rows={1}
                       />
                     </td>
                     <td className="px-2 py-1">
