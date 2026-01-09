@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode, Fragment } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Produto } from "../lib/types";
 import { bancoApresentacoes } from "../lib/data";
@@ -59,7 +59,7 @@ const COMPANY_CONFIG: Record<Empresa, {
   dadosEmpresa: { label: string; value: string }[];
   contatos: { label: string; value: string }[];
   bancos: { label: string; value: string }[];
-  observacoesFixas: string[];
+  observacoesFixas: ReactNode[];
   declaracoesFixas: string[];
 }> = {
   NSA: {
@@ -141,9 +141,23 @@ const COMPANY_CONFIG: Record<Empresa, {
       { label: "Chave PIX", value: "36.325.157/0001-34" },
     ],
     observacoesFixas: [
-      "A empresa somente processara os empenhos enviados para o endereco correto de correspondencia eletronia empenho@costacamargo.com.br. Eventual envio para endereco ou setor diverso do informado na presente proposta e de inteira responsabilidade do remetente, sendo que a empresa nao sera responsavel pelo atraso ou ausencia de resposta.",
-      "A empresa esclarece que somente o setor de Empenho possui poderes para receber e processar os pedidos de empenho, sendo de inteira responsabilidade do Contratante realizar o pedido nos moldes da presente proposta, sob pena de responder pelos seus proprios atos.",
-      "Por fim, a empresa nao se responsabiliza caso os empenhos sejam enviados para enderecos diversos ou incorretos.",
+      <p key="costa-empenho-endereco" className="text-sm text-slate-800 leading-relaxed">
+        <strong>PARA ENVIO DE EMPENHOS:</strong>{" "}
+        <strong>empenho@costacamargo.com.br</strong>
+      </p>,
+      <p key="costa-empenho-observacao" className="text-sm text-slate-700 leading-relaxed mt-1">
+        Observa??o: A empresa somente processar? os empenhos enviados para o endere?o
+        correto de correspond?ncia eletr?nica{" "}
+        <strong>empenho@costacamargo.com.br</strong>. Eventual envio para endere?o ou
+        setor diverso do informado na presente proposta ? de inteira responsabilidade
+        do remetente, sendo que a empresa n?o ser? respons?vel pelo atraso ou aus?ncia
+        de resposta. A empresa esclarece que somente o setor de{" "}
+        <strong>Empenho</strong> possui poderes para receber e processar os pedidos de
+        empenho, sendo de inteira responsabilidade do Contratante realizar o pedido nos
+        moldes da presente proposta, sob pena de responder pelos seus pr?prios atos. Por
+        fim, a empresa n?o se responsabiliza caso os empenhos sejam enviados para
+        endere?os diversos ou incorretos.
+      </p>,
     ],
     declaracoesFixas: [
       "Conforme convenio 26/03, informamos que os precos contidos nessa proposta comercial estao deduzidos do ICMS e comprovados na nota fiscal de faturamento da venda.",
@@ -221,7 +235,20 @@ const buildDefaultItem = (): PropostaItem => ({
   cap: false,
 });
 
-const normalizeNumericInput = (value: string): string => value.replace(",", ".").replace(/[^0-9.]/g, "");
+const normalizeNumericInput = (value: string): string =>
+  value.replace(/\./g, "").replace(",", ".").replace(/[^0-9.]/g, "");
+
+const formatQuantidadeInput = (value: string): string => {
+  const cleaned = value.replace(/[^0-9,]/g, "");
+  if (!cleaned) return "";
+  const [intPartRaw, decimalPartRaw] = cleaned.split(",");
+  const intPart = intPartRaw.replace(/^0+(?=\d)/, "");
+  const formattedInt = intPart ? intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
+  if (decimalPartRaw !== undefined) {
+    return decimalPartRaw.length ? `${formattedInt},${decimalPartRaw}` : `${formattedInt},`;
+  }
+  return formattedInt;
+};
 
 const parseNumber = (value: string): number | null => {
   if (!value) return null;
@@ -862,6 +889,9 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
     setItens((prev) => prev.map((item) => {
       if (item.id !== id) return item;
       const updated = { ...item, [field]: value } as PropostaItem;
+      if (field === "quantidade" && typeof value === "string") {
+        updated.quantidade = formatQuantidadeInput(value);
+      }
       if (field === "descricao" && typeof value === "string") {
         updated.descricao = formatDescricao(value);
       }
@@ -1222,9 +1252,13 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
               Observações
             </div>
             <div className="text-xs text-slate-600 space-y-3">
-              {config.observacoesFixas.map((linha) => (
-                <p key={linha}>{linha}</p>
-              ))}
+              {config.observacoesFixas.map((linha, index) =>
+                typeof linha === "string" ? (
+                  <p key={`obs-${index}`}>{linha}</p>
+                ) : (
+                  <Fragment key={`obs-${index}`}>{linha}</Fragment>
+                )
+              )}
               {declaracoesOrgao.map((linha) => (
                 <p key={linha} className="font-bold text-slate-700">{linha}</p>
               ))}
