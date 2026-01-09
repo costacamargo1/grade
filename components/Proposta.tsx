@@ -1137,7 +1137,7 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
             Proposta Comercial
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto pr-16 print:overflow-visible print:pr-0">
             <table className="w-full text-xs border-collapse">
               <thead className="bg-slate-800 text-white uppercase font-semibold divide-x divide-slate-500">
                 <tr>
@@ -1151,11 +1151,12 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                   <th className="px-3 py-3 text-right">Total COM ICMS</th>
                   <th className="px-3 py-3 text-right">VAL. UNIT. SEM ICMS</th>
                   <th className="px-3 py-3 text-right">VAL. Total SEM ICMS</th>
-                  <th className="px-3 py-3 text-center print:hidden">Ação</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-x divide-slate-300">
-                {itens.map((item) => (
+                {itens.map((item, index) => {
+                  const isLastItem = index === itens.length - 1;
+                  return (
                   <tr key={item.id} className="align-top hover:bg-slate-50">
                     <td className="px-2 py-1">
                       <input
@@ -1227,7 +1228,9 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                       />
                     </td>
                     <td className="px-2 py-1 text-right font-medium text-slate-700">
-                      {formatCurrencyTotalDisplay(item.valorTotalComIcms)}
+                      <div className="min-h-[36px] p-2 border border-transparent rounded-md bg-transparent text-right flex items-center justify-end">
+                        {formatCurrencyTotalDisplay(item.valorTotalComIcms)}
+                      </div>
                     </td>
                     <td className="px-2 py-1 text-right">
                       <input
@@ -1239,15 +1242,30 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
                       />
                     </td>
                     <td className="px-2 py-1 text-right font-medium text-slate-700">
-                      {formatCurrencyTotalDisplay(item.valorTotalSemIcms)}
+                      <div className="min-h-[36px] p-2 border border-transparent rounded-md bg-transparent text-right flex items-center justify-end">
+                        {formatCurrencyTotalDisplay(item.valorTotalSemIcms)}
+                      </div>
                     </td>
-                    <td className="px-2 py-1 text-center print:hidden">
-                      <button onClick={() => removeItem(item.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors">
-                        <Trash2 size={16} />
-                      </button>
+                    <td className="relative px-0 py-1 w-0 print:hidden">
+                      <div className="absolute left-full top-1/2 -translate-y-1/2 flex items-center gap-2 pl-2">
+                        <button
+                          onClick={() => removeItem(item.id)}
+                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                        {isLastItem && (
+                          <button
+                            onClick={addItem}
+                            className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-100 rounded-full transition-colors"
+                          >
+                            <Plus size={18} />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>
@@ -1407,15 +1425,6 @@ export default function Proposta({ empresa = "UNIQUE", produtos = [] }: Proposta
           </div>
         </div>
 
-        <div className="flex justify-start print:hidden">
-          <button
-            onClick={addItem}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 transition-all"
-          >
-            <Plus size={18} />
-            Adicionar Item
-          </button>
-        </div>
       </div>
     </div>
   );
